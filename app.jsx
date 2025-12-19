@@ -1137,7 +1137,7 @@ function App() {
   };
 
   const HomeView = () => (
-    <div className="p-4 max-w-2xl mx-auto pb-24">
+    <div className="p-4 max-w-2xl md:max-w-4xl lg:max-w-6xl xl:max-w-7xl mx-auto pb-24">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
           <img src="logoflashcard.ico" alt="NihonGo Deck" className="w-8 h-8" />
@@ -1212,7 +1212,7 @@ function App() {
         </div>
       </div>
 
-      <div className="grid gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         {decks.map(deck => (
           <div 
             key={deck.id} 
@@ -1289,7 +1289,7 @@ function App() {
     }
 
     return (
-      <div className="p-4 max-w-2xl mx-auto h-full flex flex-col">
+      <div className="p-4 max-w-2xl md:max-w-4xl lg:max-w-6xl xl:max-w-7xl mx-auto h-full flex flex-col">
         <div className="flex items-center justify-between mb-6">
           <button onClick={() => setView('home')} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg">
             <ChevronLeft size={20} className="text-gray-800 dark:text-white" />
@@ -1488,7 +1488,7 @@ function App() {
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
               {filteredCards.map((card, idx) => (
                 <div 
                   key={idx} 

@@ -1317,6 +1317,13 @@ function App() {
   );
 }
 
+// Registrar Service Worker para PWA
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js');
+  });
+}
+
 // Renderizar o app
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(<App />);

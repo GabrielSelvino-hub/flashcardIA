@@ -1140,7 +1140,7 @@ function App() {
     <div className="p-4 max-w-2xl mx-auto pb-24">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
-          <Brain size={24} className="text-red-500" />
+          <img src="logoflashcard.ico" alt="NihonGo Deck" className="w-8 h-8" />
           NihonGo Deck
         </h1>
         <div className="relative">

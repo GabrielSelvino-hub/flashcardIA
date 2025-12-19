@@ -118,6 +118,7 @@ function App() {
   const [furiganaMode, setFuriganaMode] = useState('always');
   const [showApiKeyModal, setShowApiKeyModal] = useState(false);
   const [apiKeyInput, setApiKeyInput] = useState('');
+  const [cardsCount, setCardsCount] = useState(5);
 
   // Modal States
   const [modalConfig, setModalConfig] = useState({ type: null, data: null });
@@ -323,8 +324,9 @@ function App() {
   };
 
   // --- AI GENERATION LOGIC ---
-  const handleGenerate = async (promptOverride = null) => {
+  const handleGenerate = async (promptOverride = null, countOverride = null) => {
     const prompt = promptOverride || generatorPrompt;
+    const count = countOverride || cardsCount;
     if (!prompt || !prompt.trim()) return;
     
     const apiKey = localStorage.getItem('gemini_api_key');
@@ -336,7 +338,7 @@ function App() {
     
     setIsGenerating(true);
     const promptText = `
-      Gere um array JSON estrito contendo 5 flashcards de vocabulário japonês focados no tema: "${prompt}".
+      Gere um array JSON estrito contendo ${count} flashcards de vocabulário japonês focados no tema: "${prompt}".
       
       Regras de formato:
       1. A resposta deve ser APENAS um array JSON válido. Sem markdown (como \`\`\`json), sem texto adicional.
@@ -567,7 +569,7 @@ function App() {
       const value = inputRef.current?.value || '';
       if (value.trim() && !isGenerating) {
         // Passa o valor diretamente para handleGenerate sem atualizar o estado
-        handleGenerate(value);
+        handleGenerate(value, cardsCount);
         // Limpa o input após gerar
         if (inputRef.current) {
           inputRef.current.value = '';
@@ -608,13 +610,34 @@ function App() {
             </p>
           </div>
 
+          <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 mb-6">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+              Quantidade de cards:
+            </label>
+            <div className="flex gap-2">
+              {[3, 5, 8].map((num) => (
+                <button
+                  key={num}
+                  onClick={() => setCardsCount(num)}
+                  className={`flex-1 py-2 px-4 rounded-lg font-bold transition-all ${
+                    cardsCount === num
+                      ? 'bg-indigo-600 text-white shadow-md'
+                      : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                  }`}
+                >
+                  {num} cards
+                </button>
+              ))}
+            </div>
+          </div>
+
         <div className="bg-indigo-50 dark:bg-indigo-900/20 p-4 rounded-lg border border-indigo-200 dark:border-indigo-800 mb-6">
            <h4 className="font-bold text-indigo-800 dark:text-indigo-200 text-sm flex items-center gap-2">
              <Sparkles size={16} />
              Power by Google Gemini
            </h4>
            <p className="text-sm text-indigo-700 dark:text-indigo-300 mt-1">
-             A IA criará 5 cards únicos para você. O processo pode levar alguns segundos.
+             A IA criará {cardsCount} cards únicos para você. O processo pode levar alguns segundos.
            </p>
         </div>
 

@@ -390,7 +390,29 @@ function App() {
     setDecks(prevDecks => prevDecks.map(d => {
       if (d.id === activeDeckId) {
         const timestamp = Date.now();
-        const cardsToAdd = newCardsData.map((data, index) => ({
+        
+        // Função auxiliar para normalizar e comparar cards
+        const normalizeCard = (card) => ({
+          kanji: (card.kanji || '').trim().toLowerCase(),
+          reading: (card.reading || '').trim().toLowerCase(),
+          meaning: (card.meaning || '').trim().toLowerCase()
+        });
+        
+        // Verifica quais cards já existem no baralho
+        const existingCardsNormalized = d.cards.map(normalizeCard);
+        
+        // Filtra cards duplicados
+        const uniqueCardsData = newCardsData.filter(newCard => {
+          const normalized = normalizeCard(newCard);
+          return !existingCardsNormalized.some(existing => 
+            existing.kanji === normalized.kanji &&
+            existing.reading === normalized.reading &&
+            existing.meaning === normalized.meaning
+          );
+        });
+        
+        // Cria os cards únicos
+        const cardsToAdd = uniqueCardsData.map((data, index) => ({
           id: `${timestamp}-${index}-${Math.random().toString(36).substr(2, 5)}`,
           ...data,
           interval: 0,
@@ -403,6 +425,18 @@ function App() {
           tags: data.tags || [],
           createdAt: timestamp
         }));
+        
+        // Exibe mensagem sobre cards adicionados e duplicatas
+        const duplicatesCount = newCardsData.length - uniqueCardsData.length;
+        if (uniqueCardsData.length > 0) {
+          if (duplicatesCount > 0) {
+            showAlert(`${uniqueCardsData.length} novos cards adicionados. ${duplicatesCount} card(s) duplicado(s) foram ignorados.`);
+          } else {
+            showAlert(`Sucesso! ${uniqueCardsData.length} novos cards foram criados.`);
+          }
+        } else if (duplicatesCount > 0) {
+          showAlert(`Todos os ${duplicatesCount} card(s) gerados já existem no baralho. Nenhum card foi adicionado.`);
+        }
         
         return {
           ...d,
@@ -910,7 +944,6 @@ function App() {
 
       if (Array.isArray(newCards) && newCards.length > 0) {
         addCardsToActiveDeck(newCards);
-        showAlert(`Sucesso! ${newCards.length} novos cards sobre "${prompt}" foram criados.`);
         setGeneratorPrompt('');
         setView('deck');
       } else {

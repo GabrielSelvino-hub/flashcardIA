@@ -23,6 +23,11 @@ const RotateCw = ({ size, className }) => <Icon size={size} className={className
 const X = ({ size, className }) => <Icon size={size} className={className}><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></Icon>;
 const AlertCircle = ({ size, className }) => <Icon size={size} className={className}><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></Icon>;
 const Sparkles = ({ size, className }) => <Icon size={size} className={className}><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/></Icon>;
+const Check = ({ size, className }) => <Icon size={size} className={className}><polyline points="20 6 9 17 4 12"/></Icon>;
+const Award = ({ size, className }) => <Icon size={size} className={className}><circle cx="12" cy="8" r="6"/><polyline points="9 12 2 22 12 20 22 22 15 12"/></Icon>;
+const Settings = ({ size, className }) => <Icon size={size} className={className}><circle cx="12" cy="12" r="3"/><path d="M12 1v6m0 6v6M5.64 5.64l4.24 4.24m4.24 4.24l4.24 4.24M1 12h6m6 0h6M5.64 18.36l4.24-4.24m4.24-4.24l4.24-4.24"/></Icon>;
+const List = ({ size, className }) => <Icon size={size} className={className}><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></Icon>;
+const Grid = ({ size, className }) => <Icon size={size} className={className}><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></Icon>;
 
 // --- DATA STRUCTURES & HELPERS ---
 
@@ -119,6 +124,19 @@ function App() {
   const [showApiKeyModal, setShowApiKeyModal] = useState(false);
   const [apiKeyInput, setApiKeyInput] = useState('');
   const [cardsCount, setCardsCount] = useState(5);
+  const [showSettingsMenu, setShowSettingsMenu] = useState(false);
+  const [cardViewMode, setCardViewMode] = useState('list'); // 'list' ou 'grid'
+
+  // Test States
+  const [testMode, setTestMode] = useState(null); // 'translation' | 'reading' | null
+  const [testQueue, setTestQueue] = useState([]);
+  const [testCurrentIndex, setTestCurrentIndex] = useState(0);
+  const [testScore, setTestScore] = useState({ correct: 0, wrong: 0 });
+  const [testOptions, setTestOptions] = useState([]);
+  const [testSelectedAnswer, setTestSelectedAnswer] = useState(null);
+  const [testShowResult, setTestShowResult] = useState(false);
+  const [testCompleted, setTestCompleted] = useState(false);
+  const [testPassed, setTestPassed] = useState(false);
 
   // Modal States
   const [modalConfig, setModalConfig] = useState({ type: null, data: null });
@@ -323,6 +341,137 @@ function App() {
     }
   };
 
+  // --- TEST LOGIC ---
+  const startTest = (deckId, testType) => {
+    const deck = decks.find(d => d.id === deckId);
+    if (!deck || deck.cards.length < 10) {
+      showAlert('Este baralho precisa ter pelo menos 10 cards para fazer um teste.');
+      return;
+    }
+
+    // Seleciona 10 cards aleatórios
+    const shuffled = shuffleArray([...deck.cards]);
+    const selectedCards = shuffled.slice(0, 10);
+    
+    setTestQueue(selectedCards);
+    setTestCurrentIndex(0);
+    setTestScore({ correct: 0, wrong: 0 });
+    setTestMode(testType);
+    setTestCompleted(false);
+    setTestPassed(false);
+    setTestShowResult(false);
+    setTestSelectedAnswer(null);
+    
+    // Gera opções para o primeiro card
+    const firstCard = selectedCards[0];
+    const options = generateTestOptions(firstCard, deck.cards, testType);
+    setTestOptions(options);
+    
+    setView('test');
+  };
+
+  const generateTestOptions = (card, allCards, testType) => {
+    const correctAnswer = testType === 'translation' ? card.meaning : card.reading;
+    
+    // Encontra um distrator aleatório de outro card
+    const otherCards = allCards.filter(c => c.id !== card.id);
+    if (otherCards.length === 0) {
+      // Fallback se não houver outros cards
+      const wrongAnswer = testType === 'translation' ? 'Opção Incorreta' : 'あいうえお';
+      return shuffleArray([correctAnswer, wrongAnswer]);
+    }
+    
+    const randomOtherCard = otherCards[Math.floor(Math.random() * otherCards.length)];
+    const wrongAnswer = testType === 'translation' ? randomOtherCard.meaning : randomOtherCard.reading;
+    
+    // Garante que o distrator seja diferente da resposta correta
+    let distractor = wrongAnswer;
+    let attempts = 0;
+    while (distractor === correctAnswer && attempts < 10) {
+      const anotherCard = otherCards[Math.floor(Math.random() * otherCards.length)];
+      distractor = testType === 'translation' ? anotherCard.meaning : anotherCard.reading;
+      attempts++;
+    }
+    
+    return shuffleArray([correctAnswer, distractor]);
+  };
+
+  const handleTestAnswer = (selectedOption) => {
+    if (testShowResult) return; // Já mostrou resultado, aguarda próximo
+    
+    const currentCard = testQueue[testCurrentIndex];
+    const correctAnswer = testMode === 'translation' ? currentCard.meaning : currentCard.reading;
+    const isCorrect = selectedOption === correctAnswer;
+    
+    setTestSelectedAnswer(selectedOption);
+    setTestShowResult(true);
+    
+    // Atualiza score
+    setTestScore(prev => {
+      const newScore = {
+        correct: isCorrect ? prev.correct + 1 : prev.correct,
+        wrong: isCorrect ? prev.wrong : prev.wrong + 1
+      };
+      
+      // Verifica se perdeu (4 ou mais erros) ou completou todas as questões
+      const isLastQuestion = testCurrentIndex === testQueue.length - 1;
+      
+      if (newScore.wrong >= 4) {
+        // Perdeu - vai direto para resultado após um pequeno delay
+        setTimeout(() => {
+          setTestCompleted(true);
+          setTestPassed(false);
+          setView('test-result');
+        }, 1500);
+      } else if (isLastQuestion) {
+        // Completou todas as questões e passou
+        setTimeout(() => {
+          setTestCompleted(true);
+          setTestPassed(true);
+          setView('test-result');
+        }, 1500);
+      }
+      
+      return newScore;
+    });
+  };
+
+  const nextTestQuestion = () => {
+    // Se já perdeu ou completou, não deve chegar aqui
+    if (testScore.wrong >= 4 || testCurrentIndex >= testQueue.length - 1) {
+      return;
+    }
+    
+    // Próxima questão
+    const nextIndex = testCurrentIndex + 1;
+    setTestCurrentIndex(nextIndex);
+    setTestShowResult(false);
+    setTestSelectedAnswer(null);
+    
+    const nextCard = testQueue[nextIndex];
+    const deck = decks.find(d => d.id === activeDeckId);
+    const options = generateTestOptions(nextCard, deck.cards, testMode);
+    setTestOptions(options);
+  };
+
+  const restartTest = () => {
+    // Reinicia o mesmo teste (mesmos 10 kanjis)
+    setTestCurrentIndex(0);
+    setTestScore({ correct: 0, wrong: 0 });
+    setTestCompleted(false);
+    setTestPassed(false);
+    setTestShowResult(false);
+    setTestSelectedAnswer(null);
+    
+    // Gera opções para o primeiro card novamente
+    const firstCard = testQueue[0];
+    const deck = decks.find(d => d.id === activeDeckId);
+    const options = generateTestOptions(firstCard, deck.cards, testMode);
+    setTestOptions(options);
+    
+    setView('test');
+  };
+
   // --- AI GENERATION LOGIC ---
   const handleGenerate = async (promptOverride = null, countOverride = null) => {
     const prompt = promptOverride || generatorPrompt;
@@ -399,17 +548,61 @@ function App() {
           <Brain size={24} className="text-red-500" />
           NihonGo Deck
         </h1>
-        <div className="flex gap-2">
-           <label className="p-2 bg-gray-200 dark:bg-gray-700 rounded-full cursor-pointer hover:bg-gray-300 dark:hover:bg-gray-600 transition">
-             <Upload size={20} className="text-gray-700 dark:text-gray-300" />
-             <input type="file" onChange={handleImport} className="hidden" accept=".json" />
-           </label>
-           <button onClick={handleExportAll} className="p-2 bg-gray-200 dark:bg-gray-700 rounded-full hover:bg-gray-300 dark:hover:bg-gray-600 transition">
-             <Download size={20} className="text-gray-700 dark:text-gray-300" />
-           </button>
-           <button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} className="p-2 bg-gray-200 dark:bg-gray-700 rounded-full hover:bg-gray-300 dark:hover:bg-gray-600 transition">
-            {theme === 'dark' ? <Sun size={20} className="text-yellow-400" /> : <Moon size={20} className="text-gray-700" />}
+        <div className="relative">
+          <button 
+            onClick={() => setShowSettingsMenu(!showSettingsMenu)} 
+            className="p-2 bg-gray-200 dark:bg-gray-700 rounded-full hover:bg-gray-300 dark:hover:bg-gray-600 transition"
+          >
+            <Settings size={20} className="text-gray-700 dark:text-gray-300" />
           </button>
+          
+          {showSettingsMenu && (
+            <>
+              <div 
+                className="fixed inset-0 z-40" 
+                onClick={() => setShowSettingsMenu(false)}
+              />
+              <div className="absolute right-0 top-12 z-50 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 p-3 min-w-[200px]">
+                <div className="space-y-2">
+                  <label className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer transition">
+                    <Upload size={18} className="text-gray-700 dark:text-gray-300" />
+                    <span className="text-sm text-gray-700 dark:text-gray-300">Importar</span>
+                    <input type="file" onChange={handleImport} className="hidden" accept=".json" />
+                  </label>
+                  <button 
+                    onClick={() => {
+                      handleExportAll();
+                      setShowSettingsMenu(false);
+                    }} 
+                    className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition text-left"
+                  >
+                    <Download size={18} className="text-gray-700 dark:text-gray-300" />
+                    <span className="text-sm text-gray-700 dark:text-gray-300">Exportar</span>
+                  </button>
+                  <div className="border-t border-gray-200 dark:border-gray-700 my-2" />
+                  <button 
+                    onClick={() => {
+                      setTheme(theme === 'dark' ? 'light' : 'dark');
+                      setShowSettingsMenu(false);
+                    }} 
+                    className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+                  >
+                    {theme === 'dark' ? (
+                      <>
+                        <Sun size={18} className="text-yellow-400" />
+                        <span className="text-sm text-gray-700 dark:text-gray-300">Tema Claro</span>
+                      </>
+                    ) : (
+                      <>
+                        <Moon size={18} className="text-gray-700 dark:text-gray-300" />
+                        <span className="text-sm text-gray-700 dark:text-gray-300">Tema Escuro</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+            </>
+          )}
         </div>
       </div>
 
@@ -453,6 +646,13 @@ function App() {
           </button>
           <h2 className="text-xl font-bold text-gray-800 dark:text-white truncate max-w-[200px]">{deck.name}</h2>
           <div className="flex gap-2">
+            <button 
+              onClick={() => setCardViewMode(cardViewMode === 'list' ? 'grid' : 'list')} 
+              className="p-2 text-gray-600 dark:text-gray-400 hover:text-indigo-500 transition"
+              title={cardViewMode === 'list' ? 'Alternar para Grid' : 'Alternar para Lista'}
+            >
+              {cardViewMode === 'list' ? <Grid size={20} /> : <List size={20} />}
+            </button>
             <button onClick={() => handleExportDeck(deck)} className="p-2 text-gray-600 dark:text-gray-400 hover:text-red-500">
               <Download size={20} />
             </button>
@@ -527,13 +727,24 @@ function App() {
              <Sparkles size={20} />
              Gerar Cards com IA (Tema)
            </button>
+           
+           <button 
+             onClick={() => setView('test-mode-selection')}
+             disabled={deck.cards.length < 10}
+             className={`w-full text-white py-3 rounded-lg font-bold shadow-md active:scale-95 transition flex items-center justify-center gap-2
+               ${deck.cards.length < 10 ? 'bg-gray-400 cursor-not-allowed' : 'bg-purple-600 hover:bg-purple-700'}
+             `}
+           >
+             <Award size={20} />
+             Iniciar Teste
+           </button>
         </div>
 
         <div className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-900 rounded-lg p-2 border border-gray-200 dark:border-gray-700">
           <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-2 px-2">Cards Existentes</h3>
           {deck.cards.length === 0 ? (
             <div className="text-center py-8 text-gray-400">Nenhum card ainda. Crie ou Gere um!</div>
-          ) : (
+          ) : cardViewMode === 'list' ? (
             <div className="space-y-2">
               {deck.cards.map((card, idx) => (
                 <div key={idx} className="bg-white dark:bg-gray-800 p-3 rounded shadow-sm flex justify-between items-center">
@@ -552,6 +763,32 @@ function App() {
                     className="text-gray-400 hover:text-red-500"
                   >
                     <Trash2 size={16} />
+                  </button>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+              {deck.cards.map((card, idx) => (
+                <div 
+                  key={idx} 
+                  className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 aspect-square flex flex-col justify-between relative group hover:shadow-md transition-shadow"
+                >
+                  <div className="flex-1 flex flex-col items-center justify-center text-center">
+                    <ruby className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-gray-200 mb-2">
+                      {card.kanji}
+                      <rt className="text-xs sm:text-sm text-gray-500">{card.reading}</rt>
+                    </ruby>
+                    <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 line-clamp-2">{card.meaning}</div>
+                  </div>
+                  <button 
+                    onClick={() => {
+                      const newCards = deck.cards.filter(c => c.id !== card.id);
+                      setDecks(decks.map(d => d.id === deck.id ? {...d, cards: newCards} : d));
+                    }}
+                    className="absolute top-2 right-2 text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity p-1"
+                  >
+                    <Trash2 size={14} />
                   </button>
                 </div>
               ))}
@@ -720,6 +957,272 @@ function App() {
     );
   };
 
+  const TestModeSelectionView = () => {
+    const deck = decks.find(d => d.id === activeDeckId);
+    if (!deck) return null;
+
+    return (
+      <div className="p-4 max-w-2xl mx-auto h-full flex flex-col">
+        <div className="flex items-center mb-6">
+          <button onClick={() => setView('deck')} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg mr-2">
+            <ChevronLeft size={20} className="text-gray-800 dark:text-white" />
+          </button>
+          <h2 className="text-xl font-bold text-gray-800 dark:text-white">Escolher Tipo de Teste</h2>
+        </div>
+
+        <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg mb-6 border border-blue-200 dark:border-blue-800">
+          <p className="text-sm text-blue-800 dark:text-blue-200">
+            <strong>Regras do Teste:</strong> Você responderá 10 questões. Se errar 4 ou mais, precisará recomeçar o mesmo teste.
+          </p>
+        </div>
+
+        <div className="flex-1 flex flex-col justify-center gap-4">
+          <button
+            onClick={() => startTest(activeDeckId, 'translation')}
+            disabled={deck.cards.length < 10}
+            className={`w-full p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg border-2 border-gray-200 dark:border-gray-700 hover:border-red-500 dark:hover:border-red-500 transition-all ${
+              deck.cards.length < 10 ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer active:scale-95'
+            }`}
+          >
+            <div className="text-left">
+              <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">Teste de Tradução</h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                Você verá o kanji e precisará escolher a tradução correta entre duas opções.
+              </p>
+            </div>
+          </button>
+
+          <button
+            onClick={() => startTest(activeDeckId, 'reading')}
+            disabled={deck.cards.length < 10}
+            className={`w-full p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg border-2 border-gray-200 dark:border-gray-700 hover:border-red-500 dark:hover:border-red-500 transition-all ${
+              deck.cards.length < 10 ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer active:scale-95'
+            }`}
+          >
+            <div className="text-left">
+              <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">Teste de Leitura</h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                Você verá o kanji e precisará escolher a leitura em hiragana correta entre duas opções.
+              </p>
+            </div>
+          </button>
+        </div>
+
+        {deck.cards.length < 10 && (
+          <div className="mt-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
+            <p className="text-sm text-yellow-800 dark:text-yellow-200 text-center">
+              Este baralho precisa ter pelo menos 10 cards para fazer um teste. Atualmente tem {deck.cards.length} cards.
+            </p>
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  const TestView = () => {
+    const currentCard = testQueue[testCurrentIndex];
+    if (!currentCard) return <div>Erro ao carregar card.</div>;
+
+    const correctAnswer = testMode === 'translation' ? currentCard.meaning : currentCard.reading;
+    const isCorrect = testSelectedAnswer === correctAnswer;
+
+    return (
+      <div className="h-full flex flex-col p-4 max-w-xl mx-auto">
+        <div className="flex justify-between items-center mb-4">
+          <div className="text-sm text-gray-500 dark:text-gray-400">
+            <span className="font-semibold">Questão {testCurrentIndex + 1} / 10</span>
+          </div>
+          <div className="text-sm">
+            <span className={`font-bold ${testScore.wrong >= 3 ? 'text-red-600 dark:text-red-400' : 'text-gray-600 dark:text-gray-400'}`}>
+              Erros: {testScore.wrong} / 4
+            </span>
+          </div>
+        </div>
+
+        <div className="flex-1 flex items-center justify-center min-h-[250px] bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 mb-6">
+          <KanjiCard 
+            kanji={currentCard.kanji}
+            reading={currentCard.reading}
+            meaning={currentCard.meaning}
+            showBack={false}
+            furiganaMode={testMode === 'reading' ? 'never' : 'always'}
+            size="large"
+          />
+        </div>
+
+        <div className="space-y-3 mb-4">
+          {testOptions.map((option, index) => {
+            let buttonClass = "w-full py-4 px-6 rounded-lg font-bold text-lg transition-all border-2 ";
+            let isSelected = testSelectedAnswer === option;
+            let isCorrectOption = option === correctAnswer;
+
+            if (testShowResult) {
+              if (isCorrectOption) {
+                buttonClass += "bg-green-500 text-white border-green-600 dark:bg-green-600 dark:border-green-700";
+              } else if (isSelected && !isCorrectOption) {
+                buttonClass += "bg-red-500 text-white border-red-600 dark:bg-red-600 dark:border-red-700";
+              } else {
+                buttonClass += "bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 border-gray-300 dark:border-gray-600 opacity-50";
+              }
+            } else {
+              buttonClass += "bg-white dark:bg-gray-700 text-gray-800 dark:text-white border-gray-300 dark:border-gray-600 hover:border-red-500 dark:hover:border-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 cursor-pointer active:scale-95";
+            }
+
+            return (
+              <button
+                key={index}
+                onClick={() => !testShowResult && handleTestAnswer(option)}
+                disabled={testShowResult}
+                className={buttonClass}
+              >
+                <div className="flex items-center justify-between">
+                  <span>{option}</span>
+                  {testShowResult && isCorrectOption && (
+                    <Check size={24} className="text-white" />
+                  )}
+                  {testShowResult && isSelected && !isCorrectOption && (
+                    <X size={24} className="text-white" />
+                  )}
+                </div>
+              </button>
+            );
+          })}
+        </div>
+
+        {testShowResult && (
+          <div className="mb-4">
+            {isCorrect ? (
+              <div className="bg-green-50 dark:bg-green-900/20 p-3 rounded-lg border border-green-200 dark:border-green-800 text-center">
+                <p className="text-green-800 dark:text-green-200 font-semibold">✓ Correto!</p>
+              </div>
+            ) : (
+              <div className="bg-red-50 dark:bg-red-900/20 p-3 rounded-lg border border-red-200 dark:border-red-800 text-center">
+                <p className="text-red-800 dark:text-red-200 font-semibold">✗ Incorreto. A resposta correta é: {correctAnswer}</p>
+              </div>
+            )}
+          </div>
+        )}
+
+        {testShowResult && testScore.wrong < 4 && testCurrentIndex < testQueue.length - 1 && (
+          <button
+            onClick={nextTestQuestion}
+            className="w-full bg-red-600 text-white py-4 rounded-lg font-bold shadow-lg hover:bg-red-700 active:scale-95 transition"
+          >
+            Próxima Questão
+          </button>
+        )}
+        
+        {testShowResult && (testScore.wrong >= 4 || testCurrentIndex >= testQueue.length - 1) && (
+          <div className="w-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 py-4 rounded-lg font-medium text-center">
+            Carregando resultado...
+          </div>
+        )}
+
+        <button 
+          onClick={() => setView('deck')} 
+          className="mt-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-sm text-center w-full"
+        >
+          Cancelar Teste
+        </button>
+      </div>
+    );
+  };
+
+  const TestResultView = () => {
+    const totalQuestions = 10;
+    const percentage = Math.round((testScore.correct / totalQuestions) * 100);
+
+    return (
+      <div className="h-full flex flex-col p-4 max-w-xl mx-auto">
+        <div className="flex-1 flex flex-col items-center justify-center">
+          {testPassed ? (
+            <>
+              <div className="mb-6">
+                <Award size={80} className="text-green-500 dark:text-green-400 mx-auto" />
+              </div>
+              <h2 className="text-3xl font-bold text-green-600 dark:text-green-400 mb-4 text-center">
+                Parabéns! Você Passou!
+              </h2>
+              <div className="bg-green-50 dark:bg-green-900/20 p-6 rounded-xl border border-green-200 dark:border-green-800 mb-6 w-full">
+                <div className="text-center mb-4">
+                  <div className="text-4xl font-bold text-green-600 dark:text-green-400 mb-2">
+                    {testScore.correct} / {totalQuestions}
+                  </div>
+                  <div className="text-lg text-green-700 dark:text-green-300">
+                    {percentage}% de acertos
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div className="text-center">
+                    <div className="font-semibold text-green-800 dark:text-green-200">Acertos</div>
+                    <div className="text-2xl font-bold text-green-600 dark:text-green-400">{testScore.correct}</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="font-semibold text-red-800 dark:text-red-200">Erros</div>
+                    <div className="text-2xl font-bold text-red-600 dark:text-red-400">{testScore.wrong}</div>
+                  </div>
+                </div>
+              </div>
+              <button
+                onClick={() => setView('test-mode-selection')}
+                className="w-full bg-red-600 text-white py-4 rounded-lg font-bold shadow-lg hover:bg-red-700 active:scale-95 transition mb-3"
+              >
+                Novo Teste
+              </button>
+            </>
+          ) : (
+            <>
+              <div className="mb-6">
+                <AlertCircle size={80} className="text-red-500 dark:text-red-400 mx-auto" />
+              </div>
+              <h2 className="text-3xl font-bold text-red-600 dark:text-red-400 mb-4 text-center">
+                Você Errou 4 ou Mais
+              </h2>
+              <div className="bg-red-50 dark:bg-red-900/20 p-6 rounded-xl border border-red-200 dark:border-red-800 mb-6 w-full">
+                <div className="text-center mb-4">
+                  <div className="text-4xl font-bold text-red-600 dark:text-red-400 mb-2">
+                    {testScore.correct} / {totalQuestions}
+                  </div>
+                  <div className="text-lg text-red-700 dark:text-red-300">
+                    {percentage}% de acertos
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div className="text-center">
+                    <div className="font-semibold text-green-800 dark:text-green-200">Acertos</div>
+                    <div className="text-2xl font-bold text-green-600 dark:text-green-400">{testScore.correct}</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="font-semibold text-red-800 dark:text-red-200">Erros</div>
+                    <div className="text-2xl font-bold text-red-600 dark:text-red-400">{testScore.wrong}</div>
+                  </div>
+                </div>
+                <div className="mt-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
+                  <p className="text-sm text-yellow-800 dark:text-yellow-200 text-center">
+                    Você precisa acertar pelo menos 7 de 10 para passar. Continue estudando!
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={restartTest}
+                className="w-full bg-red-600 text-white py-4 rounded-lg font-bold shadow-lg hover:bg-red-700 active:scale-95 transition mb-3"
+              >
+                Tentar Novamente (Mesmo Teste)
+              </button>
+            </>
+          )}
+          
+          <button
+            onClick={() => setView('deck')}
+            className="w-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white py-3 rounded-lg font-medium hover:bg-gray-300 dark:hover:bg-gray-600 transition"
+          >
+            Voltar ao Baralho
+          </button>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-950 transition-colors duration-300 font-sans">
       {/* Modals Layer */}
@@ -807,6 +1310,9 @@ function App() {
       {view === 'deck' && <DeckDetailView />}
       {view === 'generator' && <GeneratorView />}
       {view === 'review' && <ReviewSessionView />}
+      {view === 'test-mode-selection' && <TestModeSelectionView />}
+      {view === 'test' && <TestView />}
+      {view === 'test-result' && <TestResultView />}
     </div>
   );
 }

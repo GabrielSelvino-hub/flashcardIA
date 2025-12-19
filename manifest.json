@@ -1,10 +1,12 @@
 {
-  "name": "Controle De Gastos",
-  "short_name": "Gastos",
+  "name": "NihonGo Deck - Flashcard IA",
+  "short_name": "NihonGo Deck",
+  "description": "Aplicativo de flashcards para aprendizado de japonês",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#121212",
-  "theme_color": "#2e7d32",
+  "background_color": "#1a1a1a",
+  "theme_color": "#dc2626",
+  "orientation": "portrait-primary",
   "icons": [
     {
       "src": "icon-192.png",
@@ -15,7 +17,8 @@
     {
       "src": "icon-512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }

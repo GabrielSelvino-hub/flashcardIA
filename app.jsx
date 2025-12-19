@@ -28,6 +28,12 @@ const Award = ({ size, className }) => <Icon size={size} className={className}><
 const Settings = ({ size, className }) => <Icon size={size} className={className}><circle cx="12" cy="12" r="3"/><path d="M12 1v6m0 6v6M5.64 5.64l4.24 4.24m4.24 4.24l4.24 4.24M1 12h6m6 0h6M5.64 18.36l4.24-4.24m4.24-4.24l4.24-4.24"/></Icon>;
 const List = ({ size, className }) => <Icon size={size} className={className}><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></Icon>;
 const Grid = ({ size, className }) => <Icon size={size} className={className}><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></Icon>;
+const Keyboard = ({ size, className }) => <Icon size={size} className={className}><rect x="2" y="4" width="20" height="16" rx="2" ry="2"/><line x1="6" y1="8" x2="8" y2="8"/><line x1="10" y1="8" x2="12" y2="8"/><line x1="14" y1="8" x2="16" y2="8"/><line x1="18" y1="8" x2="18" y2="8"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="16" x2="12" y2="16"/></Icon>;
+const Edit = ({ size, className }) => <Icon size={size} className={className}><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></Icon>;
+const History = ({ size, className }) => <Icon size={size} className={className}><path d="M3 3v5h5"/><path d="M3 8a10 10 0 1 1 3 7.7"/><path d="M12 8v4l2 2"/></Icon>;
+const Tag = ({ size, className }) => <Icon size={size} className={className}><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><circle cx="7" cy="7" r="1.5"/></Icon>;
+const Search = ({ size, className }) => <Icon size={size} className={className}><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></Icon>;
+const Filter = ({ size, className }) => <Icon size={size} className={className}><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></Icon>;
 
 // --- DATA STRUCTURES & HELPERS ---
 
@@ -142,6 +148,29 @@ function App() {
   const [modalConfig, setModalConfig] = useState({ type: null, data: null });
   const [tempInput, setTempInput] = useState('');
 
+  // Writing Mode States
+  const [reviewMode, setReviewMode] = useState('visual'); // 'visual' | 'writing'
+  const [writingInput, setWritingInput] = useState('');
+  const [writingResult, setWritingResult] = useState(null); // null | 'correct' | 'wrong'
+  const [writingAnswerType, setWritingAnswerType] = useState('meaning'); // 'meaning' | 'reading'
+
+  // Edit Card States
+  const [editingCard, setEditingCard] = useState(null);
+  const [editCardForm, setEditCardForm] = useState({ kanji: '', reading: '', meaning: '' });
+
+  // Tags States
+  const [availableTags, setAvailableTags] = useState(() => {
+    const saved = localStorage.getItem('nihongo_tags');
+    return saved ? JSON.parse(saved) : [];
+  });
+  const [tagFilter, setTagFilter] = useState('all'); // 'all' or specific tag
+  const [newTagInput, setNewTagInput] = useState('');
+
+  // Search and Filter States
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filterStatus, setFilterStatus] = useState('all'); // 'all', 'new', 'due', 'mastered'
+  const [sortBy, setSortBy] = useState('default'); // 'default', 'kanji', 'created', 'nextReview'
+
   // Effects
   useEffect(() => {
     // Debounce para evitar salvar a cada mudança e causar re-renders
@@ -167,6 +196,88 @@ function App() {
     }
   }, []);
 
+  // Keyboard Shortcuts
+  useEffect(() => {
+    const handleKeyPress = (e) => {
+      // Ignora se estiver digitando em um input
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+        return;
+      }
+
+      // Atalhos na view de revisão
+      if (view === 'review' && reviewQueue.length > 0) {
+        if (e.key === ' ') {
+          e.preventDefault();
+          if (!showAnswer) {
+            setShowAnswer(true);
+          }
+        } else if (showAnswer) {
+          if (e.key === '0' || e.key === 'Numpad0') {
+            e.preventDefault();
+            processReview(0);
+          } else if (e.key === '1' || e.key === 'Numpad1') {
+            e.preventDefault();
+            processReview(1);
+          } else if (e.key === '2' || e.key === 'Numpad2') {
+            e.preventDefault();
+            processReview(2);
+          }
+        }
+      }
+
+      // Atalhos na view de escrita
+      if (view === 'writing-review' && reviewQueue.length > 0) {
+        if (e.key === 'Enter' && writingInput.trim() && !writingResult) {
+          e.preventDefault();
+          checkWritingAnswer();
+        } else if (e.key === 'Enter' && writingResult) {
+          e.preventDefault();
+          if (writingResult === 'wrong') {
+            processReview(0);
+          }
+          setWritingInput('');
+          setWritingResult(null);
+          if (currentCardIndex < reviewQueue.length - 1) {
+            setCurrentCardIndex(prev => prev + 1);
+          } else {
+            showAlert('Sessão de revisão concluída!');
+            setView('deck');
+          }
+        }
+      }
+
+      // Atalhos na view de teste
+      if (view === 'test' && testOptions.length > 0) {
+        if (!testShowResult) {
+          if (e.key === '1' || e.key === 'Numpad1') {
+            e.preventDefault();
+            handleTestAnswer(testOptions[0]);
+          } else if (e.key === '2' || e.key === 'Numpad2') {
+            e.preventDefault();
+            handleTestAnswer(testOptions[1]);
+          }
+        } else if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          if (testScore.wrong < 4 && testCurrentIndex < testQueue.length - 1) {
+            nextTestQuestion();
+          }
+        }
+      }
+
+      // Escape para voltar
+      if (e.key === 'Escape') {
+        if (view === 'review' || view === 'writing-review' || view === 'test') {
+          setView('deck');
+        } else if (view !== 'home') {
+          setView('home');
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [view, reviewQueue, showAnswer, currentCardIndex, writingInput, writingResult, testOptions, testShowResult, testCurrentIndex, testScore]);
+
   // Modal Helpers
   const closeModal = () => {
     setModalConfig({ type: null, data: null });
@@ -184,6 +295,71 @@ function App() {
   const showPrompt = () => {
     setTempInput('');
     setModalConfig({ type: 'create_deck', data: null });
+  };
+
+  const startEditCard = (card) => {
+    setEditingCard(card);
+    setEditCardForm({ kanji: card.kanji, reading: card.reading, meaning: card.meaning });
+    setNewTagInput('');
+    setModalConfig({ type: 'edit_card', data: null });
+  };
+
+  const saveEditedCard = () => {
+    if (!editCardForm.kanji.trim() || !editCardForm.reading.trim() || !editCardForm.meaning.trim()) {
+      showAlert('Por favor, preencha todos os campos.');
+      return;
+    }
+
+    if (!editingCard) return;
+
+    setDecks(prevDecks => prevDecks.map(d => {
+      if (d.id === activeDeckId) {
+        return {
+          ...d,
+          cards: d.cards.map(c => 
+            c.id === editingCard.id 
+              ? { ...c, kanji: editCardForm.kanji.trim(), reading: editCardForm.reading.trim(), meaning: editCardForm.meaning.trim() }
+              : c
+          )
+        };
+      }
+      return d;
+    }));
+
+    setEditingCard(null);
+    setEditCardForm({ kanji: '', reading: '', meaning: '' });
+    closeModal();
+    showAlert('Card editado com sucesso!');
+  };
+
+  const resetCardProgress = (cardId) => {
+    showConfirm('Tem certeza que deseja resetar o progresso deste card? O intervalo e data de revisão serão resetados.', () => {
+      const timestamp = Date.now();
+      setDecks(prevDecks => prevDecks.map(d => {
+        if (d.id === activeDeckId) {
+          return {
+            ...d,
+            cards: d.cards.map(c => 
+              c.id === cardId 
+                ? { 
+                    ...c, 
+                    interval: 0, 
+                    easeFactor: 2.5,
+                    repetitions: 0,
+                    nextReview: timestamp,
+                    lastReview: timestamp,
+                    qualityHistory: [],
+                    reviewHistory: []
+                  }
+                : c
+            )
+          };
+        }
+        return d;
+      }));
+      closeModal();
+      showAlert('Progresso do card resetado!');
+    });
   };
 
   const saveApiKey = () => {
@@ -218,12 +394,62 @@ function App() {
           id: `${timestamp}-${index}-${Math.random().toString(36).substr(2, 5)}`,
           ...data,
           interval: 0,
-          nextReview: timestamp
+          easeFactor: 2.5,
+          repetitions: 0,
+          nextReview: timestamp,
+          lastReview: timestamp,
+          qualityHistory: [],
+          reviewHistory: [],
+          tags: data.tags || [],
+          createdAt: timestamp
         }));
         
         return {
           ...d,
           cards: [...d.cards, ...cardsToAdd]
+        };
+      }
+      return d;
+    }));
+  };
+
+  // Tags functions
+  const addTagToCard = (cardId, tag) => {
+    if (!tag.trim()) return;
+    const tagLower = tag.trim().toLowerCase();
+    
+    setDecks(prevDecks => prevDecks.map(d => {
+      if (d.id === activeDeckId) {
+        return {
+          ...d,
+          cards: d.cards.map(c => 
+            c.id === cardId 
+              ? { ...c, tags: [...(c.tags || []), tagLower].filter((t, i, arr) => arr.indexOf(t) === i) }
+              : c
+          )
+        };
+      }
+      return d;
+    }));
+
+    // Adiciona tag à lista de tags disponíveis
+    if (!availableTags.includes(tagLower)) {
+      const newTags = [...availableTags, tagLower].sort();
+      setAvailableTags(newTags);
+      localStorage.setItem('nihongo_tags', JSON.stringify(newTags));
+    }
+  };
+
+  const removeTagFromCard = (cardId, tag) => {
+    setDecks(prevDecks => prevDecks.map(d => {
+      if (d.id === activeDeckId) {
+        return {
+          ...d,
+          cards: d.cards.map(c => 
+            c.id === cardId 
+              ? { ...c, tags: (c.tags || []).filter(t => t !== tag) }
+              : c
+          )
         };
       }
       return d;
@@ -302,30 +528,190 @@ function App() {
     setReviewQueue(shuffleArray(cardsToReview));
     setCurrentCardIndex(0);
     setShowAnswer(false);
+    setReviewMode('visual');
+    setWritingInput('');
+    setWritingResult(null);
     setView('review');
+  };
+
+  const startQuickReview = (deckId, mode = 'all') => {
+    const deck = decks.find(d => d.id === deckId);
+    if (!deck || deck.cards.length === 0) {
+      showAlert('Este baralho está vazio. Adicione cards primeiro.');
+      return;
+    }
+
+    const now = Date.now();
+    let cardsToReview = [];
+
+    if (mode === 'errors') {
+      // Cards com muitos erros (facilidade baixa)
+      cardsToReview = deck.cards.filter(c => (c.easeFactor || 2.5) < 2.0);
+      if (cardsToReview.length < 5) {
+        cardsToReview = [...deck.cards].sort((a, b) => (a.easeFactor || 2.5) - (b.easeFactor || 2.5)).slice(0, 10);
+      }
+    } else if (mode === 'new') {
+      cardsToReview = deck.cards.filter(c => c.interval === 0 && c.nextReview <= now);
+    } else {
+      cardsToReview = deck.cards.filter(c => c.nextReview <= now);
+    }
+
+    if (cardsToReview.length === 0) {
+      cardsToReview = [...deck.cards].slice(0, 10);
+    }
+
+    setReviewQueue(shuffleArray(cardsToReview.slice(0, 20))); // Limita a 20 para revisão rápida
+    setCurrentCardIndex(0);
+    setShowAnswer(false);
+    setReviewMode('visual');
+    setView('quick-review');
+  };
+
+  const startWritingReview = (deckId, answerType = 'meaning', forceAll = false) => {
+    const deck = decks.find(d => d.id === deckId);
+    if (!deck || deck.cards.length === 0) {
+      showAlert('Este baralho está vazio. Adicione cards primeiro.');
+      return;
+    }
+
+    const now = Date.now();
+    let cardsToReview = [];
+
+    if (forceAll) {
+      cardsToReview = [...deck.cards];
+    } else {
+      cardsToReview = deck.cards.filter(c => c.nextReview <= now);
+    }
+    
+    if (cardsToReview.length === 0) {
+      showConfirm("Sem revisões pendentes. Quer revisar todos os cards agora?", () => {
+        setReviewQueue(shuffleArray([...deck.cards]));
+        setCurrentCardIndex(0);
+        setReviewMode('writing');
+        setWritingAnswerType(answerType);
+        setWritingInput('');
+        setWritingResult(null);
+        setView('writing-review');
+        closeModal();
+      });
+      return;
+    }
+    
+    setReviewQueue(shuffleArray(cardsToReview));
+    setCurrentCardIndex(0);
+    setReviewMode('writing');
+    setWritingAnswerType(answerType);
+    setWritingInput('');
+    setWritingResult(null);
+    setView('writing-review');
+  };
+
+  // Função para normalizar texto (remove acentos, espaços, converte para minúsculas)
+  const normalizeText = (text) => {
+    return text
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '') // Remove acentos
+      .replace(/\s+/g, '') // Remove espaços
+      .trim();
+  };
+
+  const checkWritingAnswer = () => {
+    const card = reviewQueue[currentCardIndex];
+    if (!card || !writingInput.trim()) return;
+
+    const correctAnswer = writingAnswerType === 'meaning' ? card.meaning : card.reading;
+    const userAnswer = writingInput.trim();
+    
+    // Normaliza ambas as respostas para comparação
+    const normalizedCorrect = normalizeText(correctAnswer);
+    const normalizedUser = normalizeText(userAnswer);
+    
+    // Comparação exata ou com pequena tolerância
+    const isCorrect = normalizedCorrect === normalizedUser || 
+                     normalizedCorrect.includes(normalizedUser) ||
+                     normalizedUser.includes(normalizedCorrect);
+
+    setWritingResult(isCorrect ? 'correct' : 'wrong');
+    
+    // Se correto, processa a revisão automaticamente após 2s (mais tempo para ver feedback)
+    if (isCorrect) {
+      setTimeout(() => {
+        processReview(2); // Qualidade 2 = sabe
+        setWritingInput('');
+        setWritingResult(null);
+        if (currentCardIndex < reviewQueue.length - 1) {
+          setCurrentCardIndex(prev => prev + 1);
+        }
+      }, 2000);
+    }
   };
 
   const processReview = (quality) => {
     const currentCard = reviewQueue[currentCardIndex];
-    let newInterval;
-    let nextReviewDate = Date.now();
+    const now = Date.now();
+    
+    // Initialize SM-2 variables with defaults for old cards
+    let easeFactor = currentCard.easeFactor || 2.5;
+    let repetitions = currentCard.repetitions || 0;
+    let interval = currentCard.interval || 0;
+    const qualityHistory = currentCard.qualityHistory || [];
+    const reviewHistory = currentCard.reviewHistory || [];
+    const lastReview = currentCard.lastReview || now;
 
-    if (quality === 0) {
-      newInterval = 0;
-      nextReviewDate += 60 * 1000;
-    } else if (quality === 1) {
-      newInterval = currentCard.interval === 0 ? 1 : Math.ceil(currentCard.interval * 1.2);
-      nextReviewDate += 24 * 60 * 60 * 1000;
+    // SM-2 Algorithm
+    // Quality: 0 = Não sei, 1 = Dúvida, 2 = Sei
+    
+    if (quality < 2) {
+      // Failed or hard - reset
+      repetitions = 0;
+      interval = 0;
+      easeFactor = Math.max(1.3, easeFactor - 0.15);
     } else {
-      newInterval = currentCard.interval === 0 ? 1 : Math.ceil(currentCard.interval * 2.5);
-      nextReviewDate += newInterval * 24 * 60 * 60 * 1000;
+      // Correct answer
+      if (repetitions === 0) {
+        interval = 1;
+      } else if (repetitions === 1) {
+        interval = 6;
+      } else {
+        interval = Math.round(interval * easeFactor);
+      }
+      repetitions += 1;
+      easeFactor = easeFactor + (0.1 - (2 - quality) * (0.08 + (2 - quality) * 0.02));
+      easeFactor = Math.max(1.3, easeFactor);
     }
+
+    const nextReviewDate = now + (interval * 24 * 60 * 60 * 1000);
+    const newQualityHistory = [...qualityHistory, quality].slice(-10); // Keep last 10 reviews
+    
+    // Add to review history
+    const newReviewHistory = [...reviewHistory, {
+      date: now,
+      quality: quality,
+      intervalBefore: currentCard.interval || 0,
+      intervalAfter: interval,
+      easeFactorBefore: currentCard.easeFactor || 2.5,
+      easeFactorAfter: easeFactor
+    }].slice(-20); // Keep last 20 reviews
 
     const updatedDecks = decks.map(d => {
       if (d.id === activeDeckId) {
         return {
           ...d,
-          cards: d.cards.map(c => c.id === currentCard.id ? { ...c, interval: newInterval, nextReview: nextReviewDate } : c)
+          cards: d.cards.map(c => 
+            c.id === currentCard.id 
+              ? { 
+                  ...c, 
+                  interval: interval,
+                  easeFactor: easeFactor,
+                  repetitions: repetitions,
+                  nextReview: nextReviewDate,
+                  lastReview: now,
+                  qualityHistory: newQualityHistory,
+                  reviewHistory: newReviewHistory
+                } 
+              : c
+          )
         };
       }
       return d;
@@ -541,6 +927,215 @@ function App() {
 
   // --- SUB-VIEWS ---
 
+  const StatsView = () => {
+    const now = Date.now();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const todayStart = today.getTime();
+    const weekAgo = todayStart - (7 * 24 * 60 * 60 * 1000);
+    const monthAgo = todayStart - (30 * 24 * 60 * 60 * 1000);
+
+    // Calculate statistics
+    let totalCards = 0;
+    let newCards = 0;
+    let dueCards = 0;
+    let masteredCards = 0;
+    let totalDecks = decks.length;
+    let totalReviews = 0;
+
+    decks.forEach(deck => {
+      totalCards += deck.cards.length;
+      deck.cards.forEach(card => {
+        if (card.interval === 0 && card.nextReview <= now) {
+          newCards++;
+        } else if (card.nextReview <= now && card.interval > 0) {
+          dueCards++;
+        } else if (card.interval > 7) {
+          masteredCards++;
+        }
+        if (card.reviewHistory) {
+          totalReviews += card.reviewHistory.length;
+        }
+      });
+    });
+
+    const inLearning = totalCards - newCards - dueCards - masteredCards;
+
+    // Calculate review history for last 7 days
+    const reviewHistory = [];
+    for (let i = 6; i >= 0; i--) {
+      const date = new Date(todayStart - i * 24 * 60 * 60 * 1000);
+      const dateStr = date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+      let count = 0;
+      
+      decks.forEach(deck => {
+        deck.cards.forEach(card => {
+          if (card.reviewHistory) {
+            card.reviewHistory.forEach(review => {
+              const reviewDate = new Date(review.date);
+              reviewDate.setHours(0, 0, 0, 0);
+              if (reviewDate.getTime() === date.getTime()) {
+                count++;
+              }
+            });
+          }
+        });
+      });
+      
+      reviewHistory.push({ date: dateStr, count });
+    }
+
+    const maxReviews = Math.max(...reviewHistory.map(r => r.count), 1);
+
+    return (
+      <div className="p-4 max-w-2xl mx-auto pb-24">
+        <div className="flex items-center mb-6">
+          <button onClick={() => setView('home')} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg mr-2">
+            <ChevronLeft size={20} className="text-gray-800 dark:text-white" />
+          </button>
+          <h2 className="text-xl font-bold text-gray-800 dark:text-white">Estatísticas</h2>
+        </div>
+
+        <div className="space-y-4">
+          {/* Overview Cards */}
+          <div className="grid grid-cols-2 gap-4">
+            <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
+              <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">{totalCards}</div>
+              <div className="text-xs text-blue-800 dark:text-blue-300 uppercase font-semibold mt-1">Total de Cards</div>
+            </div>
+            <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg border border-purple-200 dark:border-purple-800">
+              <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">{totalDecks}</div>
+              <div className="text-xs text-purple-800 dark:text-purple-300 uppercase font-semibold mt-1">Baralhos</div>
+            </div>
+          </div>
+
+          {/* Cards by Status */}
+          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+            <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-4">Cards por Status</h3>
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                  <span className="text-sm text-gray-700 dark:text-gray-300">Novos</span>
+                </div>
+                <span className="text-lg font-bold text-gray-800 dark:text-white">{newCards}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                  <span className="text-sm text-gray-700 dark:text-gray-300">Para Revisar</span>
+                </div>
+                <span className="text-lg font-bold text-gray-800 dark:text-white">{dueCards}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-full bg-blue-500"></div>
+                  <span className="text-sm text-gray-700 dark:text-gray-300">Em Aprendizado</span>
+                </div>
+                <span className="text-lg font-bold text-gray-800 dark:text-white">{inLearning}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                  <span className="text-sm text-gray-700 dark:text-gray-300">Dominados</span>
+                </div>
+                <span className="text-lg font-bold text-gray-800 dark:text-white">{masteredCards}</span>
+              </div>
+            </div>
+            
+            {/* Pie Chart (simulado com barras) */}
+            {totalCards > 0 && (
+              <div className="mt-4 space-y-2">
+                <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                  <div className="h-full bg-red-500" style={{ width: `${(newCards / totalCards) * 100}%` }}></div>
+                </div>
+                <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                  <div className="h-full bg-yellow-500" style={{ width: `${(dueCards / totalCards) * 100}%` }}></div>
+                </div>
+                <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                  <div className="h-full bg-blue-500" style={{ width: `${(inLearning / totalCards) * 100}%` }}></div>
+                </div>
+                <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                  <div className="h-full bg-green-500" style={{ width: `${(masteredCards / totalCards) * 100}%` }}></div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Review History Chart */}
+          {totalReviews > 0 && (
+            <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+              <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-4">Revisões nos Últimos 7 Dias</h3>
+              <div className="flex items-end justify-between gap-1 h-32">
+                {reviewHistory.map((day, idx) => (
+                  <div key={idx} className="flex-1 flex flex-col items-center justify-end">
+                    <div 
+                      className="w-full bg-blue-500 rounded-t transition-all hover:bg-blue-600"
+                      style={{ height: `${(day.count / maxReviews) * 100}%` }}
+                      title={`${day.date}: ${day.count} revisões`}
+                    ></div>
+                    <span className="text-xs text-gray-500 dark:text-gray-400 mt-1">{day.date.split('/')[0]}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Deck Statistics */}
+          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+            <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-4">Estatísticas por Baralho</h3>
+            <div className="space-y-3">
+              {decks.map(deck => {
+                const deckDue = deck.cards.filter(c => c.nextReview <= now).length;
+                const deckNew = deck.cards.filter(c => c.interval === 0 && c.nextReview <= now).length;
+                const deckMastered = deck.cards.filter(c => c.interval > 7).length;
+                const deckTotal = deck.cards.length;
+                const accuracy = deckTotal > 0 ? Math.round(((deckTotal - deckNew - deckDue) / deckTotal) * 100) : 0;
+
+                return (
+                  <div key={deck.id} className="p-3 bg-gray-50 dark:bg-gray-900 rounded-lg">
+                    <div className="flex justify-between items-start mb-2">
+                      <h4 className="font-semibold text-gray-800 dark:text-white">{deck.name}</h4>
+                      <span className="text-sm text-gray-500 dark:text-gray-400">{deckTotal} cards</span>
+                    </div>
+                    <div className="grid grid-cols-3 gap-2 text-xs">
+                      <div>
+                        <span className="text-gray-500 dark:text-gray-400">Novos:</span>
+                        <span className="ml-1 font-semibold text-red-600 dark:text-red-400">{deckNew}</span>
+                      </div>
+                      <div>
+                        <span className="text-gray-500 dark:text-gray-400">Revisar:</span>
+                        <span className="ml-1 font-semibold text-yellow-600 dark:text-yellow-400">{deckDue}</span>
+                      </div>
+                      <div>
+                        <span className="text-gray-500 dark:text-gray-400">Dominados:</span>
+                        <span className="ml-1 font-semibold text-green-600 dark:text-green-400">{deckMastered}</span>
+                      </div>
+                    </div>
+                    {deckTotal > 0 && (
+                      <div className="mt-2">
+                        <div className="flex justify-between text-xs mb-1">
+                          <span className="text-gray-500 dark:text-gray-400">Progresso</span>
+                          <span className="font-semibold text-gray-700 dark:text-gray-300">{accuracy}%</span>
+                        </div>
+                        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                          <div 
+                            className="bg-blue-600 h-2 rounded-full transition-all"
+                            style={{ width: `${accuracy}%` }}
+                          ></div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   const HomeView = () => (
     <div className="p-4 max-w-2xl mx-auto pb-24">
       <div className="flex justify-between items-center mb-6">
@@ -578,6 +1173,17 @@ function App() {
                   >
                     <Download size={18} className="text-gray-700 dark:text-gray-300" />
                     <span className="text-sm text-gray-700 dark:text-gray-300">Exportar</span>
+                  </button>
+                  <div className="border-t border-gray-200 dark:border-gray-700 my-2" />
+                  <button 
+                    onClick={() => {
+                      setView('stats');
+                      setShowSettingsMenu(false);
+                    }} 
+                    className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition text-left"
+                  >
+                    <Award size={18} className="text-gray-700 dark:text-gray-300" />
+                    <span className="text-sm text-gray-700 dark:text-gray-300">Estatísticas</span>
                   </button>
                   <div className="border-t border-gray-200 dark:border-gray-700 my-2" />
                   <button 
@@ -638,6 +1244,50 @@ function App() {
     const dueCardsCount = deck.cards.filter(c => c.nextReview <= Date.now()).length;
     const isReviewDue = dueCardsCount > 0;
 
+    // Filter and sort cards
+    const now = Date.now();
+    let filteredCards = [...deck.cards];
+
+    // Apply search filter
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase().trim();
+      filteredCards = filteredCards.filter(card => 
+        card.kanji.toLowerCase().includes(query) ||
+        card.reading.toLowerCase().includes(query) ||
+        card.meaning.toLowerCase().includes(query)
+      );
+    }
+
+    // Apply status filter
+    if (filterStatus !== 'all') {
+      filteredCards = filteredCards.filter(card => {
+        if (filterStatus === 'new') {
+          return card.interval === 0 && card.nextReview <= now;
+        } else if (filterStatus === 'due') {
+          return card.nextReview <= now && card.interval > 0;
+        } else if (filterStatus === 'mastered') {
+          return card.interval > 7;
+        }
+        return true;
+      });
+    }
+
+    // Apply tag filter
+    if (tagFilter !== 'all') {
+      filteredCards = filteredCards.filter(card => 
+        (card.tags || []).includes(tagFilter)
+      );
+    }
+
+    // Apply sorting
+    if (sortBy === 'kanji') {
+      filteredCards.sort((a, b) => a.kanji.localeCompare(b.kanji));
+    } else if (sortBy === 'created') {
+      filteredCards.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+    } else if (sortBy === 'nextReview') {
+      filteredCards.sort((a, b) => a.nextReview - b.nextReview);
+    }
+
     return (
       <div className="p-4 max-w-2xl mx-auto h-full flex flex-col">
         <div className="flex items-center justify-between mb-6">
@@ -693,33 +1343,6 @@ function App() {
              </button>
            </div>
 
-           {isReviewDue ? (
-             <button 
-               onClick={() => startReview(deck.id, false)}
-               className="w-full bg-red-600 text-white py-3 rounded-lg font-bold shadow-md hover:bg-red-700 active:scale-95 transition flex items-center justify-center gap-2 animate-pulse"
-             >
-               <Play size={20} fill="currentColor" />
-               Iniciar Revisão ({dueCardsCount})
-             </button>
-           ) : (
-             <button 
-               onClick={() => startReview(deck.id, true)}
-               disabled={deck.cards.length === 0}
-               className={`w-full text-white py-3 rounded-lg font-bold shadow-md active:scale-95 transition flex items-center justify-center gap-2
-                 ${deck.cards.length === 0 ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}
-               `}
-             >
-               {deck.cards.length === 0 ? (
-                 <>Baralho Vazio</>
-               ) : (
-                 <>
-                   <RotateCw size={20} />
-                   Revisão Extra (Rever Todos)
-                 </>
-               )}
-             </button>
-           )}
-           
            <button 
              onClick={() => setView('generator')}
              className="w-full bg-indigo-600 text-white py-3 rounded-lg font-bold shadow-md hover:bg-indigo-700 active:scale-95 transition flex items-center justify-center gap-2"
@@ -728,68 +1351,187 @@ function App() {
              Gerar Cards com IA (Tema)
            </button>
            
-           <button 
-             onClick={() => setView('test-mode-selection')}
-             disabled={deck.cards.length < 10}
-             className={`w-full text-white py-3 rounded-lg font-bold shadow-md active:scale-95 transition flex items-center justify-center gap-2
-               ${deck.cards.length < 10 ? 'bg-gray-400 cursor-not-allowed' : 'bg-purple-600 hover:bg-purple-700'}
-             `}
-           >
-             <Award size={20} />
-             Iniciar Teste
-           </button>
+           <div className="grid grid-cols-2 gap-3">
+             {isReviewDue ? (
+               <button 
+                 onClick={() => startReview(deck.id, false)}
+                 className="w-full bg-red-600 text-white py-3 rounded-lg font-bold shadow-md hover:bg-red-700 active:scale-95 transition flex items-center justify-center gap-2 animate-pulse"
+               >
+                 <Play size={18} fill="currentColor" />
+                 Revisão
+                 <span>({dueCardsCount})</span>
+               </button>
+             ) : (
+               <button 
+                 onClick={() => startReview(deck.id, true)}
+                 disabled={deck.cards.length === 0}
+                 className={`w-full text-white py-3 rounded-lg font-bold shadow-md active:scale-95 transition flex items-center justify-center gap-2
+                   ${deck.cards.length === 0 ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}
+                 `}
+               >
+                 {deck.cards.length === 0 ? (
+                   <span className="text-xs">Vazio</span>
+                 ) : (
+                   <>
+                     <RotateCw size={18} />
+                     Revisão
+                   </>
+                 )}
+               </button>
+             )}
+             
+             <button 
+               onClick={() => setView('test-mode-selection')}
+               disabled={deck.cards.length < 10}
+               className={`w-full text-white py-3 rounded-lg font-bold shadow-md active:scale-95 transition flex items-center justify-center gap-2
+                 ${deck.cards.length < 10 ? 'bg-gray-400 cursor-not-allowed' : 'bg-purple-600 hover:bg-purple-700'}
+               `}
+             >
+               <Award size={18} />
+               Teste
+             </button>
+           </div>
         </div>
 
         <div className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-900 rounded-lg p-2 border border-gray-200 dark:border-gray-700">
-          <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-2 px-2">Cards Existentes</h3>
+          <div className="mb-3 space-y-2">
+            <div className="relative">
+              <Search size={18} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Buscar cards..."
+                className="w-full pl-10 pr-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-800 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none text-sm"
+              />
+            </div>
+            <div className="flex gap-2 flex-wrap">
+              <select
+                value={filterStatus}
+                onChange={(e) => setFilterStatus(e.target.value)}
+                className="flex-1 min-w-[120px] px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-800 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+              >
+                <option value="all">Todos</option>
+                <option value="new">Novos</option>
+                <option value="due">Para Revisar</option>
+                <option value="mastered">Dominados</option>
+              </select>
+              <select
+                value={tagFilter}
+                onChange={(e) => setTagFilter(e.target.value)}
+                className="flex-1 min-w-[120px] px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-800 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+              >
+                <option value="all">Todas Tags</option>
+                {availableTags.map(tag => (
+                  <option key={tag} value={tag}>{tag}</option>
+                ))}
+              </select>
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="flex-1 min-w-[120px] px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-800 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+              >
+                <option value="default">Padrão</option>
+                <option value="kanji">Por Kanji</option>
+                <option value="created">Por Data</option>
+                <option value="nextReview">Próxima Revisão</option>
+              </select>
+            </div>
+          </div>
+          <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-2 px-2">
+            Cards Existentes {filteredCards.length !== deck.cards.length && `(${filteredCards.length} de ${deck.cards.length})`}
+          </h3>
           {deck.cards.length === 0 ? (
             <div className="text-center py-8 text-gray-400">Nenhum card ainda. Crie ou Gere um!</div>
+          ) : filteredCards.length === 0 ? (
+            <div className="text-center py-8 text-gray-400">Nenhum card encontrado com os filtros aplicados.</div>
           ) : cardViewMode === 'list' ? (
             <div className="space-y-2">
-              {deck.cards.map((card, idx) => (
-                <div key={idx} className="bg-white dark:bg-gray-800 p-3 rounded shadow-sm flex justify-between items-center">
-                  <div>
+              {filteredCards.map((card, idx) => (
+                <div key={idx} className="bg-white dark:bg-gray-800 p-3 rounded shadow-sm flex justify-between items-center group animate-fadeIn hover:shadow-md transition-all">
+                  <div className="flex-1">
                     <ruby className="text-lg font-bold text-gray-800 dark:text-gray-200">
                       {card.kanji}
                       <rt className="text-xs text-gray-500">{card.reading}</rt>
                     </ruby>
                     <div className="text-sm text-gray-600 dark:text-gray-400">{card.meaning}</div>
+                    {card.tags && card.tags.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mt-1">
+                        {card.tags.map((tag, tagIdx) => (
+                          <span key={tagIdx} className="px-1.5 py-0.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded text-xs">
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                   </div>
-                  <button 
-                    onClick={() => {
-                      const newCards = deck.cards.filter(c => c.id !== card.id);
-                      setDecks(decks.map(d => d.id === deck.id ? {...d, cards: newCards} : d));
-                    }}
-                    className="text-gray-400 hover:text-red-500"
-                  >
-                    <Trash2 size={16} />
-                  </button>
+                  <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button 
+                      onClick={() => startEditCard(card)}
+                      className="text-gray-400 hover:text-blue-500"
+                      title="Editar card"
+                    >
+                      <Edit size={16} />
+                    </button>
+                    <button 
+                      onClick={() => {
+                        const newCards = deck.cards.filter(c => c.id !== card.id);
+                        setDecks(decks.map(d => d.id === deck.id ? {...d, cards: newCards} : d));
+                      }}
+                      className="text-gray-400 hover:text-red-500"
+                      title="Excluir card"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-              {deck.cards.map((card, idx) => (
+            <div className="grid grid-cols-3 gap-3">
+              {filteredCards.map((card, idx) => (
                 <div 
                   key={idx} 
-                  className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 aspect-square flex flex-col justify-between relative group hover:shadow-md transition-shadow"
+                  className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 aspect-square flex flex-col justify-between relative group hover:shadow-md transition-all animate-fadeIn"
                 >
                   <div className="flex-1 flex flex-col items-center justify-center text-center">
                     <ruby className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-gray-200 mb-2">
                       {card.kanji}
                       <rt className="text-xs sm:text-sm text-gray-500">{card.reading}</rt>
                     </ruby>
-                    <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 line-clamp-2">{card.meaning}</div>
+                    <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 line-clamp-2 mb-1">{card.meaning}</div>
+                    {card.tags && card.tags.length > 0 && (
+                      <div className="flex flex-wrap gap-0.5 justify-center">
+                        {card.tags.slice(0, 2).map((tag, tagIdx) => (
+                          <span key={tagIdx} className="px-1 py-0.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded text-[10px]">
+                            {tag}
+                          </span>
+                        ))}
+                        {card.tags.length > 2 && (
+                          <span className="px-1 py-0.5 text-gray-500 text-[10px]">+{card.tags.length - 2}</span>
+                        )}
+                      </div>
+                    )}
                   </div>
-                  <button 
-                    onClick={() => {
-                      const newCards = deck.cards.filter(c => c.id !== card.id);
-                      setDecks(decks.map(d => d.id === deck.id ? {...d, cards: newCards} : d));
-                    }}
-                    className="absolute top-2 right-2 text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity p-1"
-                  >
-                    <Trash2 size={14} />
-                  </button>
+                  <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button 
+                      onClick={() => startEditCard(card)}
+                      className="text-gray-400 hover:text-blue-500 p-1"
+                      title="Editar card"
+                    >
+                      <Edit size={14} />
+                    </button>
+                    <button 
+                      onClick={() => {
+                        const newCards = deck.cards.filter(c => c.id !== card.id);
+                        setDecks(decks.map(d => d.id === deck.id ? {...d, cards: newCards} : d));
+                      }}
+                      className="text-gray-400 hover:text-red-500 p-1"
+                      title="Excluir card"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -899,6 +1641,143 @@ function App() {
     );
   };
 
+  const QuickReviewView = () => {
+    const card = reviewQueue[currentCardIndex];
+    if (!card) return <div>Erro ao carregar card.</div>;
+    
+    const cardRef = useRef(null);
+    const touchStartX = useRef(0);
+    const touchStartY = useRef(0);
+
+    const handleTouchStart = (e) => {
+      touchStartX.current = e.touches[0].clientX;
+      touchStartY.current = e.touches[0].clientY;
+    };
+
+    const handleTouchEnd = (e) => {
+      if (!touchStartX.current || !touchStartY.current) return;
+      
+      const touchEndX = e.changedTouches[0].clientX;
+      const touchEndY = e.changedTouches[0].clientY;
+      const diffX = touchEndX - touchStartX.current;
+      const diffY = touchEndY - touchStartY.current;
+      
+      // Swipe horizontal (esquerda/direita) tem prioridade
+      if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
+        if (diffX > 0) {
+          // Swipe direito = correto (qualidade 2)
+          if (showAnswer) {
+            processReview(2);
+            if (currentCardIndex < reviewQueue.length - 1) {
+              setCurrentCardIndex(prev => prev + 1);
+              setShowAnswer(false);
+            } else {
+              showAlert('Revisão rápida concluída!');
+              setView('deck');
+            }
+          }
+        } else {
+          // Swipe esquerdo = incorreto (qualidade 0)
+          if (showAnswer) {
+            processReview(0);
+            if (currentCardIndex < reviewQueue.length - 1) {
+              setCurrentCardIndex(prev => prev + 1);
+              setShowAnswer(false);
+            } else {
+              showAlert('Revisão rápida concluída!');
+              setView('deck');
+            }
+          }
+        }
+      } else if (Math.abs(diffY) > 50) {
+        // Swipe vertical = mostrar/esconder resposta
+        if (diffY < 0 && !showAnswer) {
+          setShowAnswer(true);
+        } else if (diffY > 0 && showAnswer) {
+          setShowAnswer(false);
+        }
+      }
+      
+      touchStartX.current = 0;
+      touchStartY.current = 0;
+    };
+
+    return (
+      <div className="h-full flex flex-col p-4 max-w-xl mx-auto">
+        <div className="flex justify-between items-center mb-4 text-sm text-gray-500 dark:text-gray-400">
+           <span>Revisão Rápida</span>
+           <span>{currentCardIndex + 1} / {reviewQueue.length}</span>
+        </div>
+        <div className="text-xs text-gray-400 dark:text-gray-500 mb-2 text-center">
+          {!showAnswer ? '⬆️ Deslize para cima ou toque para revelar' : '⬅️ Errado | ➡️ Correto | ⬇️ Esconder'}
+        </div>
+
+        <div 
+          ref={cardRef}
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+          className="flex-1 flex items-center justify-center min-h-[300px] bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 mb-8 cursor-pointer relative overflow-hidden group touch-pan-y"
+          onClick={() => setShowAnswer(!showAnswer)}
+        >
+           <KanjiCard 
+             kanji={card.kanji}
+             reading={card.reading}
+             meaning={card.meaning}
+             showBack={showAnswer}
+             furiganaMode={furiganaMode}
+             size="large"
+           />
+        </div>
+
+        {showAnswer ? (
+          <div className="grid grid-cols-2 gap-3">
+             <button 
+               onClick={() => {
+                 processReview(0);
+                 if (currentCardIndex < reviewQueue.length - 1) {
+                   setCurrentCardIndex(prev => prev + 1);
+                   setShowAnswer(false);
+                 } else {
+                   showAlert('Revisão rápida concluída!');
+                   setView('deck');
+                 }
+               }}
+               className="bg-red-100 hover:bg-red-200 dark:bg-red-900/30 dark:hover:bg-red-900/50 text-red-700 dark:text-red-300 py-4 rounded-lg font-bold border border-red-200 dark:border-red-800 transition"
+             >
+               ❌ Errado
+             </button>
+             <button 
+               onClick={() => {
+                 processReview(2);
+                 if (currentCardIndex < reviewQueue.length - 1) {
+                   setCurrentCardIndex(prev => prev + 1);
+                   setShowAnswer(false);
+                 } else {
+                   showAlert('Revisão rápida concluída!');
+                   setView('deck');
+                 }
+               }}
+               className="bg-green-100 hover:bg-green-200 dark:bg-green-900/30 dark:hover:bg-green-900/50 text-green-700 dark:text-green-300 py-4 rounded-lg font-bold border border-green-200 dark:border-green-800 transition"
+             >
+               ✅ Correto
+             </button>
+          </div>
+        ) : (
+          <button 
+            onClick={() => setShowAnswer(true)}
+            className="w-full bg-gray-800 dark:bg-gray-700 text-white py-4 rounded-lg font-bold shadow hover:bg-gray-700 dark:hover:bg-gray-600 transition"
+          >
+            Mostrar Resposta
+          </button>
+        )}
+        
+        <button onClick={() => setView('deck')} className="mt-6 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-sm text-center w-full">
+          Cancelar Revisão
+        </button>
+      </div>
+    );
+  };
+
   const ReviewSessionView = () => {
     const card = reviewQueue[currentCardIndex];
     if (!card) return <div>Erro ao carregar card.</div>;
@@ -908,6 +1787,9 @@ function App() {
         <div className="flex justify-between items-center mb-4 text-sm text-gray-500 dark:text-gray-400">
            <span>Revisão</span>
            <span>{currentCardIndex + 1} / {reviewQueue.length}</span>
+        </div>
+        <div className="text-xs text-gray-400 dark:text-gray-500 mb-2 text-center">
+          {!showAnswer ? 'Espaço: Mostrar resposta' : '0: Não sei | 1: Dúvida | 2: Sei'}
         </div>
 
         <div 
@@ -951,6 +1833,127 @@ function App() {
         )}
         
         <button onClick={() => setView('deck')} className="mt-6 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-sm text-center w-full">
+          Cancelar Revisão
+        </button>
+      </div>
+    );
+  };
+
+  const WritingReviewView = () => {
+    const card = reviewQueue[currentCardIndex];
+    if (!card) return <div>Erro ao carregar card.</div>;
+
+    const correctAnswer = writingAnswerType === 'meaning' ? card.meaning : card.reading;
+    const inputRef = useRef(null);
+
+    useEffect(() => {
+      if (inputRef.current) {
+        inputRef.current.focus();
+      }
+    }, [currentCardIndex]);
+
+    const handleSubmit = (e) => {
+      e.preventDefault();
+      if (writingInput.trim() && !writingResult) {
+        checkWritingAnswer();
+      }
+    };
+
+    const handleNext = () => {
+      if (writingResult === 'wrong') {
+        processReview(0); // Não sabe
+      }
+      setWritingInput('');
+      setWritingResult(null);
+      if (currentCardIndex < reviewQueue.length - 1) {
+        setCurrentCardIndex(prev => prev + 1);
+      } else {
+        showAlert('Sessão de revisão concluída!');
+        setView('deck');
+      }
+    };
+
+    return (
+      <div className="h-full flex flex-col p-4 max-w-xl mx-auto">
+        <div className="flex justify-between items-center mb-4 text-sm text-gray-500 dark:text-gray-400">
+           <span>Revisão por Escrita</span>
+           <span>{currentCardIndex + 1} / {reviewQueue.length}</span>
+        </div>
+        <div className="text-xs text-gray-400 dark:text-gray-500 mb-2 text-center">
+          Enter: {!writingResult ? 'Verificar' : 'Próximo'} | ESC: Cancelar
+        </div>
+
+        <div className="flex-1 flex items-center justify-center min-h-[300px] bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 mb-6">
+           <KanjiCard 
+             kanji={card.kanji}
+             reading={card.reading}
+             meaning={card.meaning}
+             showBack={false}
+             furiganaMode={writingAnswerType === 'reading' ? 'never' : 'always'}
+             size="large"
+           />
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              {writingAnswerType === 'meaning' ? 'Digite o significado:' : 'Digite a leitura:'}
+            </label>
+            <input
+              ref={inputRef}
+              type="text"
+              value={writingInput}
+              onChange={(e) => {
+                setWritingInput(e.target.value);
+                setWritingResult(null);
+              }}
+              disabled={writingResult !== null}
+              className={`w-full p-4 text-lg rounded-lg border-2 transition-all ${
+                writingResult === 'correct' 
+                  ? 'bg-green-50 dark:bg-green-900/20 border-green-500 text-green-700 dark:text-green-300' 
+                  : writingResult === 'wrong'
+                  ? 'bg-red-50 dark:bg-red-900/20 border-red-500 text-red-700 dark:text-red-300'
+                  : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-800 dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500'
+              }`}
+              placeholder={writingAnswerType === 'meaning' ? 'Ex: Gato' : 'Ex: ねこ'}
+            />
+          </div>
+
+          {writingResult === 'correct' && (
+            <div className="bg-green-50 dark:bg-green-900/20 p-3 rounded-lg border border-green-200 dark:border-green-800 text-center animate-bounce">
+              <p className="text-green-800 dark:text-green-200 font-semibold">✓ Correto!</p>
+            </div>
+          )}
+
+          {writingResult === 'wrong' && (
+            <div className="bg-red-50 dark:bg-red-900/20 p-3 rounded-lg border border-red-200 dark:border-red-800 animate-fadeIn">
+              <p className="text-red-800 dark:text-red-200 font-semibold text-center mb-2">✗ Incorreto</p>
+              <p className="text-sm text-red-700 dark:text-red-300 text-center">
+                Resposta correta: <strong>{correctAnswer}</strong>
+              </p>
+            </div>
+          )}
+
+          {!writingResult ? (
+            <button
+              type="submit"
+              disabled={!writingInput.trim()}
+              className="w-full bg-blue-600 text-white py-4 rounded-lg font-bold shadow hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
+            >
+              Verificar
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={handleNext}
+              className="w-full bg-blue-600 text-white py-4 rounded-lg font-bold shadow hover:bg-blue-700 transition"
+            >
+              {currentCardIndex < reviewQueue.length - 1 ? 'Próximo Card' : 'Finalizar'}
+            </button>
+          )}
+        </form>
+        
+        <button onClick={() => setView('deck')} className="mt-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-sm text-center w-full">
           Cancelar Revisão
         </button>
       </div>
@@ -1003,6 +2006,24 @@ function App() {
               <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">Teste de Leitura</h3>
               <p className="text-sm text-gray-600 dark:text-gray-400">
                 Você verá o kanji e precisará escolher a leitura em hiragana correta entre duas opções.
+              </p>
+            </div>
+          </button>
+
+          <button
+            onClick={() => startWritingReview(activeDeckId, 'meaning', true)}
+            disabled={deck.cards.length === 0}
+            className={`w-full p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg border-2 border-gray-200 dark:border-gray-700 hover:border-orange-500 dark:hover:border-orange-500 transition-all ${
+              deck.cards.length === 0 ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer active:scale-95'
+            }`}
+          >
+            <div className="text-left">
+              <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2 flex items-center gap-2">
+                <Keyboard size={20} />
+                Teste de Escrita
+              </h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                Você verá o kanji e precisará escrever o significado ou a leitura correta.
               </p>
             </div>
           </button>
@@ -1305,11 +2326,173 @@ function App() {
         </Modal>
       )}
 
+      {modalConfig.type === 'edit_card' && editingCard && (
+        <Modal isOpen={true} onClose={closeModal} title="Editar Card">
+          <div className="space-y-4 max-h-[80vh] overflow-y-auto">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Kanji / Palavra
+              </label>
+              <input 
+                type="text" 
+                value={editCardForm.kanji}
+                onChange={(e) => setEditCardForm({...editCardForm, kanji: e.target.value})}
+                className="w-full p-3 bg-gray-100 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-800 dark:text-white outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Leitura (Hiragana/Katakana)
+              </label>
+              <input 
+                type="text" 
+                value={editCardForm.reading}
+                onChange={(e) => setEditCardForm({...editCardForm, reading: e.target.value})}
+                className="w-full p-3 bg-gray-100 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-800 dark:text-white outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Significado
+              </label>
+              <input 
+                type="text" 
+                value={editCardForm.meaning}
+                onChange={(e) => setEditCardForm({...editCardForm, meaning: e.target.value})}
+                className="w-full p-3 bg-gray-100 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-800 dark:text-white outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            {/* Tags */}
+            <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Tags
+              </label>
+              <div className="flex flex-wrap gap-2 mb-2">
+                {(editingCard.tags || []).map((tag, idx) => (
+                  <span key={idx} className="inline-flex items-center gap-1 px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded text-xs">
+                    <Tag size={12} />
+                    {tag}
+                    <button
+                      onClick={() => removeTagFromCard(editingCard.id, tag)}
+                      className="ml-1 text-blue-500 hover:text-blue-700"
+                    >
+                      <X size={12} />
+                    </button>
+                  </span>
+                ))}
+              </div>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={newTagInput}
+                  onChange={(e) => setNewTagInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && newTagInput.trim()) {
+                      e.preventDefault();
+                      addTagToCard(editingCard.id, newTagInput);
+                      setNewTagInput('');
+                    }
+                  }}
+                  placeholder="Adicionar tag..."
+                  className="flex-1 p-2 bg-gray-100 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-800 dark:text-white outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                />
+                <button
+                  onClick={() => {
+                    if (newTagInput.trim()) {
+                      addTagToCard(editingCard.id, newTagInput);
+                      setNewTagInput('');
+                    }
+                  }}
+                  className="px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium"
+                >
+                  <Plus size={16} />
+                </button>
+              </div>
+              {availableTags.length > 0 && (
+                <div className="mt-2">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Tags disponíveis:</p>
+                  <div className="flex flex-wrap gap-1">
+                    {availableTags.filter(tag => !(editingCard.tags || []).includes(tag)).map(tag => (
+                      <button
+                        key={tag}
+                        onClick={() => {
+                          addTagToCard(editingCard.id, tag);
+                        }}
+                        className="px-2 py-1 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded text-xs hover:bg-gray-300 dark:hover:bg-gray-600"
+                      >
+                        + {tag}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Histórico de Revisões */}
+            {editingCard.reviewHistory && editingCard.reviewHistory.length > 0 && (
+              <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                <div className="flex items-center gap-2 mb-3">
+                  <History size={18} className="text-gray-600 dark:text-gray-400" />
+                  <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300">Histórico de Revisões</h4>
+                </div>
+                <div className="space-y-2 max-h-48 overflow-y-auto">
+                  {editingCard.reviewHistory.slice().reverse().map((review, idx) => {
+                    const date = new Date(review.date);
+                    const qualityLabels = { 0: 'Não sei', 1: 'Dúvida', 2: 'Sei' };
+                    const qualityColors = { 0: 'red', 1: 'yellow', 2: 'green' };
+                    
+                    return (
+                      <div key={idx} className="p-2 bg-gray-50 dark:bg-gray-900 rounded text-xs">
+                        <div className="flex justify-between items-center mb-1">
+                          <span className="text-gray-600 dark:text-gray-400">{date.toLocaleString('pt-BR')}</span>
+                          <span className={`px-2 py-0.5 rounded font-semibold text-white ${
+                            review.quality === 0 ? 'bg-red-500' : review.quality === 1 ? 'bg-yellow-500' : 'bg-green-500'
+                          }`}>
+                            {qualityLabels[review.quality]}
+                          </span>
+                        </div>
+                        <div className="text-gray-500 dark:text-gray-500 text-xs">
+                          Intervalo: {review.intervalBefore} → {review.intervalAfter} dias | 
+                          Facilidade: {review.easeFactorBefore.toFixed(2)} → {review.easeFactorAfter.toFixed(2)}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            <div className="flex gap-3 pt-2">
+              <button 
+                onClick={() => resetCardProgress(editingCard.id)}
+                className="flex-1 py-2 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 rounded-lg hover:bg-yellow-200 dark:hover:bg-yellow-900/50 font-medium text-sm"
+              >
+                Resetar Progresso
+              </button>
+            </div>
+            <div className="flex gap-3 pt-2">
+              <button onClick={closeModal} className="flex-1 py-3 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 font-medium">Cancelar</button>
+              <button 
+                onClick={saveEditedCard}
+                disabled={!editCardForm.kanji.trim() || !editCardForm.reading.trim() || !editCardForm.meaning.trim()}
+                className="flex-1 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-bold disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Salvar
+              </button>
+            </div>
+          </div>
+        </Modal>
+      )}
+
       {/* Main Views */}
       {view === 'home' && <HomeView />}
+      {view === 'stats' && <StatsView />}
       {view === 'deck' && <DeckDetailView />}
       {view === 'generator' && <GeneratorView />}
       {view === 'review' && <ReviewSessionView />}
+      {view === 'quick-review' && <QuickReviewView />}
+      {view === 'writing-review' && <WritingReviewView />}
       {view === 'test-mode-selection' && <TestModeSelectionView />}
       {view === 'test' && <TestView />}
       {view === 'test-result' && <TestResultView />}

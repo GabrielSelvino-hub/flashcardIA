@@ -157,6 +157,9 @@ function App() {
   // Edit Card States
   const [editingCard, setEditingCard] = useState(null);
   const [editCardForm, setEditCardForm] = useState({ kanji: '', reading: '', meaning: '' });
+  
+  // Add Card States
+  const [newCardForm, setNewCardForm] = useState({ kanji: '', reading: '', meaning: '' });
 
   // Tags States
   const [availableTags, setAvailableTags] = useState(() => {
@@ -282,6 +285,7 @@ function App() {
   const closeModal = () => {
     setModalConfig({ type: null, data: null });
     setTempInput('');
+    setNewCardForm({ kanji: '', reading: '', meaning: '' });
   };
 
   const showAlert = (message) => {
@@ -295,6 +299,32 @@ function App() {
   const showPrompt = () => {
     setTempInput('');
     setModalConfig({ type: 'create_deck', data: null });
+  };
+
+  const showAddCardModal = () => {
+    setNewCardForm({ kanji: '', reading: '', meaning: '' });
+    setModalConfig({ type: 'add_card', data: null });
+  };
+
+  const saveNewCard = () => {
+    if (!newCardForm.kanji.trim() || !newCardForm.reading.trim() || !newCardForm.meaning.trim()) {
+      showAlert('Por favor, preencha todos os campos (Kanji, Leitura e Significado).');
+      return;
+    }
+
+    if (!activeDeckId) {
+      showAlert('Nenhum baralho selecionado.');
+      return;
+    }
+
+    addCardsToActiveDeck([{
+      kanji: newCardForm.kanji.trim(),
+      reading: newCardForm.reading.trim(),
+      meaning: newCardForm.meaning.trim()
+    }]);
+
+    showAlert('Card adicionado com sucesso!');
+    closeModal();
   };
 
   const startEditCard = (card) => {
@@ -1365,13 +1395,22 @@ function App() {
              </button>
            </div>
 
-           <button 
-             onClick={() => setView('generator')}
-             className="w-full bg-indigo-600 text-white py-3 rounded-lg font-bold shadow-md hover:bg-indigo-700 active:scale-95 transition flex items-center justify-center gap-2"
-           >
-             <Sparkles size={20} />
-             Gerar Cards com IA (Tema)
-           </button>
+           <div className="grid grid-cols-2 gap-3 mb-3">
+             <button 
+               onClick={showAddCardModal}
+               className="w-full bg-green-600 text-white py-3 rounded-lg font-bold shadow-md hover:bg-green-700 active:scale-95 transition flex items-center justify-center gap-2"
+             >
+               <Plus size={20} />
+               Adicionar Card
+             </button>
+             <button 
+               onClick={() => setView('generator')}
+               className="w-full bg-indigo-600 text-white py-3 rounded-lg font-bold shadow-md hover:bg-indigo-700 active:scale-95 transition flex items-center justify-center gap-2"
+             >
+               <Sparkles size={20} />
+               Gerar com IA
+             </button>
+           </div>
            
            <div className="grid grid-cols-2 gap-3">
              {isReviewDue ? (
@@ -2325,6 +2364,80 @@ function App() {
            >
              Criar
            </button>
+        </Modal>
+      )}
+
+      {modalConfig.type === 'add_card' && (
+        <Modal isOpen={true} onClose={closeModal} title="Adicionar Card Manualmente">
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Kanji / Palavra
+              </label>
+              <input 
+                type="text" 
+                autoFocus
+                value={newCardForm.kanji}
+                onChange={(e) => setNewCardForm({...newCardForm, kanji: e.target.value})}
+                placeholder="Ex: 猫"
+                className="w-full p-3 bg-gray-100 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-800 dark:text-white outline-none focus:ring-2 focus:ring-green-500"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && newCardForm.kanji.trim() && newCardForm.reading.trim() && newCardForm.meaning.trim()) {
+                    saveNewCard();
+                  }
+                }}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Leitura (Hiragana/Katakana)
+              </label>
+              <input 
+                type="text" 
+                value={newCardForm.reading}
+                onChange={(e) => setNewCardForm({...newCardForm, reading: e.target.value})}
+                placeholder="Ex: ねこ"
+                className="w-full p-3 bg-gray-100 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-800 dark:text-white outline-none focus:ring-2 focus:ring-green-500"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && newCardForm.kanji.trim() && newCardForm.reading.trim() && newCardForm.meaning.trim()) {
+                    saveNewCard();
+                  }
+                }}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Significado
+              </label>
+              <input 
+                type="text" 
+                value={newCardForm.meaning}
+                onChange={(e) => setNewCardForm({...newCardForm, meaning: e.target.value})}
+                placeholder="Ex: Gato"
+                className="w-full p-3 bg-gray-100 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-800 dark:text-white outline-none focus:ring-2 focus:ring-green-500"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && newCardForm.kanji.trim() && newCardForm.reading.trim() && newCardForm.meaning.trim()) {
+                    saveNewCard();
+                  }
+                }}
+              />
+            </div>
+            <div className="flex gap-3 pt-2">
+              <button 
+                onClick={closeModal}
+                className="flex-1 py-3 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 font-medium transition"
+              >
+                Cancelar
+              </button>
+              <button 
+                onClick={saveNewCard}
+                disabled={!newCardForm.kanji.trim() || !newCardForm.reading.trim() || !newCardForm.meaning.trim()}
+                className="flex-1 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed font-bold transition"
+              >
+                Adicionar
+              </button>
+            </div>
+          </div>
         </Modal>
       )}
 

@@ -426,18 +426,6 @@ function App() {
           createdAt: timestamp
         }));
         
-        // Exibe mensagem sobre cards adicionados e duplicatas
-        const duplicatesCount = newCardsData.length - uniqueCardsData.length;
-        if (uniqueCardsData.length > 0) {
-          if (duplicatesCount > 0) {
-            showAlert(`${uniqueCardsData.length} novos cards adicionados. ${duplicatesCount} card(s) duplicado(s) foram ignorados.`);
-          } else {
-            showAlert(`Sucesso! ${uniqueCardsData.length} novos cards foram criados.`);
-          }
-        } else if (duplicatesCount > 0) {
-          showAlert(`Todos os ${duplicatesCount} card(s) gerados já existem no baralho. Nenhum card foi adicionado.`);
-        }
-        
         return {
           ...d,
           cards: [...d.cards, ...cardsToAdd]
@@ -944,6 +932,7 @@ function App() {
 
       if (Array.isArray(newCards) && newCards.length > 0) {
         addCardsToActiveDeck(newCards);
+        showAlert(`Sucesso! ${newCards.length} novos cards sobre "${prompt}" foram criados.`);
         setGeneratorPrompt('');
         setView('deck');
       } else {

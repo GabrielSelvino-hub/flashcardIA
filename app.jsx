@@ -558,6 +558,83 @@ function App() {
     downloadAnchorNode.remove();
   };
 
+  // Função para fazer merge inteligente de decks e cards
+  const mergeDecksAndCards = (localDecks, cloudDecks) => {
+    if (!cloudDecks || !Array.isArray(cloudDecks) || cloudDecks.length === 0) {
+      return localDecks || [];
+    }
+    
+    if (!localDecks || !Array.isArray(localDecks) || localDecks.length === 0) {
+      return cloudDecks;
+    }
+
+    // Cria um mapa de decks locais por ID
+    const localDecksMap = new Map();
+    localDecks.forEach(deck => {
+      localDecksMap.set(deck.id, { ...deck });
+    });
+
+    // Processa cada deck da nuvem
+    cloudDecks.forEach(cloudDeck => {
+      const localDeck = localDecksMap.get(cloudDeck.id);
+      
+      if (!localDeck) {
+        // Deck não existe localmente, adiciona completo da nuvem
+        localDecksMap.set(cloudDeck.id, { ...cloudDeck });
+      } else {
+        // Deck existe em ambos, faz merge dos cards
+        const localCardsMap = new Map();
+        (localDeck.cards || []).forEach(card => {
+          localCardsMap.set(card.id, { ...card });
+        });
+
+        // Adiciona cards da nuvem que não existem localmente
+        (cloudDeck.cards || []).forEach(cloudCard => {
+          if (!localCardsMap.has(cloudCard.id)) {
+            // Card não existe localmente, adiciona da nuvem
+            localCardsMap.set(cloudCard.id, { ...cloudCard });
+          } else {
+            // Card existe em ambos, mantém o mais recente baseado em lastReview ou createdAt
+            const localCard = localCardsMap.get(cloudCard.id);
+            const localTime = localCard.lastReview || localCard.createdAt || 0;
+            const cloudTime = cloudCard.lastReview || cloudCard.createdAt || 0;
+            
+            // Se o card da nuvem for mais recente, substitui
+            if (cloudTime > localTime) {
+              localCardsMap.set(cloudCard.id, { ...cloudCard });
+            }
+            // Caso contrário, mantém o local (já está no mapa)
+          }
+        });
+
+        // Atualiza o deck com os cards mesclados
+        localDecksMap.set(cloudDeck.id, {
+          ...localDeck,
+          name: cloudDeck.name || localDeck.name, // Usa o nome mais recente da nuvem
+          cards: Array.from(localCardsMap.values())
+        });
+      }
+    });
+
+    // Retorna array de decks mesclados
+    return Array.from(localDecksMap.values());
+  };
+
+  // Função para fazer merge de tags
+  const mergeTags = (localTags, cloudTags) => {
+    if (!cloudTags || !Array.isArray(cloudTags) || cloudTags.length === 0) {
+      return localTags || [];
+    }
+    
+    if (!localTags || !Array.isArray(localTags) || localTags.length === 0) {
+      return cloudTags;
+    }
+
+    // Combina tags únicas (remove duplicatas)
+    const tagsSet = new Set([...localTags, ...cloudTags]);
+    return Array.from(tagsSet).filter(tag => tag && tag.trim());
+  };
+
   // JSONBin Sync Functions
   const saveData = async () => {
     if (!window.jsonbinService) {
@@ -575,11 +652,33 @@ function App() {
       const decksData = localStorage.getItem('nihongo_decks');
       const tagsData = localStorage.getItem('nihongo_tags');
       
+      let decks = [];
+      let tags = [];
+      
+      try {
+        decks = decksData ? JSON.parse(decksData) : [];
+      } catch (e) {
+        console.error('Erro ao parsear decks:', e);
+        decks = [];
+      }
+      
+      try {
+        tags = tagsData ? JSON.parse(tagsData) : [];
+      } catch (e) {
+        console.error('Erro ao parsear tags:', e);
+        tags = [];
+      }
+      
       const syncData = {
-        decks: decksData ? JSON.parse(decksData) : [],
-        tags: tagsData ? JSON.parse(tagsData) : [],
+        decks: decks,
+        tags: tags,
         lastSync: new Date().toISOString()
       };
+
+      console.log('Salvando dados do usuário:', jsonbinBinId, {
+        decksCount: decks.length,
+        tagsCount: tags.length
+      });
 
       // Usa a nova função que trabalha com banco de dados compartilhado
       // jsonbinBinId aqui é o ID do usuário, não o bin do JSONBin.io
@@ -602,7 +701,7 @@ function App() {
           });
           
           if (createResult.success) {
-            showAlert(`Banco de dados criado automaticamente!\n\nSeus dados foram salvos na nuvem.`);
+            showAlert(`Banco de dados criado automaticamente!\n\n${decks.length} baralho(s) e ${tags.length} tag(s) foram salvos na nuvem.`);
             return { success: true };
           } else {
             showAlert(`Erro ao criar banco de dados: ${createResult.error}`);
@@ -618,6 +717,7 @@ function App() {
         return { success: false };
       }
 
+      console.log('Dados salvos com sucesso na nuvem para o usuário:', jsonbinBinId);
       return { success: true };
     } catch (error) {
       showAlert(`Erro ao salvar dados: ${error.message}`);
@@ -654,21 +754,57 @@ function App() {
 
       const cloudData = result.data;
 
-      // Se o usuário não existe ainda no banco, não faz nada (mantém dados locais)
+      // Se o usuário não existe ainda no banco
       if (!cloudData) {
-        showAlert('Usuário não encontrado no banco de dados. Os dados locais serão mantidos.');
+        // Tenta listar usuários disponíveis para ajudar no debug
+        try {
+          const allUsersResult = await window.jsonbinService.getSharedBin(null);
+          if (allUsersResult.success && allUsersResult.data) {
+            const availableUsers = Object.keys(allUsersResult.data);
+            const usersList = availableUsers.length > 0 
+              ? `\n\nUsuários encontrados no banco: ${availableUsers.join(', ')}`
+              : '\n\nNenhum usuário encontrado no banco ainda.';
+            
+            showAlert(`Usuário "${jsonbinBinId}" não encontrado no banco de dados.${usersList}\n\nCertifique-se de usar o mesmo ID de usuário em ambos os dispositivos.`);
+          } else {
+            showAlert(`Usuário "${jsonbinBinId}" não encontrado no banco de dados.\n\nOs dados locais serão mantidos.\n\nPara sincronizar, primeiro salve seus dados no outro dispositivo usando o mesmo ID de usuário.`);
+          }
+        } catch (e) {
+          showAlert(`Usuário "${jsonbinBinId}" não encontrado no banco de dados.\n\nOs dados locais serão mantidos.\n\nPara sincronizar, primeiro salve seus dados no outro dispositivo.`);
+        }
+        return { success: true };
+      }
+
+      // Verifica se há dados para carregar
+      const hasDecks = cloudData.decks && Array.isArray(cloudData.decks) && cloudData.decks.length > 0;
+      const hasTags = cloudData.tags && Array.isArray(cloudData.tags) && cloudData.tags.length > 0;
+
+      if (!hasDecks && !hasTags) {
+        showAlert(`Usuário "${jsonbinBinId}" encontrado, mas não há dados salvos na nuvem.\n\nOs dados locais serão mantidos.`);
         return { success: true };
       }
 
       // Atualiza localStorage com os dados do usuário
-      if (cloudData.decks) {
+      let loadedCount = 0;
+      
+      if (hasDecks) {
         localStorage.setItem('nihongo_decks', JSON.stringify(cloudData.decks));
         setDecks(cloudData.decks);
+        loadedCount += cloudData.decks.length;
+        console.log('Decks carregados:', cloudData.decks.length);
+      } else {
+        // Se não há decks na nuvem, mantém os locais
+        console.log('Nenhum deck encontrado na nuvem, mantendo dados locais');
       }
 
-      if (cloudData.tags) {
+      if (hasTags) {
         localStorage.setItem('nihongo_tags', JSON.stringify(cloudData.tags));
         setAvailableTags(cloudData.tags);
+        console.log('Tags carregadas:', cloudData.tags.length);
+      }
+
+      if (hasDecks) {
+        showAlert(`Dados carregados com sucesso!\n\n${cloudData.decks.length} baralho(s) sincronizado(s).`);
       }
 
       return { success: true };
@@ -683,19 +819,138 @@ function App() {
 
     setIsSyncing(true);
     try {
-      // Primeiro faz upload (salva estado atual)
-      const saveResult = await saveData();
-      if (!saveResult.success) {
+      if (!window.jsonbinService) {
+        showAlert('Serviço JSONBin não carregado. Recarregue a página.');
         setIsSyncing(false);
         return;
       }
 
-      // Depois faz download (mescla com versão da nuvem)
-      const loadResult = await loadData();
-      if (loadResult.success) {
-        showAlert('Sincronização concluída com sucesso!');
+      if (!jsonbinBinId) {
+        showAlert('Configure o ID de usuário primeiro.');
+        setIsSyncing(false);
+        return;
       }
+
+      // 1. Carrega dados locais
+      const decksData = localStorage.getItem('nihongo_decks');
+      const tagsData = localStorage.getItem('nihongo_tags');
+      
+      let localDecks = [];
+      let localTags = [];
+      
+      try {
+        localDecks = decksData ? JSON.parse(decksData) : [];
+      } catch (e) {
+        console.error('Erro ao parsear decks locais:', e);
+        localDecks = [];
+      }
+      
+      try {
+        localTags = tagsData ? JSON.parse(tagsData) : [];
+      } catch (e) {
+        console.error('Erro ao parsear tags locais:', e);
+        localTags = [];
+      }
+
+      console.log('📥 Dados locais:', {
+        decks: localDecks.length,
+        totalCards: localDecks.reduce((sum, d) => sum + (d.cards?.length || 0), 0),
+        tags: localTags.length
+      });
+
+      // 2. Busca dados da nuvem
+      const cloudResult = await window.jsonbinService.getUserData(jsonbinBinId, null);
+      
+      let cloudDecks = [];
+      let cloudTags = [];
+      
+      if (cloudResult.success && cloudResult.data) {
+        cloudDecks = cloudResult.data.decks || [];
+        cloudTags = cloudResult.data.tags || [];
+        
+        console.log('☁️ Dados da nuvem:', {
+          decks: cloudDecks.length,
+          totalCards: cloudDecks.reduce((sum, d) => sum + (d.cards?.length || 0), 0),
+          tags: cloudTags.length
+        });
+      } else {
+        console.log('⚠️ Nenhum dado encontrado na nuvem para este usuário');
+      }
+
+      // 3. Faz merge inteligente dos dados
+      const mergedDecks = mergeDecksAndCards(localDecks, cloudDecks);
+      const mergedTags = mergeTags(localTags, cloudTags);
+
+      const mergedCardsCount = mergedDecks.reduce((sum, d) => sum + (d.cards?.length || 0), 0);
+      const localCardsCount = localDecks.reduce((sum, d) => sum + (d.cards?.length || 0), 0);
+      const cloudCardsCount = cloudDecks.reduce((sum, d) => sum + (d.cards?.length || 0), 0);
+
+      console.log('🔄 Dados mesclados:', {
+        decks: mergedDecks.length,
+        totalCards: mergedCardsCount,
+        tags: mergedTags.length,
+        cardsAdicionados: mergedCardsCount - localCardsCount,
+        cardsDaNuvem: cloudCardsCount
+      });
+
+      // 4. Atualiza localStorage com dados mesclados
+      localStorage.setItem('nihongo_decks', JSON.stringify(mergedDecks));
+      localStorage.setItem('nihongo_tags', JSON.stringify(mergedTags));
+      setDecks(mergedDecks);
+      setAvailableTags(mergedTags);
+
+      // 5. Salva dados mesclados na nuvem
+      const syncData = {
+        decks: mergedDecks,
+        tags: mergedTags,
+        lastSync: new Date().toISOString()
+      };
+
+      const saveResult = await window.jsonbinService.updateUserData(
+        jsonbinBinId,
+        null,
+        syncData
+      );
+
+      if (!saveResult.success) {
+        // Se o bin compartilhado não existe, cria automaticamente
+        if (saveResult.error.includes('não encontrado') || saveResult.error.includes('404') || 
+            saveResult.error.includes('banco de dados')) {
+          
+          const createResult = await window.jsonbinService.createSharedBin(null, {
+            [jsonbinBinId]: syncData
+          });
+          
+          if (!createResult.success) {
+            showAlert(`Erro ao criar banco de dados: ${createResult.error}`);
+            setIsSyncing(false);
+            return;
+          }
+        } else {
+          showAlert(`Erro ao salvar na nuvem: ${saveResult.error}`);
+          setIsSyncing(false);
+          return;
+        }
+      }
+
+      // 6. Mostra resultado da sincronização
+      const newCardsCount = mergedCardsCount - localCardsCount;
+      let message = `✅ Sincronização concluída!\n\n`;
+      message += `📚 ${mergedDecks.length} baralho(s)\n`;
+      message += `🃏 ${mergedCardsCount} card(s) total\n`;
+      message += `🏷️ ${mergedTags.length} tag(s)\n`;
+      
+      if (newCardsCount > 0) {
+        message += `\n✨ ${newCardsCount} novo(s) card(s) adicionado(s) da nuvem!`;
+      } else if (cloudCardsCount > 0 && localCardsCount > 0) {
+        message += `\n🔄 Dados locais e da nuvem foram combinados.`;
+      } else if (cloudCardsCount === 0 && localCardsCount > 0) {
+        message += `\n📤 Seus dados locais foram enviados para a nuvem.`;
+      }
+
+      showAlert(message);
     } catch (error) {
+      console.error('Erro na sincronização:', error);
       showAlert(`Erro na sincronização: ${error.message}`);
     } finally {
       setIsSyncing(false);

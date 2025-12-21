@@ -17,7 +17,7 @@ const ACCESS_KEY_ID = '69482d3dae596e708fa8d8e8';
 // - '694836ee43b1c97be9fd27f1' (criado às 18:05)
 // - '694836c543b1c97be9fd27b3' (criado às 18:04)
 // Escolha um e cole aqui. Se deixar null, criará um novo (não recomendado para sincronização)
-const FIXED_SHARED_BIN_ID = '6948372ed0ea881f40384180'; // Use este ou substitua por outro dos seus bins
+const FIXED_SHARED_BIN_ID = '69483c8dd0ea881f403849c0'; // Bin ID fixo - sempre usa este bin
 
 // Função para obter o Bin ID compartilhado (usa fixo ou cria se não existir)
 async function getSharedBinId(masterKey) {
@@ -28,80 +28,36 @@ async function getSharedBinId(masterKey) {
     return null;
   }
 
-  // Se há um Bin ID fixo configurado, verifica se existe e usa
-  if (FIXED_SHARED_BIN_ID) {
+  // SEMPRE usa o Bin ID fixo se estiver configurado (não cria novos bins)
+  if (FIXED_SHARED_BIN_ID && FIXED_SHARED_BIN_ID.trim()) {
+    const fixedBinId = FIXED_SHARED_BIN_ID.trim();
+    
+    // Verifica se o bin existe e é acessível
     try {
-      const response = await fetch(`${JSONBIN_API_BASE}/${FIXED_SHARED_BIN_ID}/latest`, {
+      const response = await fetch(`${JSONBIN_API_BASE}/${fixedBinId}/latest`, {
         method: 'GET',
         headers: { 'X-Master-Key': keyToUse.trim() }
       });
       
       if (response.ok) {
-        console.log('Usando Bin ID fixo:', FIXED_SHARED_BIN_ID);
-        return FIXED_SHARED_BIN_ID;
+        console.log('✅ Usando Bin ID fixo:', fixedBinId);
+        return fixedBinId;
       } else {
-        console.warn('Bin ID fixo não encontrado, tentando criar novo...');
+        // Se o bin não existe ou não é acessível, retorna erro em vez de criar novo
+        console.error('❌ Bin ID fixo não encontrado ou sem acesso:', fixedBinId, 'Status:', response.status);
+        const result = await response.json().catch(() => ({}));
+        console.error('Detalhes do erro:', result);
+        return null; // Retorna null para que a função chamadora possa tratar o erro
       }
     } catch (e) {
-      console.warn('Erro ao verificar bin fixo:', e);
-    }
-  }
-
-  // Tenta buscar do localStorage (fallback para compatibilidade)
-  const savedBinId = typeof localStorage !== 'undefined' ? localStorage.getItem('shared_jsonbin_id') : null;
-  
-  if (savedBinId) {
-    try {
-      const response = await fetch(`${JSONBIN_API_BASE}/${savedBinId}/latest`, {
-        method: 'GET',
-        headers: { 'X-Master-Key': keyToUse.trim() }
-      });
-      
-      if (response.ok) {
-        console.log('Usando Bin ID do localStorage:', savedBinId);
-        return savedBinId;
-      }
-    } catch (e) {
-      console.warn('Erro ao verificar bin salvo:', e);
-    }
-  }
-  
-  // Se não existe, cria um novo (apenas na primeira vez)
-  try {
-    const initialData = { _initialized: true, _created: new Date().toISOString() };
-    
-    const response = await fetch(JSONBIN_API_BASE, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Master-Key': keyToUse.trim(),
-        'X-Bin-Private': 'true'
-      },
-      body: JSON.stringify(initialData)
-    });
-    
-    const result = await response.json();
-    
-    if (response.ok && result.metadata && result.metadata.id) {
-      const newBinId = result.metadata.id;
-      console.log('⚠️ NOVO BIN CRIADO:', newBinId);
-      console.log('⚠️ IMPORTANTE: Cole este Bin ID na constante FIXED_SHARED_BIN_ID no código para usar o mesmo bin em todos os dispositivos!');
-      
-      if (typeof localStorage !== 'undefined') {
-        localStorage.setItem('shared_jsonbin_id', newBinId);
-      }
-      return newBinId;
-    } else {
-      console.error('Erro ao criar bin compartilhado:', {
-        status: response.status,
-        result: result
-      });
+      console.error('Erro ao verificar bin fixo:', e);
       return null;
     }
-  } catch (error) {
-    console.error('Erro na requisição ao criar bin:', error);
-    return null;
   }
+  
+  // Se não há Bin ID fixo configurado, retorna null (não cria novos bins automaticamente)
+  console.error('⚠️ FIXED_SHARED_BIN_ID não está configurado! Configure um Bin ID fixo no código.');
+  return null;
 }
 
 /**
@@ -268,24 +224,38 @@ async function updateUserData(userBinId, masterKey, userData) {
     }
 
     // Primeiro, busca o bin compartilhado completo
+    console.log('Atualizando dados do usuário:', userBinId);
     const getResult = await getSharedBin(masterKey);
     if (!getResult.success) {
+      console.error('Erro ao buscar bin compartilhado:', getResult.error);
       return { success: false, error: `Erro ao buscar banco de dados: ${getResult.error}` };
     }
 
     // Atualiza os dados do usuário específico
     const allUsersData = getResult.data || {};
+    console.log('Dados atuais no bin (antes de atualizar):', Object.keys(allUsersData));
+    
     allUsersData[userBinId] = {
       ...userData,
       lastSync: new Date().toISOString()
     };
+    
+    console.log('Salvando dados do usuário:', {
+      userId: userBinId,
+      decksCount: userData.decks ? userData.decks.length : 0,
+      tagsCount: userData.tags ? userData.tags.length : 0,
+      totalUsersInBin: Object.keys(allUsersData).length
+    });
 
     // Obtém o ID do bin compartilhado
     const sharedBinId = await getSharedBinId(masterKey);
     if (!sharedBinId) {
+      console.error('Não foi possível obter o bin compartilhado');
       return { success: false, error: 'Não foi possível obter ou criar o bin compartilhado.' };
     }
 
+    console.log('Atualizando bin compartilhado:', sharedBinId);
+    
     // Atualiza o bin compartilhado
     const response = await fetch(`${JSONBIN_API_BASE}/${sharedBinId}`, {
       method: 'PUT',
@@ -300,9 +270,15 @@ async function updateUserData(userBinId, masterKey, userData) {
 
     if (!response.ok) {
       const errorMsg = result.message || `Erro HTTP ${response.status}`;
+      console.error('Erro ao atualizar bin:', {
+        status: response.status,
+        error: errorMsg,
+        result: result
+      });
       
       if (response.status === 404) {
         // Bin compartilhado não existe, cria com os dados do usuário
+        console.log('Bin não encontrado, criando novo...');
         const createResult = await createSharedBin(masterKey, { [userBinId]: userData });
         return createResult;
       }
@@ -314,6 +290,7 @@ async function updateUserData(userBinId, masterKey, userData) {
       return { success: false, error: errorMsg };
     }
 
+    console.log('Dados do usuário salvos com sucesso no bin:', sharedBinId);
     return { success: true };
   } catch (error) {
     return { 
@@ -469,21 +446,35 @@ async function getUserData(userBinId, masterKey) {
       return { success: false, error: 'ID do usuário inválido' };
     }
 
+    console.log('Buscando dados do usuário:', userBinId);
     const getResult = await getSharedBin(masterKey);
     
     if (!getResult.success) {
+      console.error('Erro ao buscar bin compartilhado:', getResult.error);
       return { success: false, error: getResult.error };
     }
 
     const allUsersData = getResult.data || {};
+    console.log('Dados de todos os usuários no bin:', Object.keys(allUsersData));
+    console.log('Dados completos do bin:', allUsersData);
+    
     const userData = allUsersData[userBinId];
 
     if (!userData) {
+      console.warn(`Usuário "${userBinId}" não encontrado no banco. Usuários disponíveis:`, Object.keys(allUsersData));
       return { success: true, data: null }; // Usuário não existe ainda, retorna null
     }
 
+    console.log('Dados do usuário encontrados:', {
+      hasDecks: !!userData.decks,
+      decksCount: userData.decks ? userData.decks.length : 0,
+      hasTags: !!userData.tags,
+      tagsCount: userData.tags ? userData.tags.length : 0
+    });
+
     return { success: true, data: userData };
   } catch (error) {
+    console.error('Erro ao buscar dados do usuário:', error);
     return { 
       success: false, 
       error: error.message || 'Erro ao buscar dados do usuário. Verifique sua conexão.' 

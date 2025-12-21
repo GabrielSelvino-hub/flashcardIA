@@ -10,21 +10,55 @@ const DEFAULT_MASTER_KEY = '$2a$10$7X2XacpWyeo/Ui/pjevyOuEF9q07kF386hQPD9ImDbhAJ
 // Access Key ID (opcional, pode ser usado para leitura)
 const ACCESS_KEY_ID = '69482d3dae596e708fa8d8e8';
 
-// Função para obter o Bin ID compartilhado (cria se não existir)
+// Bin ID fixo compartilhado - Use um dos bins que você já criou
+// IMPORTANTE: Use o mesmo Bin ID em todos os dispositivos (PC e celular) para sincronização funcionar
+// Use um dos seus bins existentes. Exemplos dos que você criou:
+// - '6948372ed0ea881f40384180' (criado às 18:06)
+// - '694836ee43b1c97be9fd27f1' (criado às 18:05)
+// - '694836c543b1c97be9fd27b3' (criado às 18:04)
+// Escolha um e cole aqui. Se deixar null, criará um novo (não recomendado para sincronização)
+const FIXED_SHARED_BIN_ID = '6948372ed0ea881f40384180'; // Use este ou substitua por outro dos seus bins
+
+// Função para obter o Bin ID compartilhado (usa fixo ou cria se não existir)
 async function getSharedBinId(masterKey) {
-  // Tenta buscar do localStorage primeiro
-  const savedBinId = typeof localStorage !== 'undefined' ? localStorage.getItem('shared_jsonbin_id') : null;
+  const keyToUse = (masterKey && masterKey.trim()) || DEFAULT_MASTER_KEY;
   
-  if (savedBinId) {
-    // Verifica se o bin ainda existe
-    const keyToUse = (masterKey && masterKey.trim()) || DEFAULT_MASTER_KEY;
+  if (!keyToUse || keyToUse === 'SUA_MASTER_KEY_AQUI') {
+    console.error('Master Key não configurada');
+    return null;
+  }
+
+  // Se há um Bin ID fixo configurado, verifica se existe e usa
+  if (FIXED_SHARED_BIN_ID) {
     try {
-      const response = await fetch(`https://api.jsonbin.io/v3/b/${savedBinId}/latest`, {
+      const response = await fetch(`${JSONBIN_API_BASE}/${FIXED_SHARED_BIN_ID}/latest`, {
         method: 'GET',
         headers: { 'X-Master-Key': keyToUse.trim() }
       });
       
       if (response.ok) {
+        console.log('Usando Bin ID fixo:', FIXED_SHARED_BIN_ID);
+        return FIXED_SHARED_BIN_ID;
+      } else {
+        console.warn('Bin ID fixo não encontrado, tentando criar novo...');
+      }
+    } catch (e) {
+      console.warn('Erro ao verificar bin fixo:', e);
+    }
+  }
+
+  // Tenta buscar do localStorage (fallback para compatibilidade)
+  const savedBinId = typeof localStorage !== 'undefined' ? localStorage.getItem('shared_jsonbin_id') : null;
+  
+  if (savedBinId) {
+    try {
+      const response = await fetch(`${JSONBIN_API_BASE}/${savedBinId}/latest`, {
+        method: 'GET',
+        headers: { 'X-Master-Key': keyToUse.trim() }
+      });
+      
+      if (response.ok) {
+        console.log('Usando Bin ID do localStorage:', savedBinId);
         return savedBinId;
       }
     } catch (e) {
@@ -32,16 +66,8 @@ async function getSharedBinId(masterKey) {
     }
   }
   
-  // Se não existe, cria um novo
-  const keyToUse = (masterKey && masterKey.trim()) || DEFAULT_MASTER_KEY;
-  
-  if (!keyToUse || keyToUse === 'SUA_MASTER_KEY_AQUI') {
-    console.error('Master Key não configurada');
-    return null;
-  }
-  
+  // Se não existe, cria um novo (apenas na primeira vez)
   try {
-    // Cria um bin com estrutura inicial mínima (JSONBin.io pode não aceitar objeto completamente vazio)
     const initialData = { _initialized: true, _created: new Date().toISOString() };
     
     const response = await fetch(JSONBIN_API_BASE, {
@@ -56,31 +82,20 @@ async function getSharedBinId(masterKey) {
     
     const result = await response.json();
     
-    if (response.ok) {
-      if (result.metadata && result.metadata.id) {
-        const newBinId = result.metadata.id;
-        if (typeof localStorage !== 'undefined') {
-          localStorage.setItem('shared_jsonbin_id', newBinId);
-        }
-        console.log('Bin compartilhado criado com sucesso:', newBinId);
-        return newBinId;
-      } else {
-        console.error('Bin criado mas ID não retornado:', result);
-        return null;
+    if (response.ok && result.metadata && result.metadata.id) {
+      const newBinId = result.metadata.id;
+      console.log('⚠️ NOVO BIN CRIADO:', newBinId);
+      console.log('⚠️ IMPORTANTE: Cole este Bin ID na constante FIXED_SHARED_BIN_ID no código para usar o mesmo bin em todos os dispositivos!');
+      
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem('shared_jsonbin_id', newBinId);
       }
+      return newBinId;
     } else {
-      // Log detalhado do erro
       console.error('Erro ao criar bin compartilhado:', {
         status: response.status,
-        statusText: response.statusText,
-        result: result,
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Master-Key': keyToUse.substring(0, 10) + '...' // Log parcial da key
-        }
+        result: result
       });
-      
-      // Retorna null para que a função chamadora possa tratar o erro
       return null;
     }
   } catch (error) {

@@ -148,6 +148,15 @@ function App() {
   const [modalConfig, setModalConfig] = useState({ type: null, data: null });
   const [tempInput, setTempInput] = useState('');
 
+  // JSONBin Sync States
+  const [jsonbinBinId, setJsonbinBinId] = useState(() => 
+    localStorage.getItem('jsonbin_bin_id') || ''
+  );
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [jsonbinBinIdInput, setJsonbinBinIdInput] = useState('');
+  const [showBinIdModal, setShowBinIdModal] = useState(false);
+  const [binIdModalMode, setBinIdModalMode] = useState('insert'); // 'insert' ou 'edit'
+
   // Writing Mode States
   const [reviewMode, setReviewMode] = useState('visual'); // 'visual' | 'writing'
   const [writingInput, setWritingInput] = useState('');
@@ -547,6 +556,256 @@ function App() {
     document.body.appendChild(downloadAnchorNode);
     downloadAnchorNode.click();
     downloadAnchorNode.remove();
+  };
+
+  // JSONBin Sync Functions
+  const saveData = async () => {
+    if (!window.jsonbinService) {
+      showAlert('Serviço JSONBin não carregado. Recarregue a página.');
+      return { success: false };
+    }
+
+    if (!jsonbinBinId) {
+      showAlert('Configure o ID de usuário primeiro.');
+      return { success: false };
+    }
+
+    try {
+      // Serializa dados do localStorage
+      const decksData = localStorage.getItem('nihongo_decks');
+      const tagsData = localStorage.getItem('nihongo_tags');
+      
+      const syncData = {
+        decks: decksData ? JSON.parse(decksData) : [],
+        tags: tagsData ? JSON.parse(tagsData) : [],
+        lastSync: new Date().toISOString()
+      };
+
+      // Usa a nova função que trabalha com banco de dados compartilhado
+      // jsonbinBinId aqui é o ID do usuário, não o bin do JSONBin.io
+      const result = await window.jsonbinService.updateUserData(
+        jsonbinBinId,
+        null, // Usa a Master Key padrão do código
+        syncData
+      );
+
+      if (!result.success) {
+        let errorMessage = result.error;
+        
+        // Se o bin compartilhado não existe, cria automaticamente
+        if (errorMessage.includes('não encontrado') || errorMessage.includes('404') || 
+            errorMessage.includes('banco de dados')) {
+          
+          // Cria o bin compartilhado com os dados do usuário atual
+          const createResult = await window.jsonbinService.createSharedBin(null, {
+            [jsonbinBinId]: syncData
+          });
+          
+          if (createResult.success) {
+            showAlert(`Banco de dados criado automaticamente!\n\nSeus dados foram salvos na nuvem.`);
+            return { success: true };
+          } else {
+            showAlert(`Erro ao criar banco de dados: ${createResult.error}`);
+            return { success: false };
+          }
+        } else if (errorMessage.includes('Master Key')) {
+          errorMessage = `Erro de autenticação: ${errorMessage}. Verifique a configuração da Master Key.`;
+          showAlert(`Erro ao salvar: ${errorMessage}`);
+        } else {
+          showAlert(`Erro ao salvar: ${errorMessage}`);
+        }
+        
+        return { success: false };
+      }
+
+      return { success: true };
+    } catch (error) {
+      showAlert(`Erro ao salvar dados: ${error.message}`);
+      return { success: false };
+    }
+  };
+
+  const loadData = async () => {
+    if (!window.jsonbinService) {
+      showAlert('Serviço JSONBin não carregado. Recarregue a página.');
+      return { success: false };
+    }
+
+    if (!jsonbinBinId) {
+      showAlert('Configure o ID de usuário primeiro.');
+      return { success: false };
+    }
+
+    try {
+      // Busca dados do usuário específico do banco compartilhado
+      // jsonbinBinId aqui é o ID do usuário, não o bin do JSONBin.io
+      const result = await window.jsonbinService.getUserData(jsonbinBinId, null);
+
+      if (!result.success) {
+        let errorMessage = result.error;
+        
+        if (errorMessage.includes('Master Key')) {
+          errorMessage = `Erro de autenticação: ${errorMessage}. Verifique a configuração da Master Key.`;
+        }
+        
+        showAlert(`Erro ao carregar: ${errorMessage}`);
+        return { success: false };
+      }
+
+      const cloudData = result.data;
+
+      // Se o usuário não existe ainda no banco, não faz nada (mantém dados locais)
+      if (!cloudData) {
+        showAlert('Usuário não encontrado no banco de dados. Os dados locais serão mantidos.');
+        return { success: true };
+      }
+
+      // Atualiza localStorage com os dados do usuário
+      if (cloudData.decks) {
+        localStorage.setItem('nihongo_decks', JSON.stringify(cloudData.decks));
+        setDecks(cloudData.decks);
+      }
+
+      if (cloudData.tags) {
+        localStorage.setItem('nihongo_tags', JSON.stringify(cloudData.tags));
+        setAvailableTags(cloudData.tags);
+      }
+
+      return { success: true };
+    } catch (error) {
+      showAlert(`Erro ao carregar dados: ${error.message}`);
+      return { success: false };
+    }
+  };
+
+  const syncData = async () => {
+    if (isSyncing) return;
+
+    setIsSyncing(true);
+    try {
+      // Primeiro faz upload (salva estado atual)
+      const saveResult = await saveData();
+      if (!saveResult.success) {
+        setIsSyncing(false);
+        return;
+      }
+
+      // Depois faz download (mescla com versão da nuvem)
+      const loadResult = await loadData();
+      if (loadResult.success) {
+        showAlert('Sincronização concluída com sucesso!');
+      }
+    } catch (error) {
+      showAlert(`Erro na sincronização: ${error.message}`);
+    } finally {
+      setIsSyncing(false);
+    }
+  };
+
+  const createNewBin = async () => {
+    if (isSyncing) return;
+
+    if (!window.jsonbinService) {
+      showAlert('Serviço JSONBin não carregado. Recarregue a página.');
+      return;
+    }
+
+    // Gera um ID único para o usuário
+    const newUserBinId = 'user_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now().toString(36);
+    
+    setIsSyncing(true);
+    try {
+      // Serializa dados atuais
+      const decksData = localStorage.getItem('nihongo_decks');
+      const tagsData = localStorage.getItem('nihongo_tags');
+      
+      let decks = [];
+      let tags = [];
+      
+      try {
+        decks = decksData ? JSON.parse(decksData) : [];
+      } catch (e) {
+        console.error('Erro ao parsear decks:', e);
+        decks = [];
+      }
+      
+      try {
+        tags = tagsData ? JSON.parse(tagsData) : [];
+      } catch (e) {
+        console.error('Erro ao parsear tags:', e);
+        tags = [];
+      }
+      
+      const userData = {
+        decks: decks,
+        tags: tags,
+        lastSync: new Date().toISOString()
+      };
+
+      // Salva os dados do novo usuário no banco compartilhado
+      const result = await window.jsonbinService.updateUserData(newUserBinId, null, userData);
+
+      if (!result.success) {
+        // Se o banco não existe, tenta criar
+        if (result.error.includes('404') || result.error.includes('não encontrado')) {
+          const createResult = await window.jsonbinService.createSharedBin(null, {
+            [newUserBinId]: userData
+          });
+          
+          if (!createResult.success) {
+            showAlert(`Erro ao criar banco de dados: ${createResult.error}`);
+            setIsSyncing(false);
+            return;
+          }
+        } else {
+          showAlert(`Erro ao salvar dados: ${result.error}`);
+          setIsSyncing(false);
+          return;
+        }
+      }
+
+      // Salva o ID do usuário
+      setJsonbinBinId(newUserBinId);
+      localStorage.setItem('jsonbin_bin_id', newUserBinId);
+      showAlert(`ID de usuário criado com sucesso!\n\nSeu ID: ${newUserBinId}\n\nEste ID foi salvo automaticamente. Agora você pode sincronizar seus dados.`);
+    } catch (error) {
+      console.error('Erro ao criar ID de usuário:', error);
+      showAlert(`Erro inesperado: ${error.message}\n\nVerifique o console para mais detalhes.`);
+    } finally {
+      setIsSyncing(false);
+    }
+  };
+
+  const saveJsonbinBinId = async () => {
+    if (!jsonbinBinIdInput.trim()) {
+      showAlert('Por favor, digite um ID de usuário.');
+      return;
+    }
+
+    const userBinId = jsonbinBinIdInput.trim();
+    
+    // Validação básica: apenas verifica se não está vazio
+    if (userBinId.length < 3) {
+      showAlert('O ID de usuário deve ter pelo menos 3 caracteres.');
+      return;
+    }
+
+    // Salva o ID do usuário (não precisa verificar se existe, será criado automaticamente)
+    setJsonbinBinId(userBinId);
+    localStorage.setItem('jsonbin_bin_id', userBinId);
+    setJsonbinBinIdInput('');
+    setShowBinIdModal(false);
+    showAlert(`ID de usuário salvo com sucesso!\n\nSeu ID: ${userBinId}\n\nAgora você pode sincronizar seus dados.`);
+  };
+
+  const openBinIdModal = (mode = 'insert') => {
+    setBinIdModalMode(mode);
+    if (mode === 'edit' && jsonbinBinId) {
+      setJsonbinBinIdInput(jsonbinBinId);
+    } else {
+      setJsonbinBinIdInput('');
+    }
+    setShowBinIdModal(true);
   };
 
   // SRS Logic
@@ -1257,6 +1516,69 @@ function App() {
                       </>
                     )}
                   </button>
+                  <div className="border-t border-gray-200 dark:border-gray-700 my-2" />
+                  <div className="px-2 py-1">
+                    <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Sincronização</span>
+                  </div>
+                  {!jsonbinBinId && (
+                    <>
+                      <button 
+                        onClick={() => {
+                          createNewBin();
+                          setShowSettingsMenu(false);
+                        }}
+                        disabled={isSyncing}
+                        className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition text-left disabled:opacity-50"
+                      >
+                        <RefreshCw size={18} className={`text-gray-700 dark:text-gray-300 ${isSyncing ? 'animate-spin' : ''}`} />
+                        <span className="text-sm text-gray-700 dark:text-gray-300">
+                          {isSyncing ? 'Criando...' : 'Criar Novo ID de Usuário'}
+                        </span>
+                      </button>
+                      <button 
+                        onClick={() => {
+                          setShowSettingsMenu(false);
+                          openBinIdModal('insert');
+                        }} 
+                        className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition text-left"
+                      >
+                        <Edit size={18} className="text-gray-700 dark:text-gray-300" />
+                        <span className="text-sm text-gray-700 dark:text-gray-300">Inserir ID de Usuário</span>
+                      </button>
+                    </>
+                  )}
+                  {jsonbinBinId && (
+                    <>
+                      <div className="px-2 py-1">
+                        <div className="text-xs text-gray-500 dark:text-gray-400 truncate" title={jsonbinBinId}>
+                          ID: {jsonbinBinId.length > 20 ? jsonbinBinId.substring(0, 20) + '...' : jsonbinBinId}
+                        </div>
+                      </div>
+                      <button 
+                        onClick={() => {
+                          setShowSettingsMenu(false);
+                          openBinIdModal('edit');
+                        }} 
+                        className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition text-left"
+                      >
+                        <Edit size={18} className="text-gray-700 dark:text-gray-300" />
+                        <span className="text-sm text-gray-700 dark:text-gray-300">Editar ID de Usuário</span>
+                      </button>
+                      <button 
+                        onClick={() => {
+                          syncData();
+                          setShowSettingsMenu(false);
+                        }}
+                        disabled={isSyncing}
+                        className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition text-left disabled:opacity-50"
+                      >
+                        <RefreshCw size={18} className={`text-gray-700 dark:text-gray-300 ${isSyncing ? 'animate-spin' : ''}`} />
+                        <span className="text-sm text-gray-700 dark:text-gray-300">
+                          {isSyncing ? 'Sincronizando...' : 'Sincronizar Dados'}
+                        </span>
+                      </button>
+                    </>
+                  )}
                 </div>
               </div>
             </>
@@ -2343,6 +2665,72 @@ function App() {
           </div>
         </Modal>
       )}
+
+      {showBinIdModal && (
+        <Modal 
+          isOpen={true} 
+          onClose={() => {
+            setShowBinIdModal(false);
+            setJsonbinBinIdInput('');
+          }} 
+          title={binIdModalMode === 'edit' ? 'Editar ID de Usuário' : 'Inserir ID de Usuário'}
+        >
+          <div className="space-y-4">
+            <p className="text-sm text-gray-600 dark:text-gray-300">
+              {binIdModalMode === 'edit' 
+                ? 'Digite o seu ID de usuário para sincronizar seus dados na nuvem.'
+                : 'Digite o seu ID de usuário para sincronizar seus dados na nuvem. Se você não tem um ID, clique em "Criar Novo Bin" no menu de configurações para gerar um automaticamente.'}
+            </p>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                ID de Usuário
+              </label>
+              <input 
+                type="text"
+                autoFocus
+                value={jsonbinBinIdInput}
+                onChange={(e) => setJsonbinBinIdInput(e.target.value)}
+                placeholder="Digite seu ID de usuário (ex: gselvino, user123)"
+                className="w-full p-3 bg-gray-100 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-800 dark:text-white outline-none focus:ring-2 focus:ring-indigo-500 font-mono text-sm"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && jsonbinBinIdInput.trim()) {
+                    saveJsonbinBinId();
+                  }
+                }}
+              />
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                O ID de usuário identifica seus dados no banco compartilhado. Cada usuário deve ter seu próprio ID único.
+              </p>
+            </div>
+            <div className="flex gap-2">
+              <button 
+                onClick={() => {
+                  setShowBinIdModal(false);
+                  setJsonbinBinIdInput('');
+                }}
+                className="flex-1 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white py-3 rounded-lg font-medium hover:bg-gray-300 dark:hover:bg-gray-600 transition"
+              >
+                Cancelar
+              </button>
+              <button 
+                onClick={saveJsonbinBinId}
+                disabled={!jsonbinBinIdInput.trim() || isSyncing}
+                className="flex-1 bg-indigo-600 text-white py-3 rounded-lg font-bold hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition flex items-center justify-center gap-2"
+              >
+                {isSyncing ? (
+                  <>
+                    <RefreshCw size={16} className="animate-spin" />
+                    <span>Verificando...</span>
+                  </>
+                ) : (
+                  <span>{binIdModalMode === 'edit' ? 'Salvar' : 'Conectar'}</span>
+                )}
+              </button>
+            </div>
+          </div>
+        </Modal>
+      )}
+
 
       {modalConfig.type === 'create_deck' && (
         <Modal isOpen={true} onClose={closeModal} title="Novo Baralho">

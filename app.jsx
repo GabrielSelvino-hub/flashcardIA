@@ -183,6 +183,15 @@ function App() {
   const [filterStatus, setFilterStatus] = useState('all'); // 'all', 'new', 'due', 'mastered'
   const [sortBy, setSortBy] = useState('default'); // 'default', 'kanji', 'created', 'nextReview'
 
+  // Dev Mode States
+  const [devCustomCount, setDevCustomCount] = useState(10);
+  const [devLogs, setDevLogs] = useState([]);
+
+  // Dev Mode Functions
+  const isDevMode = () => {
+    return localStorage.getItem('dev') === 'true';
+  };
+
   // Effects
   useEffect(() => {
     // Debounce para evitar salvar a cada mudança e causar re-renders
@@ -1708,6 +1717,11 @@ function App() {
         <h1 className="text-2xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
           <img src="logoflashcard.ico" alt="NihonGo Deck" className="w-8 h-8" />
           NihonGo Deck
+          {isDevMode() && (
+            <span className="px-2 py-1 text-xs font-bold bg-purple-500 text-white rounded animate-pulse" title="Modo Desenvolvedor Ativo">
+              DEV
+            </span>
+          )}
         </h1>
         <div className="relative">
           <button 
@@ -1831,6 +1845,24 @@ function App() {
                         <span className="text-sm text-gray-700 dark:text-gray-300">
                           {isSyncing ? 'Sincronizando...' : 'Sincronizar Dados'}
                         </span>
+                      </button>
+                    </>
+                  )}
+                  {isDevMode() && (
+                    <>
+                      <div className="border-t border-gray-200 dark:border-gray-700 my-2" />
+                      <div className="px-2 py-1">
+                        <span className="text-xs font-semibold text-purple-600 dark:text-purple-400 uppercase">Modo Desenvolvedor</span>
+                      </div>
+                      <button 
+                        onClick={() => {
+                          setView('dev-panel');
+                          setShowSettingsMenu(false);
+                        }} 
+                        className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-purple-50 dark:hover:bg-purple-900/20 transition text-left border border-purple-200 dark:border-purple-800"
+                      >
+                        <Settings size={18} className="text-purple-600 dark:text-purple-400" />
+                        <span className="text-sm text-purple-700 dark:text-purple-300 font-semibold">Painel Dev</span>
                       </button>
                     </>
                   )}
@@ -2186,7 +2218,8 @@ function App() {
       const value = inputRef.current?.value || '';
       if (value.trim() && !isGenerating) {
         // Passa o valor diretamente para handleGenerate sem atualizar o estado
-        handleGenerate(value, cardsCount);
+        const count = isDevMode() ? devCustomCount : cardsCount;
+        handleGenerate(value, count);
         // Limpa o input após gerar
         if (inputRef.current) {
           inputRef.current.value = '';
@@ -2227,25 +2260,50 @@ function App() {
             </p>
           </div>
 
-          <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 mb-6">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-              Quantidade de cards:
-            </label>
-            <div className="flex gap-2">
-              {[3, 5, 8].map((num) => (
-                <button
-                  key={num}
-                  onClick={() => setCardsCount(num)}
-                  className={`flex-1 py-2 px-4 rounded-lg font-bold transition-all ${
-                    cardsCount === num
-                      ? 'bg-indigo-600 text-white shadow-md'
-                      : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
-                  }`}
-                >
-                  {num} cards
-                </button>
-              ))}
+          <div className={`bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border ${isDevMode() ? 'border-purple-500 dark:border-purple-400' : 'border-gray-200 dark:border-gray-700'} mb-6`}>
+            <div className="flex items-center justify-between mb-3">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                Quantidade de cards:
+              </label>
+              {isDevMode() && (
+                <span className="px-2 py-1 text-xs font-bold bg-purple-500 text-white rounded">DEV</span>
+              )}
             </div>
+            {isDevMode() ? (
+              <div className="space-y-2">
+                <input
+                  type="number"
+                  min="1"
+                  max="1000"
+                  value={devCustomCount}
+                  onChange={(e) => {
+                    const val = parseInt(e.target.value) || 1;
+                    setDevCustomCount(Math.min(Math.max(1, val), 1000));
+                  }}
+                  className="w-full p-3 bg-gray-50 dark:bg-gray-900 border border-purple-300 dark:border-purple-600 rounded-lg text-gray-800 dark:text-white focus:ring-2 focus:ring-purple-500 outline-none transition"
+                  placeholder="Quantidade de cards"
+                />
+                <p className="text-xs text-purple-600 dark:text-purple-400">
+                  Modo Dev: Você pode gerar até 1000 cards por vez
+                </p>
+              </div>
+            ) : (
+              <div className="flex gap-2">
+                {[3, 5, 8].map((num) => (
+                  <button
+                    key={num}
+                    onClick={() => setCardsCount(num)}
+                    className={`flex-1 py-2 px-4 rounded-lg font-bold transition-all ${
+                      cardsCount === num
+                        ? 'bg-indigo-600 text-white shadow-md'
+                        : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                    }`}
+                  >
+                    {num} cards
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
         <div className="bg-indigo-50 dark:bg-indigo-900/20 p-4 rounded-lg border border-indigo-200 dark:border-indigo-800 mb-6">
@@ -2254,7 +2312,7 @@ function App() {
              Power by Google Gemini
            </h4>
            <p className="text-sm text-indigo-700 dark:text-indigo-300 mt-1">
-             A IA criará {cardsCount} cards únicos para você. O processo pode levar alguns segundos.
+             A IA criará {isDevMode() ? devCustomCount : cardsCount} cards únicos para você. O processo pode levar alguns segundos.
            </p>
         </div>
 
@@ -2787,6 +2845,400 @@ function App() {
     );
   };
 
+  // Dev Panel View
+  const DevPanelView = () => {
+    const [activeTab, setActiveTab] = useState('info');
+    const [cloudData, setCloudData] = useState(null);
+    const [loadingCloud, setLoadingCloud] = useState(false);
+    const [jsonEditor, setJsonEditor] = useState('');
+    const [editingKey, setEditingKey] = useState('');
+
+    // Funções Dev
+    const getLocalStorageData = () => {
+      const data = {};
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        try {
+          data[key] = JSON.parse(localStorage.getItem(key));
+        } catch {
+          data[key] = localStorage.getItem(key);
+        }
+      }
+      return data;
+    };
+
+    const exportLocalStorage = () => {
+      const data = getLocalStorageData();
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `localStorage-${new Date().toISOString().split('T')[0]}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showAlert('Dados do localStorage exportados com sucesso!');
+    };
+
+    const exportCloudData = async () => {
+      if (!jsonbinBinId) {
+        showAlert('Configure o ID de usuário primeiro.');
+        return;
+      }
+      setLoadingCloud(true);
+      try {
+        const result = await window.jsonbinService.getUserData(jsonbinBinId, null);
+        if (result.success && result.data) {
+          const blob = new Blob([JSON.stringify(result.data, null, 2)], { type: 'application/json' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `cloud-data-${new Date().toISOString().split('T')[0]}.json`;
+          a.click();
+          URL.revokeObjectURL(url);
+          showAlert('Dados da nuvem exportados com sucesso!');
+        } else {
+          showAlert('Erro ao buscar dados da nuvem: ' + (result.error || 'Dados não encontrados'));
+        }
+      } catch (error) {
+        showAlert('Erro ao exportar dados da nuvem: ' + error.message);
+      } finally {
+        setLoadingCloud(false);
+      }
+    };
+
+    const loadCloudData = async () => {
+      if (!jsonbinBinId) {
+        showAlert('Configure o ID de usuário primeiro.');
+        return;
+      }
+      setLoadingCloud(true);
+      try {
+        const result = await window.jsonbinService.getSharedBin(null);
+        if (result.success) {
+          setCloudData(result.data);
+        } else {
+          showAlert('Erro ao carregar dados da nuvem: ' + result.error);
+        }
+      } catch (error) {
+        showAlert('Erro ao carregar dados da nuvem: ' + error.message);
+      } finally {
+        setLoadingCloud(false);
+      }
+    };
+
+    const clearData = (type) => {
+      const messages = {
+        decks: 'Tem certeza que deseja limpar TODOS os decks? Esta ação não pode ser desfeita.',
+        tags: 'Tem certeza que deseja limpar TODAS as tags? Esta ação não pode ser desfeita.',
+        all: 'Tem certeza que deseja limpar TODOS os dados? Esta ação não pode ser desfeita.'
+      };
+      showConfirm(messages[type], () => {
+        if (type === 'decks' || type === 'all') {
+          setDecks([]);
+          localStorage.removeItem('nihongo_decks');
+        }
+        if (type === 'tags' || type === 'all') {
+          setAvailableTags([]);
+          localStorage.removeItem('nihongo_tags');
+        }
+        if (type === 'all') {
+          localStorage.removeItem('jsonbin_bin_id');
+          setJsonbinBinId('');
+        }
+        showAlert('Dados limpos com sucesso!');
+      });
+    };
+
+    const testApiConnection = async () => {
+      const apiKey = localStorage.getItem('gemini_api_key');
+      if (!apiKey) {
+        showAlert('Configure a chave API primeiro.');
+        return;
+      }
+      setIsGenerating(true);
+      try {
+        const response = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{ parts: [{ text: 'Teste de conexão. Responda apenas: OK' }] }]
+            })
+          }
+        );
+        if (response.ok) {
+          const data = await response.json();
+          showAlert('✅ Conexão com API bem-sucedida!');
+        } else {
+          const error = await response.json();
+          showAlert('❌ Erro na conexão: ' + (error.error?.message || 'Erro desconhecido'));
+        }
+      } catch (error) {
+        showAlert('❌ Erro ao testar conexão: ' + error.message);
+      } finally {
+        setIsGenerating(false);
+      }
+    };
+
+    const loadTestData = () => {
+      showConfirm('Carregar dados de teste? Isso adicionará um deck de exemplo com muitos cards.', () => {
+        const testDeck = {
+          id: 'test-deck-' + Date.now(),
+          name: 'Deck de Teste (Dev)',
+          cards: Array.from({ length: 50 }, (_, i) => ({
+            id: 'test-card-' + i,
+            kanji: `漢字${i}`,
+            reading: `かんじ${i}`,
+            meaning: `Significado ${i}`,
+            interval: 0,
+            nextReview: Date.now()
+          }))
+        };
+        setDecks([...decks, testDeck]);
+        showAlert('Deck de teste carregado com sucesso!');
+      });
+    };
+
+    const localStorageData = getLocalStorageData();
+    const totalCards = decks.reduce((sum, d) => sum + (d.cards?.length || 0), 0);
+    const apiKey = localStorage.getItem('gemini_api_key');
+    const maskedApiKey = apiKey ? apiKey.substring(0, 8) + '...' + apiKey.substring(apiKey.length - 4) : 'Não configurada';
+
+    return (
+      <div className="p-4 max-w-4xl mx-auto h-full flex flex-col pb-24">
+        <div className="flex items-center mb-6">
+          <button 
+            onClick={() => setView('home')} 
+            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg mr-2"
+          >
+            <ChevronLeft size={20} className="text-gray-800 dark:text-white" />
+          </button>
+          <h2 className="text-xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
+            <Settings size={24} className="text-purple-600 dark:text-purple-400" />
+            Painel Desenvolvedor
+            <span className="px-2 py-1 text-xs font-bold bg-purple-500 text-white rounded">DEV</span>
+          </h2>
+        </div>
+
+        <div className="flex gap-2 mb-6 border-b border-gray-200 dark:border-gray-700 overflow-x-auto">
+          {['info', 'export', 'clear', 'cloud', 'api', 'editor'].map(tab => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`px-4 py-2 text-sm font-medium border-b-2 transition whitespace-nowrap ${
+                activeTab === tab
+                  ? 'border-purple-500 text-purple-600 dark:text-purple-400'
+                  : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
+              }`}
+            >
+              {tab === 'info' && 'Info'}
+              {tab === 'export' && 'Exportar'}
+              {tab === 'clear' && 'Limpar'}
+              {tab === 'cloud' && 'Nuvem'}
+              {tab === 'api' && 'API'}
+              {tab === 'editor' && 'Editor'}
+            </button>
+          ))}
+        </div>
+
+        <div className="flex-1 overflow-y-auto">
+
+          {activeTab === 'info' && (
+            <div className="space-y-4">
+              <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg border border-purple-200 dark:border-purple-800">
+                <h3 className="font-bold text-purple-800 dark:text-purple-200 mb-2">Estado da Aplicação</h3>
+                <div className="space-y-2 text-sm">
+                  <div><strong>Decks:</strong> {decks.length}</div>
+                  <div><strong>Total de Cards:</strong> {totalCards}</div>
+                  <div><strong>Tags:</strong> {availableTags.length}</div>
+                  <div><strong>ID Usuário JSONBin:</strong> {jsonbinBinId || 'Não configurado'}</div>
+                  <div><strong>Chave API:</strong> {maskedApiKey}</div>
+                </div>
+              </div>
+
+              <div className="bg-gray-50 dark:bg-gray-900 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+                <h3 className="font-bold text-gray-800 dark:text-gray-200 mb-2">LocalStorage</h3>
+                <div className="space-y-2 text-xs max-h-96 overflow-y-auto">
+                  {Object.entries(localStorageData).map(([key, value]) => (
+                    <div key={key} className="p-2 bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700">
+                      <div className="font-semibold text-gray-700 dark:text-gray-300">{key}:</div>
+                      <pre className="text-xs mt-1 overflow-x-auto text-gray-600 dark:text-gray-400">
+                        {typeof value === 'object' ? JSON.stringify(value, null, 2).substring(0, 200) + '...' : String(value).substring(0, 100)}
+                      </pre>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'export' && (
+            <div className="space-y-4">
+              <button
+                onClick={exportLocalStorage}
+                className="w-full p-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
+              >
+                <Download size={18} className="inline mr-2" />
+                Exportar LocalStorage
+              </button>
+              <button
+                onClick={exportCloudData}
+                disabled={loadingCloud || !jsonbinBinId}
+                className="w-full p-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium disabled:opacity-50"
+              >
+                <Download size={18} className="inline mr-2" />
+                {loadingCloud ? 'Carregando...' : 'Exportar Dados da Nuvem'}
+              </button>
+              <button
+                onClick={() => {
+                  const allData = {
+                    localStorage: getLocalStorageData(),
+                    timestamp: new Date().toISOString()
+                  };
+                  const blob = new Blob([JSON.stringify(allData, null, 2)], { type: 'application/json' });
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement('a');
+                  a.href = url;
+                  a.download = `full-export-${new Date().toISOString().split('T')[0]}.json`;
+                  a.click();
+                  URL.revokeObjectURL(url);
+                  showAlert('Exportação completa realizada!');
+                }}
+                className="w-full p-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-medium"
+              >
+                <Download size={18} className="inline mr-2" />
+                Exportar Tudo
+              </button>
+            </div>
+          )}
+
+          {activeTab === 'clear' && (
+            <div className="space-y-4">
+              <div className="bg-red-50 dark:bg-red-900/20 p-4 rounded-lg border border-red-200 dark:border-red-800">
+                <p className="text-sm text-red-800 dark:text-red-200 font-semibold mb-2">⚠️ Atenção: Estas ações são irreversíveis!</p>
+              </div>
+              <button
+                onClick={() => clearData('decks')}
+                className="w-full p-3 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 font-medium"
+              >
+                Limpar Todos os Decks
+              </button>
+              <button
+                onClick={() => clearData('tags')}
+                className="w-full p-3 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 font-medium"
+              >
+                Limpar Todas as Tags
+              </button>
+              <button
+                onClick={() => clearData('all')}
+                className="w-full p-3 bg-red-600 text-white rounded-lg hover:bg-red-700 font-medium"
+              >
+                Limpar Tudo
+              </button>
+            </div>
+          )}
+
+          {activeTab === 'cloud' && (
+            <div className="space-y-4">
+              <button
+                onClick={loadCloudData}
+                disabled={loadingCloud || !jsonbinBinId}
+                className="w-full p-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium disabled:opacity-50"
+              >
+                {loadingCloud ? 'Carregando...' : 'Carregar Dados da Nuvem'}
+              </button>
+              {cloudData && (
+                <div className="bg-gray-50 dark:bg-gray-900 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+                  <h3 className="font-bold mb-2">Usuários no Bin Compartilhado:</h3>
+                  <div className="text-xs max-h-96 overflow-y-auto">
+                    <pre className="whitespace-pre-wrap font-mono">{JSON.stringify(cloudData, null, 2)}</pre>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {activeTab === 'api' && (
+            <div className="space-y-4">
+              <div className="bg-gray-50 dark:bg-gray-900 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+                <div className="text-sm mb-2"><strong>Chave API:</strong> {maskedApiKey}</div>
+              </div>
+              <button
+                onClick={testApiConnection}
+                disabled={isGenerating || !apiKey}
+                className="w-full p-3 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium disabled:opacity-50"
+              >
+                {isGenerating ? 'Testando...' : 'Testar Conexão com API'}
+              </button>
+            </div>
+          )}
+
+          {activeTab === 'editor' && (
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Chave do LocalStorage:</label>
+                <input
+                  type="text"
+                  value={editingKey}
+                  onChange={(e) => {
+                    setEditingKey(e.target.value);
+                    const value = localStorage.getItem(e.target.value);
+                    try {
+                      setJsonEditor(value ? (typeof JSON.parse(value) === 'object' ? JSON.stringify(JSON.parse(value), null, 2) : value) : '');
+                    } catch {
+                      setJsonEditor(value || '');
+                    }
+                  }}
+                  className="w-full p-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-800 dark:text-white focus:ring-2 focus:ring-purple-500 outline-none mb-2"
+                  placeholder="Ex: nihongo_decks"
+                />
+              </div>
+              {editingKey && (
+                <>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Valor (JSON):</label>
+                    <textarea
+                      value={jsonEditor}
+                      onChange={(e) => setJsonEditor(e.target.value)}
+                      className="w-full p-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg font-mono text-xs text-gray-800 dark:text-white focus:ring-2 focus:ring-purple-500 outline-none"
+                      rows="15"
+                    />
+                  </div>
+                  <button
+                    onClick={() => {
+                      try {
+                        const parsed = JSON.parse(jsonEditor);
+                        localStorage.setItem(editingKey, JSON.stringify(parsed));
+                        if (editingKey === 'nihongo_decks') {
+                          setDecks(parsed);
+                        } else if (editingKey === 'nihongo_tags') {
+                          setAvailableTags(parsed);
+                        }
+                        showAlert('Dados salvos com sucesso!');
+                      } catch (e) {
+                        showAlert('Erro: JSON inválido - ' + e.message);
+                      }
+                    }}
+                    className="w-full p-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-medium"
+                  >
+                    Salvar Alterações
+                  </button>
+                </>
+              )}
+              <button
+                onClick={loadTestData}
+                className="w-full p-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
+              >
+                Carregar Dados de Teste
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
+
   const TestResultView = () => {
     const totalQuestions = 10;
     const percentage = Math.round((testScore.correct / totalQuestions) * 100);
@@ -3274,6 +3726,7 @@ function App() {
       {view === 'test-mode-selection' && <TestModeSelectionView />}
       {view === 'test' && <TestView />}
       {view === 'test-result' && <TestResultView />}
+      {view === 'dev-panel' && isDevMode() && <DevPanelView />}
     </div>
   );
 }

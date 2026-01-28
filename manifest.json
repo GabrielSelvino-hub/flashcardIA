@@ -7,6 +7,7 @@
   "background_color": "#1a1a1a",
   "theme_color": "#dc2626",
   "orientation": "portrait-primary",
+  "categories": ["education", "learning"],
   "icons": [
     {
       "src": "icon-192.png",
@@ -19,6 +20,44 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Revisão Rápida",
+      "short_name": "Revisar",
+      "description": "Iniciar uma sessão de revisão rápida",
+      "url": "/?action=quick-review",
+      "icons": [
+        {
+          "src": "icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Gerar Cards",
+      "short_name": "Gerar",
+      "description": "Gerar novos flashcards com IA",
+      "url": "/?action=generator",
+      "icons": [
+        {
+          "src": "icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Estatísticas",
+      "short_name": "Stats",
+      "description": "Ver estatísticas de aprendizado",
+      "url": "/?action=stats",
+      "icons": [
+        {
+          "src": "icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
     }
   ]
 }

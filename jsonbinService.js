@@ -206,15 +206,40 @@ async function createBin(masterKey, data) {
 
 /**
  * Atualiza dados de um usuário específico no bin compartilhado
+ * OFFLINE-AWARE: Se offline, grava na outbox para sincronização posterior
  * @param {string} userBinId - ID do usuário (identificador dentro do bin compartilhado)
  * @param {string} masterKey - Master Key do JSONBin.io (opcional, usa DEFAULT_MASTER_KEY se não fornecido)
  * @param {object} userData - Dados do usuário a serem salvos
- * @returns {Promise<{success: boolean, error?: string}>}
+ * @returns {Promise<{success: boolean, error?: string, offline?: boolean}>}
  */
 async function updateUserData(userBinId, masterKey, userData) {
   try {
     if (!userBinId || typeof userBinId !== 'string' || userBinId.trim().length === 0) {
       return { success: false, error: 'ID do usuário inválido' };
+    }
+
+    // Verificar se está offline
+    if (!navigator.onLine && window.offlineStorage) {
+      console.log('📴 Offline: Gravando na outbox para sincronização posterior');
+      
+      // Salvar rascunho local
+      const decks = userData.decks || [];
+      for (const deck of decks) {
+        await window.offlineStorage.saveDeckDraft(deck, userBinId);
+      }
+
+      // Adicionar à outbox
+      await window.offlineStorage.addToOutbox({
+        type: 'deck_update',
+        data: {
+          userId: userBinId,
+          decks: userData.decks,
+          tags: userData.tags,
+          lastSync: new Date().toISOString()
+        }
+      });
+
+      return { success: true, offline: true, message: 'Dados salvos localmente. Serão sincronizados quando a conexão for restaurada.' };
     }
 
     const keyToUse = (masterKey && masterKey.trim()) || DEFAULT_MASTER_KEY;
@@ -228,6 +253,21 @@ async function updateUserData(userBinId, masterKey, userData) {
     const getResult = await getSharedBin(masterKey);
     if (!getResult.success) {
       console.error('Erro ao buscar bin compartilhado:', getResult.error);
+      
+      // Se falhar e estiver offline, gravar na outbox
+      if (!navigator.onLine && window.offlineStorage) {
+        await window.offlineStorage.addToOutbox({
+          type: 'deck_update',
+          data: {
+            userId: userBinId,
+            decks: userData.decks,
+            tags: userData.tags,
+            lastSync: new Date().toISOString()
+          }
+        });
+        return { success: true, offline: true, message: 'Dados salvos localmente.' };
+      }
+      
       return { success: false, error: `Erro ao buscar banco de dados: ${getResult.error}` };
     }
 
@@ -287,12 +327,53 @@ async function updateUserData(userBinId, masterKey, userData) {
         return { success: false, error: 'Master Key inválida ou sem permissão.' };
       }
 
+      // Se erro de rede e offline storage disponível, gravar na outbox
+      if (!navigator.onLine && window.offlineStorage) {
+        await window.offlineStorage.addToOutbox({
+          type: 'deck_update',
+          data: {
+            userId: userBinId,
+            decks: userData.decks,
+            tags: userData.tags,
+            lastSync: new Date().toISOString()
+          }
+        });
+        return { success: true, offline: true, message: 'Dados salvos localmente.' };
+      }
+
       return { success: false, error: errorMsg };
     }
 
     console.log('Dados do usuário salvos com sucesso no bin:', sharedBinId);
+    
+    // Limpar rascunhos locais após sucesso
+    if (window.offlineStorage) {
+      const decks = userData.decks || [];
+      for (const deck of decks) {
+        await window.offlineStorage.deleteDeckDraft(deck.id);
+      }
+    }
+    
     return { success: true };
   } catch (error) {
+    // Se erro de rede e offline storage disponível, gravar na outbox
+    if (!navigator.onLine && window.offlineStorage) {
+      try {
+        await window.offlineStorage.addToOutbox({
+          type: 'deck_update',
+          data: {
+            userId: userBinId,
+            decks: userData.decks,
+            tags: userData.tags,
+            lastSync: new Date().toISOString()
+          }
+        });
+        return { success: true, offline: true, message: 'Dados salvos localmente.' };
+      } catch (offlineError) {
+        console.error('Erro ao salvar na outbox:', offlineError);
+      }
+    }
+    
     return { 
       success: false, 
       error: error.message || 'Erro ao atualizar dados do usuário. Verifique sua conexão.' 

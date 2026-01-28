@@ -94,16 +94,102 @@ const KanjiCard = ({ kanji, reading, meaning, showBack, size = 'normal', furigan
 const Modal = ({ isOpen, onClose, title, children }) => {
   if (!isOpen) return null;
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm safe-top safe-bottom safe-left safe-right">
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-sm overflow-hidden border border-gray-200 dark:border-gray-700">
         <div className="px-6 py-4 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
           <h3 className="font-bold text-lg text-gray-800 dark:text-white">{title}</h3>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 touch-target">
             <X size={20} />
           </button>
         </div>
         <div className="p-6">
           {children}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// --- UX MOBILE COMPONENTS ---
+
+// Indicador de Status Online/Offline
+const OfflineIndicator = ({ isOnline, pendingCount = 0 }) => {
+  if (isOnline && pendingCount === 0) return null;
+  
+  return (
+    <div className={`fixed top-0 left-0 right-0 z-40 safe-top ${isOnline ? 'bg-blue-500' : 'bg-red-500'} text-white text-center py-2 px-4 text-sm font-medium shadow-md`}>
+      {!isOnline ? (
+        <span>🔴 Sem conexão - Modo offline</span>
+      ) : pendingCount > 0 ? (
+        <span>🔄 {pendingCount} item(s) pendente(s) de sincronização</span>
+      ) : null}
+    </div>
+  );
+};
+
+// Status de Sincronização
+const SyncStatus = ({ isSyncing, lastSync, onSync }) => {
+  const formatTime = (timestamp) => {
+    if (!timestamp) return 'Nunca';
+    const date = new Date(timestamp);
+    const now = new Date();
+    const diff = now - date;
+    const minutes = Math.floor(diff / 60000);
+    if (minutes < 1) return 'Agora';
+    if (minutes < 60) return `${minutes}min atrás`;
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return `${hours}h atrás`;
+    const days = Math.floor(hours / 24);
+    return `${days}d atrás`;
+  };
+
+  return (
+    <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+      {isSyncing ? (
+        <>
+          <RefreshCw size={16} className="animate-spin" />
+          <span>Sincronizando...</span>
+        </>
+      ) : (
+        <>
+          <span>Última sync: {formatTime(lastSync)}</span>
+          {onSync && (
+            <button
+              onClick={onSync}
+              className="ml-2 px-3 py-1 bg-blue-500 text-white rounded touch-target text-xs"
+              disabled={isSyncing}
+            >
+              Sincronizar
+            </button>
+          )}
+        </>
+      )}
+    </div>
+  );
+};
+
+// Notificação de Atualização do App
+const UpdateNotification = ({ onUpdate, onDismiss }) => {
+  return (
+    <div className="fixed bottom-0 left-0 right-0 z-50 bg-blue-600 text-white p-4 shadow-lg safe-bottom safe-left safe-right">
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex-1">
+          <p className="font-medium">Nova versão disponível!</p>
+          <p className="text-sm opacity-90">Atualize para obter as últimas melhorias.</p>
+        </div>
+        <div className="flex gap-2">
+          <button
+            onClick={onDismiss}
+            className="px-3 py-2 bg-blue-700 rounded touch-target text-sm"
+          >
+            Depois
+          </button>
+          <button
+            onClick={onUpdate}
+            className="px-4 py-2 bg-white text-blue-600 rounded font-medium touch-target text-sm"
+          >
+            Atualizar
+          </button>
         </div>
       </div>
     </div>
@@ -187,6 +273,25 @@ function App() {
   const [devCustomCount, setDevCustomCount] = useState(10);
   const [devLogs, setDevLogs] = useState([]);
 
+  // UX Mobile States
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
+  const [pendingSyncCount, setPendingSyncCount] = useState(0);
+  const [showUpdateNotification, setShowUpdateNotification] = useState(false);
+  const [swRegistration, setSwRegistration] = useState(null);
+  const [lastSyncTime, setLastSyncTime] = useState(() => 
+    localStorage.getItem('last_sync_time') || null
+  );
+
+  // Geolocation States
+  const [useLocation, setUseLocation] = useState(false);
+  const [currentLocation, setCurrentLocation] = useState(null);
+  const [locationError, setLocationError] = useState(null);
+
+  // Push Notifications States
+  const [pushEnabled, setPushEnabled] = useState(false);
+  const [pushPermission, setPushPermission] = useState('default');
+  const [pushLoading, setPushLoading] = useState(false);
+
   // Dev Mode Functions
   const isDevMode = () => {
     return localStorage.getItem('dev') === 'true';
@@ -216,6 +321,148 @@ function App() {
       setShowApiKeyModal(true);
     }
   }, []);
+
+  // Monitorar status online/offline e sincronizar
+  useEffect(() => {
+    const handleOnline = async () => {
+      setIsOnline(true);
+      console.log('Conexão restaurada');
+      
+      // Sincronizar dados pendentes
+      if (window.syncManager && jsonbinBinId) {
+        try {
+          const result = await window.syncManager.syncAll();
+          if (result.success && result.synced > 0) {
+            showAlert(`${result.synced} item(s) sincronizado(s) com sucesso!`);
+            setPendingSyncCount(0);
+            setLastSyncTime(new Date().toISOString());
+            localStorage.setItem('last_sync_time', new Date().toISOString());
+          }
+        } catch (error) {
+          console.error('Erro na sincronização:', error);
+        }
+      }
+    };
+    
+    const handleOffline = () => {
+      setIsOnline(false);
+      console.log('Sem conexão');
+    };
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    // Atualizar contagem de pendentes periodicamente
+    const updatePendingCount = async () => {
+      if (window.offlineStorage) {
+        const count = await window.offlineStorage.getPendingCount();
+        setPendingSyncCount(count);
+      }
+    };
+
+    updatePendingCount();
+    const interval = setInterval(updatePendingCount, 30000); // A cada 30 segundos
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+      clearInterval(interval);
+    };
+  }, [jsonbinBinId]);
+
+  // Registrar Service Worker e detectar atualizações
+  useEffect(() => {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js')
+        .then((registration) => {
+          setSwRegistration(registration);
+          console.log('Service Worker registrado:', registration.scope);
+
+          // Detectar atualizações
+          registration.addEventListener('updatefound', () => {
+            const newWorker = registration.installing;
+            if (newWorker) {
+              newWorker.addEventListener('statechange', () => {
+                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                  // Novo SW instalado, mostrar notificação
+                  setShowUpdateNotification(true);
+                }
+              });
+            }
+          });
+
+          // Verificar atualizações periodicamente
+          setInterval(() => {
+            registration.update();
+          }, 60000); // A cada minuto
+        })
+        .catch((error) => {
+          console.error('Erro ao registrar Service Worker:', error);
+        });
+    }
+  }, []);
+
+  // Handler para atualizar app
+  const handleUpdateApp = () => {
+    if (swRegistration && swRegistration.waiting) {
+      swRegistration.waiting.postMessage({ type: 'SKIP_WAITING' });
+      window.location.reload();
+    }
+  };
+
+  // Verificar status de push notifications
+  useEffect(() => {
+    const checkPushStatus = async () => {
+      if (window.pushService) {
+        const permissionStatus = await window.pushService.getPermissionStatus();
+        setPushPermission(permissionStatus.status);
+        
+        const isSub = await window.pushService.isSubscribed();
+        setPushEnabled(isSub);
+      }
+    };
+    
+    checkPushStatus();
+  }, []);
+
+  // Handler para ativar/desativar push
+  const handleTogglePush = async () => {
+    if (!window.pushService) {
+      showAlert('Serviço de push não disponível');
+      return;
+    }
+
+    setPushLoading(true);
+
+    try {
+      if (pushEnabled) {
+        // Desativar
+        const result = await window.pushService.unsubscribe();
+        if (result.success) {
+          setPushEnabled(false);
+          showAlert('Notificações push desativadas');
+        } else {
+          showAlert(`Erro ao desativar: ${result.error}`);
+        }
+      } else {
+        // Ativar
+        const userId = jsonbinBinId || 'anonymous';
+        const result = await window.pushService.subscribe(userId);
+        if (result.success) {
+          setPushEnabled(true);
+          setPushPermission('granted');
+          showAlert('Notificações push ativadas!');
+        } else {
+          showAlert(`Erro ao ativar: ${result.error}`);
+        }
+      }
+    } catch (error) {
+      console.error('Erro ao alternar push:', error);
+      showAlert('Erro ao alternar notificações push');
+    } finally {
+      setPushLoading(false);
+    }
+  };
 
   // Keyboard Shortcuts
   useEffect(() => {
@@ -316,6 +563,9 @@ function App() {
 
   const showPrompt = () => {
     setTempInput('');
+    setUseLocation(false);
+    setCurrentLocation(null);
+    setLocationError(null);
     setModalConfig({ type: 'create_deck', data: null });
   };
 
@@ -420,10 +670,57 @@ function App() {
   };
 
   // Actions
-  const createDeck = (name) => {
-    const newDeck = { id: generateId(), name, cards: [] };
+  const createDeck = async (name) => {
+    const newDeck = { 
+      id: generateId(), 
+      name, 
+      cards: [],
+      createdAt: new Date().toISOString()
+    };
+
+    // Adicionar localização se solicitado e disponível
+    if (useLocation && currentLocation) {
+      newDeck.location = {
+        latitude: currentLocation.latitude,
+        longitude: currentLocation.longitude,
+        accuracy: currentLocation.accuracy,
+        timestamp: currentLocation.timestamp
+      };
+    }
+
     setDecks([...decks, newDeck]);
     closeModal();
+    setUseLocation(false);
+    setCurrentLocation(null);
+    setLocationError(null);
+  };
+
+  // Obter localização para novo deck
+  const handleGetLocation = async () => {
+    if (!window.geolocationService) {
+      setLocationError('Serviço de geolocalização não disponível');
+      return;
+    }
+
+    if (!window.geolocationService.isAvailable()) {
+      setLocationError('Geolocalização não está disponível neste navegador');
+      return;
+    }
+
+    setLocationError(null);
+    setUseLocation(true);
+
+    const result = await window.geolocationService.getCurrentPosition({
+      enableHighAccuracy: true,
+      timeout: 10000
+    });
+
+    if (result.success) {
+      setCurrentLocation(result.location);
+    } else {
+      setLocationError(result.error);
+      setUseLocation(false);
+    }
   };
 
   const deleteDeck = (id) => {
@@ -1785,6 +2082,34 @@ function App() {
                       </>
                     )}
                   </button>
+                  <div className="border-t border-gray-200 dark:border-gray-700 my-2" />
+                  <div className="px-2 py-1">
+                    <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Notificações</span>
+                  </div>
+                  {window.pushService && (
+                    <button
+                      onClick={handleTogglePush}
+                      disabled={pushLoading || pushPermission === 'denied'}
+                      className="w-full flex items-center justify-between p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition text-left disabled:opacity-50 touch-target"
+                    >
+                      <div className="flex items-center gap-3">
+                        <Sparkles size={18} className={pushEnabled ? "text-blue-500" : "text-gray-700 dark:text-gray-300"} />
+                        <span className="text-sm text-gray-700 dark:text-gray-300">
+                          {pushLoading ? 'Carregando...' : pushEnabled ? 'Push Ativado' : 'Push Desativado'}
+                        </span>
+                      </div>
+                      {pushPermission !== 'denied' && (
+                        <div className={`w-10 h-6 rounded-full transition-colors ${pushEnabled ? 'bg-blue-500' : 'bg-gray-300 dark:bg-gray-600'}`}>
+                          <div className={`w-4 h-4 bg-white rounded-full mt-1 transition-transform ${pushEnabled ? 'ml-5' : 'ml-1'}`} />
+                        </div>
+                      )}
+                    </button>
+                  )}
+                  {pushPermission === 'denied' && (
+                    <p className="text-xs text-red-500 dark:text-red-400 px-2">
+                      Permissão negada. Ative nas configurações do navegador.
+                    </p>
+                  )}
                   <div className="border-t border-gray-200 dark:border-gray-700 my-2" />
                   <div className="px-2 py-1">
                     <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Sincronização</span>
@@ -3447,15 +3772,49 @@ function App() {
               placeholder="Nome do baralho (ex: Verbos N5)"
               value={tempInput}
               onChange={(e) => setTempInput(e.target.value)}
-              className="w-full p-3 bg-gray-100 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg mb-6 text-gray-800 dark:text-white outline-none focus:ring-2 focus:ring-red-500"
+              className="w-full p-3 bg-gray-100 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg mb-4 text-gray-800 dark:text-white outline-none focus:ring-2 focus:ring-red-500"
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && tempInput.trim()) createDeck(tempInput);
               }}
            />
+           
+           {/* Opção de localização */}
+           <div className="mb-4">
+             <button
+               onClick={handleGetLocation}
+               disabled={useLocation && currentLocation !== null}
+               className={`w-full py-2 px-4 rounded-lg border-2 transition touch-target ${
+                 useLocation && currentLocation
+                   ? 'bg-green-100 dark:bg-green-900 border-green-500 text-green-700 dark:text-green-300'
+                   : 'bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+               }`}
+             >
+               {useLocation && currentLocation ? (
+                 <span className="flex items-center justify-center gap-2">
+                   <Check size={18} />
+                   Localização obtida
+                 </span>
+               ) : (
+                 <span className="flex items-center justify-center gap-2">
+                   📍 Usar localização atual
+                 </span>
+               )}
+             </button>
+             {locationError && (
+               <p className="mt-2 text-sm text-red-600 dark:text-red-400">{locationError}</p>
+             )}
+             {currentLocation && (
+               <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                 {currentLocation.latitude.toFixed(6)}, {currentLocation.longitude.toFixed(6)}
+                 {currentLocation.accuracy && ` (±${Math.round(currentLocation.accuracy)}m)`}
+               </p>
+             )}
+           </div>
+
            <button 
              onClick={() => tempInput.trim() && createDeck(tempInput)}
              disabled={!tempInput.trim()}
-             className="w-full bg-red-600 text-white py-3 rounded-lg font-bold hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
+             className="w-full bg-red-600 text-white py-3 rounded-lg font-bold hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition touch-target"
            >
              Criar
            </button>
@@ -3727,6 +4086,15 @@ function App() {
       {view === 'test' && <TestView />}
       {view === 'test-result' && <TestResultView />}
       {view === 'dev-panel' && isDevMode() && <DevPanelView />}
+
+      {/* UX Mobile Components */}
+      <OfflineIndicator isOnline={isOnline} pendingCount={pendingSyncCount} />
+      {showUpdateNotification && (
+        <UpdateNotification
+          onUpdate={handleUpdateApp}
+          onDismiss={() => setShowUpdateNotification(false)}
+        />
+      )}
     </div>
   );
 }

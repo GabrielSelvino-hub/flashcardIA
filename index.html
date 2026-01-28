@@ -61,11 +61,48 @@
         .transition-all {
             transition: all 0.2s ease-in-out;
         }
+        
+        /* Safe Areas para iPhone notch */
+        .safe-top {
+            padding-top: env(safe-area-inset-top);
+        }
+        .safe-bottom {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        .safe-left {
+            padding-left: env(safe-area-inset-left);
+        }
+        .safe-right {
+            padding-right: env(safe-area-inset-right);
+        }
+        
+        /* Área de toque mínima para mobile */
+        .touch-target {
+            min-height: 44px;
+            min-width: 44px;
+        }
+        
+        /* Prevenir zoom em inputs no iOS */
+        @media screen and (max-width: 768px) {
+            input, textarea, select {
+                font-size: 16px !important;
+            }
+        }
+        
+        /* Melhorias para teclado mobile */
+        .keyboard-avoid {
+            padding-bottom: env(keyboard-inset-height, 0);
+        }
     </style>
 </head>
 <body>
     <div id="root"></div>
     <script src="./jsonbinService.js"></script>
+    <script src="./src/services/offlineStorage.js"></script>
+    <script src="./src/services/syncManager.js"></script>
+    <script src="./src/services/geolocationService.js"></script>
+    <script src="./src/services/webauthnService.js"></script>
+    <script src="./src/services/pushService.js"></script>
     <script type="text/babel" src="./app.jsx"></script>
     <script>
         if ('serviceWorker' in navigator) {

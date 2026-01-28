@@ -3,6 +3,7 @@ const CACHE_VERSION = 'v2.0.0';
 const STATIC_CACHE = `flashcard-static-${CACHE_VERSION}`;
 const API_CACHE = `flashcard-api-${CACHE_VERSION}`;
 const IMAGE_CACHE = `flashcard-images-${CACHE_VERSION}`;
+const VERSION_KEY = 'app-version';
 
 // Assets estáticos para cache inicial
 const STATIC_ASSETS = [
@@ -10,8 +11,35 @@ const STATIC_ASSETS = [
   '/index.html',
   '/app.jsx',
   '/jsonbinService.js',
+  '/version.js',
   '/manifest.json'
 ];
+
+// Função para obter versão atual do version.js
+async function getCurrentVersion() {
+  try {
+    const response = await fetch('/version.js', { cache: 'no-store' });
+    const text = await response.text();
+    // Extrair versão do formato: const APP_VERSION = '1.01';
+    const match = text.match(/const\s+APP_VERSION\s*=\s*['"]([^'"]+)['"]/);
+    return match ? match[1] : null;
+  } catch (error) {
+    console.error('[SW] Erro ao buscar versão:', error);
+    return null;
+  }
+}
+
+// Função para notificar todos os clientes sobre atualização
+async function notifyClientsAboutUpdate(newVersion) {
+  const clients = await self.clients.matchAll({ includeUncontrolled: true });
+  clients.forEach((client) => {
+    client.postMessage({
+      type: 'VERSION_UPDATE',
+      version: newVersion,
+      source: 'service-worker'
+    });
+  });
+}
 
 // Instalar o service worker
 self.addEventListener('install', (event) => {
@@ -19,6 +47,32 @@ self.addEventListener('install', (event) => {
   
   event.waitUntil(
     Promise.all([
+      // Verificar versão atual
+      getCurrentVersion().then(async (currentVersion) => {
+        if (currentVersion) {
+          // Buscar versão armazenada anteriormente
+          const cache = await caches.open(STATIC_CACHE);
+          const cachedVersionResponse = await cache.match('/version.js');
+          let storedVersion = null;
+          
+          if (cachedVersionResponse) {
+            const cachedText = await cachedVersionResponse.text();
+            const match = cachedText.match(/const\s+APP_VERSION\s*=\s*['"]([^'"]+)['"]/);
+            storedVersion = match ? match[1] : null;
+          }
+          
+          // Se versão mudou, limpar todos os caches
+          if (storedVersion && storedVersion !== currentVersion) {
+            console.log(`[SW] Nova versão detectada: ${storedVersion} -> ${currentVersion}`);
+            // Limpar todos os caches
+            const cacheNames = await caches.keys();
+            await Promise.all(cacheNames.map(name => caches.delete(name)));
+            console.log('[SW] Todos os caches foram limpos devido à nova versão');
+          }
+        }
+      }).catch((err) => {
+        console.error('[SW] Erro ao verificar versão:', err);
+      }),
       // Cache de assets estáticos
       caches.open(STATIC_CACHE).then((cache) => {
         console.log('[SW] Cacheando assets estáticos');
@@ -38,6 +92,28 @@ self.addEventListener('activate', (event) => {
   
   event.waitUntil(
     Promise.all([
+      // Verificar se há nova versão e notificar clientes
+      getCurrentVersion().then(async (currentVersion) => {
+        if (currentVersion) {
+          const cache = await caches.open(STATIC_CACHE);
+          const cachedVersionResponse = await cache.match('/version.js');
+          let storedVersion = null;
+          
+          if (cachedVersionResponse) {
+            const cachedText = await cachedVersionResponse.text();
+            const match = cachedText.match(/const\s+APP_VERSION\s*=\s*['"]([^'"]+)['"]/);
+            storedVersion = match ? match[1] : null;
+          }
+          
+          // Se versão mudou, notificar clientes
+          if (storedVersion && storedVersion !== currentVersion) {
+            console.log(`[SW] Notificando clientes sobre atualização: ${storedVersion} -> ${currentVersion}`);
+            await notifyClientsAboutUpdate(currentVersion);
+          }
+        }
+      }).catch((err) => {
+        console.error('[SW] Erro ao verificar versão na ativação:', err);
+      }),
       // Limpar caches antigos
       caches.keys().then((cacheNames) => {
         return Promise.all(
@@ -140,6 +216,46 @@ self.addEventListener('fetch', (event) => {
   if (request.destination === 'image' || 
       /\.(jpg|jpeg|png|gif|webp|svg|ico)$/i.test(url.pathname)) {
     event.respondWith(cacheFirst(request, IMAGE_CACHE));
+    return;
+  }
+  
+  // version.js - sempre buscar da rede para verificar atualizações
+  if (url.pathname === '/version.js') {
+    event.respondWith(
+      fetch(request, { cache: 'no-store' }).then(async (response) => {
+        // Verificar se versão mudou
+        const text = await response.clone().text();
+        const match = text.match(/const\s+APP_VERSION\s*=\s*['"]([^'"]+)['"]/);
+        const newVersion = match ? match[1] : null;
+        
+        if (newVersion) {
+          const cache = await caches.open(STATIC_CACHE);
+          const cachedVersionResponse = await cache.match('/version.js');
+          
+          if (cachedVersionResponse) {
+            const cachedText = await cachedVersionResponse.text();
+            const cachedMatch = cachedText.match(/const\s+APP_VERSION\s*=\s*['"]([^'"]+)['"]/);
+            const oldVersion = cachedMatch ? cachedMatch[1] : null;
+            
+            if (oldVersion && oldVersion !== newVersion) {
+              console.log(`[SW] Nova versão detectada durante fetch: ${oldVersion} -> ${newVersion}`);
+              // Notificar clientes imediatamente
+              await notifyClientsAboutUpdate(newVersion);
+              // Limpar todos os caches
+              const cacheNames = await caches.keys();
+              await Promise.all(cacheNames.map(name => caches.delete(name)));
+              // Recriar cache com nova versão
+              await caches.open(STATIC_CACHE);
+            }
+          }
+        }
+        
+        return response;
+      }).catch(() => {
+        // Se falhar, tentar do cache
+        return caches.match(request);
+      })
+    );
     return;
   }
   
@@ -261,6 +377,41 @@ self.addEventListener('message', (event) => {
     event.waitUntil(
       caches.open(STATIC_CACHE).then((cache) => {
         return cache.addAll(event.data.urls);
+      })
+    );
+  }
+  
+  // Verificar versão quando solicitado pelo app
+  if (event.data && event.data.type === 'CHECK_VERSION') {
+    event.waitUntil(
+      getCurrentVersion().then(async (currentVersion) => {
+        if (currentVersion) {
+          const cache = await caches.open(STATIC_CACHE);
+          const cachedVersionResponse = await cache.match('/version.js');
+          let storedVersion = null;
+          
+          if (cachedVersionResponse) {
+            const cachedText = await cachedVersionResponse.text();
+            const match = cachedText.match(/const\s+APP_VERSION\s*=\s*['"]([^'"]+)['"]/);
+            storedVersion = match ? match[1] : null;
+          }
+          
+          if (storedVersion && storedVersion !== currentVersion) {
+            await notifyClientsAboutUpdate(currentVersion);
+            // Limpar todos os caches
+            const cacheNames = await caches.keys();
+            await Promise.all(cacheNames.map(name => caches.delete(name)));
+          }
+          
+          // Responder com a versão atual
+          if (event.ports && event.ports[0]) {
+            event.ports[0].postMessage({
+              type: 'VERSION_RESPONSE',
+              version: currentVersion,
+              hasUpdate: storedVersion && storedVersion !== currentVersion
+            });
+          }
+        }
       })
     );
   }

@@ -292,6 +292,11 @@ function App() {
   const [pushPermission, setPushPermission] = useState('default');
   const [pushLoading, setPushLoading] = useState(false);
 
+  // App Version State
+  const [appVersion, setAppVersion] = useState(() => {
+    return window.APP_VERSION || '1.01';
+  });
+
   // Dev Mode Functions
   const isDevMode = () => {
     return localStorage.getItem('dev') === 'true';
@@ -395,12 +400,53 @@ function App() {
           setInterval(() => {
             registration.update();
           }, 60000); // A cada minuto
+
+          // Escutar mensagens do service worker sobre atualizações de versão
+          navigator.serviceWorker.addEventListener('message', (event) => {
+            if (event.data && event.data.type === 'VERSION_UPDATE') {
+              console.log('Nova versão detectada:', event.data.version);
+              // Forçar reload imediato
+              window.location.reload();
+            }
+          });
         })
         .catch((error) => {
           console.error('Erro ao registrar Service Worker:', error);
         });
     }
-  }, []);
+
+    // Verificar versão periodicamente
+    const checkVersion = async () => {
+      try {
+        const response = await fetch('/version.js', { cache: 'no-store' });
+        const text = await response.text();
+        const match = text.match(/const\s+APP_VERSION\s*=\s*['"]([^'"]+)['"]/);
+        const currentVersion = match ? match[1] : null;
+        
+        if (currentVersion && currentVersion !== appVersion) {
+          console.log(`Nova versão detectada: ${appVersion} -> ${currentVersion}`);
+          // Solicitar verificação ao service worker
+          if (navigator.serviceWorker.controller) {
+            navigator.serviceWorker.controller.postMessage({ type: 'CHECK_VERSION' });
+          }
+          // Forçar reload
+          window.location.reload();
+        }
+      } catch (error) {
+        console.error('Erro ao verificar versão:', error);
+      }
+    };
+
+    // Verificar versão a cada 30 segundos
+    const versionInterval = setInterval(checkVersion, 30000);
+    
+    // Verificar imediatamente ao carregar
+    checkVersion();
+
+    return () => {
+      clearInterval(versionInterval);
+    };
+  }, [appVersion]);
 
   // Handler para atualizar app
   const handleUpdateApp = () => {
@@ -2014,6 +2060,9 @@ function App() {
         <h1 className="text-2xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
           <img src="logoflashcard.ico" alt="NihonGo Deck" className="w-8 h-8" />
           NihonGo Deck
+          <span className="text-[10px] font-normal text-gray-500 dark:text-gray-400 opacity-70" title={`Versão ${appVersion}`}>
+            v{appVersion}
+          </span>
           {isDevMode() && (
             <span className="px-2 py-1 text-xs font-bold bg-purple-500 text-white rounded animate-pulse" title="Modo Desenvolvedor Ativo">
               DEV

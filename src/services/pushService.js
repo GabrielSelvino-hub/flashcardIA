@@ -75,13 +75,19 @@ async function getVapidPublicKey() {
 
   try {
     const response = await fetch(`${pushServerUrl}/api/push/vapid-public-key`);
+    const data = await response.json().catch(() => ({}));
     if (!response.ok) {
-      throw new Error('Erro ao obter chave VAPID');
+      const msg = data.error || 'Erro ao obter chave VAPID';
+      throw new Error(msg === 'VAPID keys não configuradas'
+        ? 'Servidor sem chaves VAPID. No servidor, execute: npx web-push generate-vapid-keys e configure o .env'
+        : msg);
     }
-    const data = await response.json();
     vapidPublicKey = data.publicKey;
     return vapidPublicKey;
   } catch (error) {
+    if (error.name === 'TypeError' && error.message.includes('fetch')) {
+      throw new Error('Servidor de push inacessível. Verifique se o servidor está rodando em ' + pushServerUrl);
+    }
     console.error('Erro ao obter chave VAPID:', error);
     throw error;
   }
@@ -147,8 +153,10 @@ async function subscribe(userId = null) {
       })
     });
 
+    const responseData = await response.json().catch(() => ({}));
     if (!response.ok) {
-      throw new Error('Erro ao registrar subscription no servidor');
+      const serverMessage = responseData.error || 'Erro ao registrar subscription no servidor';
+      throw new Error(serverMessage);
     }
 
     // Salvar subscription localmente
@@ -160,10 +168,13 @@ async function subscribe(userId = null) {
     };
   } catch (error) {
     console.error('Erro ao registrar subscription:', error);
-    
+
     let errorMessage = 'Erro ao registrar subscription';
     if (error.message) {
       errorMessage = error.message;
+    }
+    if (error.name === 'TypeError' && (error.message.includes('fetch') || error.message.includes('Failed to fetch'))) {
+      errorMessage = 'Servidor de push inacessível. Inicie o servidor (pasta server) e configure as chaves VAPID no .env';
     }
 
     return {

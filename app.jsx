@@ -1903,56 +1903,17 @@ Exemplo de formato válido:
     }
   };
 
-  // --- SUB-VIEWS ---
-
-  const StatsView = () => {
-    const now = Date.now();
+  // --- HELPERS ESTATÍSTICAS (fonte única: reviewHistory) ---
+  const getReviewsByDay = (decksList) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const todayStart = today.getTime();
     const dayMs = 24 * 60 * 60 * 1000;
     const weekAgo = todayStart - 7 * dayMs;
     const monthAgo = todayStart - 30 * dayMs;
-
-    // --- Status dos cards (definições corretas) ---
-    let totalCards = 0;
-    let newCards = 0;       // interval === 0 (nunca revisados com sucesso)
-    let dueCards = 0;       // nextReview <= now && interval > 0
-    let inLearning = 0;     // 0 < interval <= 7 && nextReview > now
-    let masteredCards = 0;  // interval > 7
-    const totalDecks = decks.length;
-
-    let totalReviewCount = 0;
-    let correctReviewCount = 0;
-
-    decks.forEach(deck => {
-      totalCards += deck.cards.length;
-      deck.cards.forEach(card => {
-        const iv = card.interval ?? 0;
-        const next = card.nextReview ?? 0;
-        if (iv === 0) newCards++;
-        else if (next <= now && iv > 0) dueCards++;
-        else if (iv > 0 && iv <= 7 && next > now) inLearning++;
-        else if (iv > 7) masteredCards++;
-
-        if (card.reviewHistory && card.reviewHistory.length > 0) {
-          card.reviewHistory.forEach(r => {
-            totalReviewCount++;
-            if (r.quality === 2) correctReviewCount++;
-          });
-        }
-      });
-    });
-
-    const accuracyGlobal = totalReviewCount > 0 ? Math.round((correctReviewCount / totalReviewCount) * 100) : 0;
-
-    // --- Revisões por período (a partir de reviewHistory) ---
-    let reviewsToday = 0;
-    let reviewsThisWeek = 0;
-    let reviewsThisMonth = 0;
-    const reviewsByDay = {}; // timestamp (start of day) -> count
-
-    decks.forEach(deck => {
+    const reviewsByDay = {};
+    let reviewsToday = 0, reviewsThisWeek = 0, reviewsThisMonth = 0;
+    decksList.forEach(deck => {
       deck.cards.forEach(card => {
         if (!card.reviewHistory) return;
         card.reviewHistory.forEach(review => {
@@ -1966,48 +1927,108 @@ Exemplo de formato válido:
         });
       });
     });
+    return { reviewsByDay, reviewsToday, reviewsThisWeek, reviewsThisMonth, todayStart, dayMs };
+  };
 
-    // --- Dias com pelo menos 1 revisão (para streaks) ---
+  const getCardStatusAndQuality = (decksList, now) => {
+    let totalCards = 0, newCards = 0, dueCards = 0, inLearning = 0, masteredCards = 0;
+    let totalReviewCount = 0, correctReviewCount = 0;
+    const qualityCounts = { 0: 0, 1: 0, 2: 0 };
+    decksList.forEach(deck => {
+      deck.cards.forEach(card => {
+        const iv = card.interval ?? 0;
+        const next = card.nextReview ?? 0;
+        totalCards++;
+        if (iv === 0) newCards++;
+        else if (next <= now && iv > 0) dueCards++;
+        else if (iv > 0 && iv <= 7 && next > now) inLearning++;
+        else if (iv > 7) masteredCards++;
+        if (card.reviewHistory && card.reviewHistory.length > 0) {
+          card.reviewHistory.forEach(r => {
+            totalReviewCount++;
+            if (r.quality === 2) correctReviewCount++;
+            const q = r.quality;
+            if (q === 0 || q === 1 || q === 2) qualityCounts[q] = (qualityCounts[q] || 0) + 1;
+          });
+        }
+      });
+    });
+    const accuracyGlobal = totalReviewCount > 0 ? Math.round((correctReviewCount / totalReviewCount) * 100) : 0;
+    return { totalCards, newCards, dueCards, inLearning, masteredCards, totalReviewCount, correctReviewCount, accuracyGlobal, qualityCounts };
+  };
+
+  const getStreaks = (reviewsByDay, todayStart, dayMs) => {
     const daysWithReviews = Object.keys(reviewsByDay).map(Number).sort((a, b) => a - b);
-
-    const getCurrentStreak = () => {
-      if (daysWithReviews.length === 0) return 0;
-      let streak = 0;
+    let currentStreak = 0;
+    if (daysWithReviews.length > 0) {
       let check = todayStart;
       while (true) {
         if (daysWithReviews.includes(check)) {
-          streak++;
+          currentStreak++;
           check -= dayMs;
         } else {
-          if (streak === 0 && check === todayStart) {
-            check -= dayMs;
-            continue;
-          }
+          if (currentStreak === 0 && check === todayStart) { check -= dayMs; continue; }
           break;
         }
       }
-      return streak;
-    };
-
-    const getBestStreak = () => {
-      if (daysWithReviews.length === 0) return 0;
-      let best = 1;
+    }
+    let bestStreak = 0;
+    if (daysWithReviews.length > 0) {
+      bestStreak = 1;
       let current = 1;
       for (let i = 1; i < daysWithReviews.length; i++) {
         if (daysWithReviews[i] - daysWithReviews[i - 1] === dayMs) {
           current++;
-          if (current > best) best = current;
-        } else {
-          current = 1;
-        }
+          if (current > bestStreak) bestStreak = current;
+        } else current = 1;
       }
-      return best;
-    };
+    }
+    return { currentStreak, bestStreak };
+  };
 
-    const currentStreak = getCurrentStreak();
-    const bestStreak = getBestStreak();
+  const getChartDataForDays = (reviewsByDay, todayStart, dayMs, numDays) => {
+    const chartData = [];
+    for (let i = numDays - 1; i >= 0; i--) {
+      const date = new Date(todayStart - i * dayMs);
+      const dateStr = date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+      const count = reviewsByDay[date.getTime()] || 0;
+      chartData.push({ date: dateStr, count, ts: date.getTime() });
+    }
+    const maxChart = Math.max(...chartData.map(r => r.count), 1);
+    return { chartData, maxChart };
+  };
 
-    // --- Meta diária (localStorage) ---
+  const getDeckStats = (deck, now) => {
+    const deckTotal = deck.cards.length;
+    let deckNew = 0, deckDue = 0, deckInLearning = 0, deckMastered = 0, deckReviews = 0, deckCorrect = 0;
+    deck.cards.forEach(card => {
+      const iv = card.interval ?? 0;
+      const next = card.nextReview ?? 0;
+      if (iv === 0) deckNew++;
+      else if (next <= now && iv > 0) deckDue++;
+      else if (iv > 0 && iv <= 7 && next > now) deckInLearning++;
+      else if (iv > 7) deckMastered++;
+      if (card.reviewHistory) {
+        card.reviewHistory.forEach(r => {
+          deckReviews++;
+          if (r.quality === 2) deckCorrect++;
+        });
+      }
+    });
+    const deckAccuracy = deckReviews > 0 ? Math.round((deckCorrect / deckReviews) * 100) : 0;
+    const progressPct = deckTotal > 0 ? Math.round(((deckInLearning + deckMastered) / deckTotal) * 100) : 0;
+    return { deckTotal, deckNew, deckDue, deckInLearning, deckMastered, deckReviews, deckAccuracy, progressPct };
+  };
+
+  // --- SUB-VIEWS ---
+
+  const StatsView = () => {
+    const now = Date.now();
+    const { reviewsByDay, reviewsToday, reviewsThisWeek, reviewsThisMonth, todayStart, dayMs } = getReviewsByDay(decks);
+    const { totalCards, newCards, dueCards, inLearning, masteredCards, totalReviewCount, correctReviewCount, accuracyGlobal, qualityCounts } = getCardStatusAndQuality(decks, now);
+    const { currentStreak, bestStreak } = getStreaks(reviewsByDay, todayStart, dayMs);
+    const totalDecks = decks.length;
+
     const defaultDailyGoal = 20;
     const [dailyGoal, setDailyGoalState] = useState(() => {
       try {
@@ -2025,41 +2046,46 @@ Exemplo de formato válido:
 
     const goal = dailyGoal;
     const hitGoalToday = reviewsToday >= goal;
-    let daysHitGoalWeek = 0;
-    let daysHitGoalMonth = 0;
+    let daysHitGoalWeek = 0, daysHitGoalMonth = 0, daysActiveThisWeek = 0;
     for (let i = 0; i <= 6; i++) {
       const dayStart = todayStart - i * dayMs;
       const count = reviewsByDay[dayStart] || 0;
       if (count >= goal) daysHitGoalWeek++;
+      if (count > 0) daysActiveThisWeek++;
     }
     for (let i = 0; i < 30; i++) {
       const dayStart = todayStart - i * dayMs;
-      const count = reviewsByDay[dayStart] || 0;
-      if (count >= goal) daysHitGoalMonth++;
+      if ((reviewsByDay[dayStart] || 0) >= goal) daysHitGoalMonth++;
     }
 
-    // --- Gráfico últimos 7 dias ---
-    const chartData = [];
-    for (let i = 6; i >= 0; i--) {
-      const date = new Date(todayStart - i * dayMs);
-      const dateStr = date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
-      const count = reviewsByDay[date.getTime()] || 0;
-      chartData.push({ date: dateStr, count, ts: date.getTime() });
+    const [chartPeriod, setChartPeriod] = useState(7);
+    const { chartData, maxChart } = getChartDataForDays(reviewsByDay, todayStart, dayMs, chartPeriod);
+
+    // Calendário 30 dias (para heatmap)
+    const calendarDays = [];
+    for (let i = 29; i >= 0; i--) {
+      const dayStart = todayStart - i * dayMs;
+      const count = reviewsByDay[dayStart] || 0;
+      const hitGoal = count >= goal;
+      const date = new Date(dayStart);
+      calendarDays.push({ ts: dayStart, count, hitGoal, label: date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }) });
     }
-    const maxChart = Math.max(...chartData.map(r => r.count), 1);
+
+    const q0 = qualityCounts[0] || 0, q1 = qualityCounts[1] || 0, q2 = qualityCounts[2] || 0;
+    const totalQ = q0 + q1 + q2;
 
     return (
-      <div className="p-4 max-w-2xl mx-auto pb-24 overflow-x-hidden">
+      <div className="p-4 max-w-2xl md:max-w-3xl mx-auto pb-24 overflow-x-hidden">
         <div className="flex items-center mb-6 min-h-[44px]">
-          <button onClick={() => setView('home')} className="p-2 -ml-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg mr-2 min-h-[44px] min-w-[44px] flex items-center justify-center touch-target">
+          <button onClick={() => setView('home')} className="p-2 -ml-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg mr-2 min-h-[44px] min-w-[44px] flex items-center justify-center touch-target" aria-label="Voltar">
             <ChevronLeft size={20} className="text-gray-800 dark:text-white" />
           </button>
           <h2 className="text-xl font-bold text-gray-800 dark:text-white">Estatísticas</h2>
         </div>
 
         <div className="space-y-4">
-          {/* Resumo: Total, Baralhos, Revisões hoje, Taxa de acerto */}
-          <div className="grid grid-cols-2 gap-4">
+          {/* Resumo expandido: Total, Baralhos, Revisões hoje/semana/mês, Taxa de acerto */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800 min-h-[80px] flex flex-col justify-center">
               <div className="text-2xl sm:text-3xl font-bold text-blue-600 dark:text-blue-400">{totalCards}</div>
               <div className="text-xs text-blue-800 dark:text-blue-300 uppercase font-semibold mt-1">Total de Cards</div>
@@ -2072,78 +2098,117 @@ Exemplo de formato válido:
               <div className="text-2xl sm:text-3xl font-bold text-emerald-600 dark:text-emerald-400">{reviewsToday}</div>
               <div className="text-xs text-emerald-800 dark:text-emerald-300 uppercase font-semibold mt-1">Revisões Hoje</div>
             </div>
+            <div className="bg-teal-50 dark:bg-teal-900/20 p-4 rounded-lg border border-teal-200 dark:border-teal-800 min-h-[80px] flex flex-col justify-center">
+              <div className="text-2xl sm:text-3xl font-bold text-teal-600 dark:text-teal-400">{reviewsThisWeek}</div>
+              <div className="text-xs text-teal-800 dark:text-teal-300 uppercase font-semibold mt-1">Revisões Esta Semana</div>
+            </div>
+            <div className="bg-cyan-50 dark:bg-cyan-900/20 p-4 rounded-lg border border-cyan-200 dark:border-cyan-800 min-h-[80px] flex flex-col justify-center">
+              <div className="text-2xl sm:text-3xl font-bold text-cyan-600 dark:text-cyan-400">{reviewsThisMonth}</div>
+              <div className="text-xs text-cyan-800 dark:text-cyan-300 uppercase font-semibold mt-1">Revisões Este Mês</div>
+            </div>
             <div className="bg-amber-50 dark:bg-amber-900/20 p-4 rounded-lg border border-amber-200 dark:border-amber-800 min-h-[80px] flex flex-col justify-center">
               <div className="text-2xl sm:text-3xl font-bold text-amber-600 dark:text-amber-400">{totalReviewCount > 0 ? accuracyGlobal + '%' : '—'}</div>
               <div className="text-xs text-amber-800 dark:text-amber-300 uppercase font-semibold mt-1">Taxa de Acerto</div>
             </div>
           </div>
 
-          {/* Cards por Status */}
+          {/* Distribuição por qualidade */}
+          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+            <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-4">Distribuição por Qualidade</h3>
+            {totalQ === 0 ? (
+              <p className="text-sm text-gray-500 dark:text-gray-400">Nenhuma revisão registrada ainda.</p>
+            ) : (
+              <>
+                <div className="grid grid-cols-3 gap-3 mb-3">
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full bg-red-500 shrink-0" aria-hidden />
+                    <span className="text-sm text-gray-700 dark:text-gray-300">Não sei</span>
+                    <span className="text-sm font-bold text-gray-800 dark:text-white ml-auto">{q0} ({totalQ > 0 ? Math.round((q0 / totalQ) * 100) : 0}%)</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full bg-yellow-500 shrink-0" aria-hidden />
+                    <span className="text-sm text-gray-700 dark:text-gray-300">Dúvida</span>
+                    <span className="text-sm font-bold text-gray-800 dark:text-white ml-auto">{q1} ({totalQ > 0 ? Math.round((q1 / totalQ) * 100) : 0}%)</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full bg-green-500 shrink-0" aria-hidden />
+                    <span className="text-sm text-gray-700 dark:text-gray-300">Sei</span>
+                    <span className="text-sm font-bold text-gray-800 dark:text-white ml-auto">{q2} ({totalQ > 0 ? Math.round((q2 / totalQ) * 100) : 0}%)</span>
+                  </div>
+                </div>
+                <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden flex min-h-[12px]">
+                  <div className="h-full bg-red-500 rounded-l" style={{ width: `${totalQ > 0 ? (q0 / totalQ) * 100 : 0}%` }} />
+                  <div className="h-full bg-yellow-500" style={{ width: `${totalQ > 0 ? (q1 / totalQ) * 100 : 0}%` }} />
+                  <div className="h-full bg-green-500 rounded-r" style={{ width: `${totalQ > 0 ? (q2 / totalQ) * 100 : 0}%` }} />
+                </div>
+              </>
+            )}
+          </div>
+
+          {/* Cards por Status — barra única empilhada */}
           <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
             <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-4">Cards por Status</h3>
             <div className="space-y-3">
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-red-500 shrink-0" aria-hidden></div>
+                  <div className="w-3 h-3 rounded-full bg-red-500 shrink-0" aria-hidden />
                   <span className="text-sm text-gray-700 dark:text-gray-300">Novos</span>
                 </div>
                 <span className="text-lg font-bold text-gray-800 dark:text-white">{newCards}</span>
               </div>
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-yellow-500 shrink-0" aria-hidden></div>
+                  <div className="w-3 h-3 rounded-full bg-yellow-500 shrink-0" aria-hidden />
                   <span className="text-sm text-gray-700 dark:text-gray-300">Para Revisar</span>
                 </div>
                 <span className="text-lg font-bold text-gray-800 dark:text-white">{dueCards}</span>
               </div>
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-blue-500 shrink-0" aria-hidden></div>
+                  <div className="w-3 h-3 rounded-full bg-blue-500 shrink-0" aria-hidden />
                   <span className="text-sm text-gray-700 dark:text-gray-300">Em Aprendizado</span>
                 </div>
                 <span className="text-lg font-bold text-gray-800 dark:text-white">{inLearning}</span>
               </div>
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-green-500 shrink-0" aria-hidden></div>
+                  <div className="w-3 h-3 rounded-full bg-green-500 shrink-0" aria-hidden />
                   <span className="text-sm text-gray-700 dark:text-gray-300">Dominados</span>
                 </div>
                 <span className="text-lg font-bold text-gray-800 dark:text-white">{masteredCards}</span>
               </div>
             </div>
             {totalCards > 0 && (
-              <div className="mt-4 space-y-2 min-h-[8px]">
-                <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-                  <div className="h-full bg-red-500 rounded-full" style={{ width: `${(newCards / totalCards) * 100}%` }}></div>
-                </div>
-                <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-                  <div className="h-full bg-yellow-500 rounded-full" style={{ width: `${(dueCards / totalCards) * 100}%` }}></div>
-                </div>
-                <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-                  <div className="h-full bg-blue-500 rounded-full" style={{ width: `${(inLearning / totalCards) * 100}%` }}></div>
-                </div>
-                <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-                  <div className="h-full bg-green-500 rounded-full" style={{ width: `${(masteredCards / totalCards) * 100}%` }}></div>
+              <div className="mt-4 min-h-[8px]">
+                <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden flex">
+                  <div className="h-full bg-red-500 rounded-l" style={{ width: `${(newCards / totalCards) * 100}%` }} title={`Novos: ${newCards}`} />
+                  <div className="h-full bg-yellow-500" style={{ width: `${(dueCards / totalCards) * 100}%` }} title={`Para revisar: ${dueCards}`} />
+                  <div className="h-full bg-blue-500" style={{ width: `${(inLearning / totalCards) * 100}%` }} title={`Em aprendizado: ${inLearning}`} />
+                  <div className="h-full bg-green-500 rounded-r" style={{ width: `${(masteredCards / totalCards) * 100}%` }} title={`Dominados: ${masteredCards}`} />
                 </div>
               </div>
             )}
           </div>
 
-          {/* Ofensivas: Streaks + Meta diária */}
+          {/* Ofensivas: Streaks + Meta + Calendário + Ofensiva da semana */}
           <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
             <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-4">Ofensivas</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               <div className="space-y-3">
-                <div className="p-3 bg-gray-50 dark:bg-gray-900 rounded-lg">
-                  <div className="text-2xl font-bold text-gray-800 dark:text-white">{currentStreak}</div>
-                  <div className="text-xs text-gray-500 dark:text-gray-400 uppercase font-semibold mt-1">Sequência atual (dias)</div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="p-3 bg-gray-50 dark:bg-gray-900 rounded-lg">
+                    <div className="text-2xl font-bold text-gray-800 dark:text-white">{currentStreak}</div>
+                    <div className="text-xs text-gray-500 dark:text-gray-400 uppercase font-semibold mt-1">Sequência atual (dias)</div>
+                  </div>
+                  <div className="p-3 bg-gray-50 dark:bg-gray-900 rounded-lg">
+                    <div className="text-2xl font-bold text-gray-800 dark:text-white">{bestStreak}</div>
+                    <div className="text-xs text-gray-500 dark:text-gray-400 uppercase font-semibold mt-1">Melhor sequência</div>
+                  </div>
                 </div>
                 <div className="p-3 bg-gray-50 dark:bg-gray-900 rounded-lg">
-                  <div className="text-2xl font-bold text-gray-800 dark:text-white">{bestStreak}</div>
-                  <div className="text-xs text-gray-500 dark:text-gray-400 uppercase font-semibold mt-1">Melhor sequência (dias)</div>
+                  <div className="text-lg font-bold text-gray-800 dark:text-white">Ofensiva da semana</div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">{daysActiveThisWeek}/7 dias ativos</div>
                 </div>
-              </div>
-              <div className="space-y-3">
                 <div className="p-3 bg-gray-50 dark:bg-gray-900 rounded-lg flex flex-wrap items-center justify-between gap-2">
                   <div>
                     <div className="text-lg font-bold text-gray-800 dark:text-white">Meta: {goal}/dia</div>
@@ -2157,6 +2222,7 @@ Exemplo de formato válido:
                       value={goal}
                       onChange={(e) => setDailyGoal(e.target.value)}
                       className="w-16 px-2 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-white text-sm min-h-[44px] touch-target"
+                      aria-label="Meta de revisões por dia"
                     />
                   </label>
                 </div>
@@ -2165,12 +2231,41 @@ Exemplo de formato válido:
                   <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">Esta semana: {daysHitGoalWeek} · Este mês: {daysHitGoalMonth}</div>
                 </div>
               </div>
+              <div className="space-y-2">
+                <div className="text-sm font-semibold text-gray-700 dark:text-gray-300">Calendário de atividade (30 dias)</div>
+                <div className="grid grid-cols-7 gap-1" role="grid" aria-label="Calendário de revisões dos últimos 30 dias">
+                  {calendarDays.map((day, idx) => (
+                    <div
+                      key={idx}
+                      className={`aspect-square min-w-[8px] rounded border border-gray-200 dark:border-gray-600 flex items-center justify-center text-[10px] font-medium touch-target ${day.count === 0 ? 'bg-gray-200 dark:bg-gray-600 text-gray-500 dark:text-gray-400' : day.hitGoal ? 'bg-emerald-500 text-white' : 'bg-blue-400 text-white'}`}
+                      title={`${day.label}: ${day.count} revisões${day.hitGoal ? ' (meta batida)' : ''}`}
+                      aria-label={`${day.label} ${day.count} revisões`}
+                    >
+                      {day.count > 0 ? day.count : ''}
+                    </div>
+                  ))}
+                </div>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Toque em um dia para ver detalhes. Cinza = sem revisões; azul = com revisões; verde = meta batida.</p>
+              </div>
             </div>
           </div>
 
-          {/* Revisões nos últimos 7 dias */}
+          {/* Gráfico revisões — seletor 7 / 14 / 30 dias */}
           <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
-            <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-4">Revisões nos Últimos 7 Dias</h3>
+            <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
+              <h3 className="text-lg font-bold text-gray-800 dark:text-white">Revisões por Período</h3>
+              <div className="flex rounded-lg overflow-hidden border border-gray-300 dark:border-gray-600">
+                {[7, 14, 30].map(n => (
+                  <button
+                    key={n}
+                    onClick={() => setChartPeriod(n)}
+                    className={`px-3 py-2 text-sm font-medium min-h-[44px] touch-target ${chartPeriod === n ? 'bg-blue-600 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'}`}
+                  >
+                    {n} dias
+                  </button>
+                ))}
+              </div>
+            </div>
             <div className="flex items-end justify-between gap-1 h-36 min-h-[120px]">
               {chartData.map((day, idx) => (
                 <div key={idx} className="flex-1 flex flex-col items-center justify-end min-w-0">
@@ -2185,7 +2280,7 @@ Exemplo de formato válido:
             </div>
           </div>
 
-          {/* Estatísticas por Baralho */}
+          {/* Estatísticas por Baralho (funções centralizadas + minigráfico) */}
           <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
             <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-4">Estatísticas por Baralho</h3>
             {decks.length === 0 ? (
@@ -2193,28 +2288,7 @@ Exemplo de formato válido:
             ) : (
               <div className="space-y-3">
                 {decks.map(deck => {
-                  const deckTotal = deck.cards.length;
-                  const deckNew = deck.cards.filter(c => (c.interval ?? 0) === 0).length;
-                  const deckDue = deck.cards.filter(c => (c.nextReview ?? 0) <= now && (c.interval ?? 0) > 0).length;
-                  const deckInLearning = deck.cards.filter(c => {
-                    const iv = c.interval ?? 0;
-                    const next = c.nextReview ?? 0;
-                    return iv > 0 && iv <= 7 && next > now;
-                  }).length;
-                  const deckMastered = deck.cards.filter(c => (c.interval ?? 0) > 7).length;
-                  let deckReviews = 0;
-                  let deckCorrect = 0;
-                  deck.cards.forEach(card => {
-                    if (card.reviewHistory) {
-                      card.reviewHistory.forEach(r => {
-                        deckReviews++;
-                        if (r.quality === 2) deckCorrect++;
-                      });
-                    }
-                  });
-                  const deckAccuracy = deckReviews > 0 ? Math.round((deckCorrect / deckReviews) * 100) : 0;
-                  const progressPct = deckTotal > 0 ? Math.round(((deckInLearning + deckMastered) / deckTotal) * 100) : 0;
-
+                  const { deckTotal, deckNew, deckDue, deckInLearning, deckMastered, deckReviews, deckAccuracy, progressPct } = getDeckStats(deck, now);
                   return (
                     <div key={deck.id} className="p-3 bg-gray-50 dark:bg-gray-900 rounded-lg">
                       <div className="flex justify-between items-start mb-2">
@@ -2242,11 +2316,11 @@ Exemplo de formato válido:
                               <span className="text-gray-500 dark:text-gray-400">Progresso</span>
                               <span className="font-semibold text-gray-700 dark:text-gray-300">{progressPct}%</span>
                             </div>
-                            <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 min-h-[8px]">
-                              <div
-                                className="bg-blue-600 h-2 rounded-full transition-all min-h-[8px]"
-                                style={{ width: `${progressPct}%` }}
-                              />
+                            <div className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden flex min-h-[8px]">
+                              <div className="h-full bg-red-500 rounded-l" style={{ width: `${(deckNew / deckTotal) * 100}%` }} />
+                              <div className="h-full bg-yellow-500" style={{ width: `${(deckDue / deckTotal) * 100}%` }} />
+                              <div className="h-full bg-blue-500" style={{ width: `${(deckInLearning / deckTotal) * 100}%` }} />
+                              <div className="h-full bg-green-500 rounded-r" style={{ width: `${(deckMastered / deckTotal) * 100}%` }} />
                             </div>
                           </div>
                           <div className="mt-2 text-xs">

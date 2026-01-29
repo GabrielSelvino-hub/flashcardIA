@@ -91,11 +91,11 @@ const KanjiCard = ({ kanji, reading, meaning, showBack, size = 'normal', furigan
 };
 
 // --- GENERIC MODAL COMPONENT ---
-const Modal = ({ isOpen, onClose, title, children }) => {
+const Modal = ({ isOpen, onClose, title, children, maxWidthClass = 'max-w-sm' }) => {
   if (!isOpen) return null;
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm safe-top safe-bottom safe-left safe-right">
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-sm overflow-hidden border border-gray-200 dark:border-gray-700">
+      <div className={`bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full ${maxWidthClass} overflow-hidden border border-gray-200 dark:border-gray-700`}>
         <div className="px-6 py-4 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
           <h3 className="font-bold text-lg text-gray-800 dark:text-white">{title}</h3>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 touch-target">
@@ -233,6 +233,7 @@ function App() {
   // Modal States
   const [modalConfig, setModalConfig] = useState({ type: null, data: null });
   const [tempInput, setTempInput] = useState('');
+  const [notesInput, setNotesInput] = useState('');
 
   // JSONBin Sync States
   const [jsonbinBinId, setJsonbinBinId] = useState(() => 
@@ -596,6 +597,7 @@ function App() {
   const closeModal = () => {
     setModalConfig({ type: null, data: null });
     setTempInput('');
+    setNotesInput('');
     setNewCardForm({ kanji: '', reading: '', meaning: '' });
   };
 
@@ -618,6 +620,11 @@ function App() {
   const showAddCardModal = () => {
     setNewCardForm({ kanji: '', reading: '', meaning: '' });
     setModalConfig({ type: 'add_card', data: null });
+  };
+
+  const showNotesToCardsModal = () => {
+    setNotesInput('');
+    setModalConfig({ type: 'notes_to_cards', data: null });
   };
 
   const saveNewCard = () => {
@@ -1843,6 +1850,86 @@ function App() {
     }
   };
 
+  const handleGenerateFromNotes = async (notesText) => {
+    const trimmed = (notesText || '').trim();
+    if (!trimmed) return;
+
+    const apiKey = localStorage.getItem('gemini_api_key');
+    if (!apiKey) {
+      showAlert('Por favor, configure sua chave API do Gemini primeiro.');
+      setShowApiKeyModal(true);
+      return;
+    }
+
+    if (!activeDeckId) {
+      showAlert('Nenhum baralho selecionado. Abra um baralho primeiro.');
+      return;
+    }
+
+    setIsGenerating(true);
+    const promptText = `
+Analise as seguintes anotações de aula e crie flashcards de vocabulário/conceitos em japonês.
+
+ANOTAÇÕES:
+---
+${trimmed}
+---
+
+Regras:
+1. Extraia termos, conceitos e vocabulário relevantes para estudo de japonês.
+2. DECIDA VOCÊ MESMO quantos flashcards criar: com base na quantidade e densidade do conteúdo, crie entre 3 e 50 flashcards. Poucas anotações = poucos cards; muitas anotações = mais cards, mas só conceitos que valem virar card.
+3. Cada flashcard: "kanji" (kanji ou palavra em japonês), "reading" (leitura em hiragana/katakana), "meaning" (significado em português).
+4. A resposta deve ser APENAS um array JSON válido. Sem markdown (como \`\`\`json), sem texto antes ou depois.
+
+Exemplo de formato válido:
+[{"kanji": "猫", "reading": "ねこ", "meaning": "Gato"}, {"kanji": "犬", "reading": "いぬ", "meaning": "Cachorro"}]
+`;
+
+    try {
+      const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: promptText }] }]
+          })
+        }
+      );
+
+      if (!response.ok) throw new Error('Falha na conexão com a IA');
+
+      const data = await response.json();
+      const textResponse = data.candidates?.[0]?.content?.parts?.[0]?.text;
+
+      if (!textResponse) throw new Error('Resposta vazia da IA');
+
+      const jsonString = textResponse.replace(/```json\n?|```/g, '').trim();
+      const newCards = JSON.parse(jsonString);
+
+      if (Array.isArray(newCards) && newCards.length > 0) {
+        const validCards = newCards.filter(
+          c => c && typeof c.kanji === 'string' && typeof c.reading === 'string' && typeof c.meaning === 'string'
+        ).map(c => ({ kanji: String(c.kanji), reading: String(c.reading), meaning: String(c.meaning) }));
+        if (validCards.length > 0) {
+          addCardsToActiveDeck(validCards);
+          closeModal();
+          showAlert(`${validCards.length} flashcard(s) criado(s) a partir das suas anotações.`);
+          setView('deck');
+        } else {
+          throw new Error('Nenhum card válido na resposta');
+        }
+      } else {
+        throw new Error('Formato inválido recebido');
+      }
+    } catch (error) {
+      console.error(error);
+      showAlert('Não foi possível gerar os cards a partir das anotações. Tente novamente ou verifique sua conexão.');
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
   // --- SUB-VIEWS ---
 
   const StatsView = () => {
@@ -2393,6 +2480,13 @@ function App() {
                <Sparkles size={20} />
                Gerar com IA
              </button>
+             <button 
+               onClick={showNotesToCardsModal}
+               className="col-span-2 w-full bg-gray-600 text-white py-3 rounded-lg font-bold shadow-md hover:bg-gray-700 active:scale-95 transition flex items-center justify-center gap-2"
+             >
+               <List size={20} />
+               Anotações
+             </button>
            </div>
            
            <div className="grid grid-cols-2 gap-3">
@@ -2678,6 +2772,19 @@ function App() {
                 ))}
               </div>
             )}
+          </div>
+
+          <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 mb-6">
+            <button
+              onClick={showNotesToCardsModal}
+              className="w-full py-3 rounded-lg font-medium text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600 flex items-center justify-center gap-2 transition"
+            >
+              <List size={20} />
+              Criar a partir de anotações
+            </button>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 text-center">
+              Cole suas anotações de aula e a IA criará a quantidade de flashcards adequada.
+            </p>
           </div>
 
         <div className="bg-indigo-50 dark:bg-indigo-900/20 p-4 rounded-lg border border-indigo-200 dark:border-indigo-800 mb-6">
@@ -3867,6 +3974,46 @@ function App() {
            >
              Criar
            </button>
+        </Modal>
+      )}
+
+      {modalConfig.type === 'notes_to_cards' && (
+        <Modal isOpen={true} onClose={closeModal} title="Anotações de aula → Flashcards" maxWidthClass="max-w-lg">
+          <div className="space-y-4">
+            <textarea
+              value={notesInput}
+              onChange={(e) => setNotesInput(e.target.value)}
+              placeholder="Cole aqui todas as anotações da aula..."
+              className="w-full min-h-[200px] p-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-800 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none transition resize-y"
+              disabled={isGenerating}
+            />
+            <p className="text-xs text-gray-500 dark:text-gray-400">
+              A IA analisará o texto e criará a quantidade de flashcards adequada ao conteúdo (entre 3 e 50).
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={closeModal}
+                className="flex-1 py-3 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 font-medium"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={() => handleGenerateFromNotes(notesInput)}
+                disabled={!notesInput.trim() || isGenerating}
+                className="flex-1 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-bold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              >
+                {isGenerating ? (
+                  <>
+                    <RefreshCw size={18} className="animate-spin" /> Gerando...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles size={18} /> Gerar flashcards
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
         </Modal>
       )}
 

@@ -229,6 +229,7 @@ function App() {
   const [testShowResult, setTestShowResult] = useState(false);
   const [testCompleted, setTestCompleted] = useState(false);
   const [testPassed, setTestPassed] = useState(false);
+  const [testQuestionsCount, setTestQuestionsCount] = useState(10); // 10 até o total de cards do baralho
 
   // Modal States
   const [modalConfig, setModalConfig] = useState({ type: null, data: null });
@@ -573,7 +574,8 @@ function App() {
           }
         } else if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
-          if (testScore.wrong < 4 && testCurrentIndex < testQueue.length - 1) {
+          const maxErrors = Math.floor(testQueue.length * 0.4);
+          if (testScore.wrong < maxErrors && testCurrentIndex < testQueue.length - 1) {
             nextTestQuestion();
           }
         }
@@ -1492,7 +1494,7 @@ function App() {
     setView('quick-review');
   };
 
-  const startWritingReview = (deckId, answerType = 'meaning', forceAll = false) => {
+  const startWritingReview = (deckId, answerType = 'meaning', forceAll = false, questionCount = null) => {
     const deck = decks.find(d => d.id === deckId);
     if (!deck || deck.cards.length === 0) {
       showAlert('Este baralho está vazio. Adicione cards primeiro.');
@@ -1503,7 +1505,9 @@ function App() {
     let cardsToReview = [];
 
     if (forceAll) {
-      cardsToReview = [...deck.cards];
+      const count = questionCount != null ? Math.min(Math.max(10, questionCount), deck.cards.length) : deck.cards.length;
+      const shuffled = shuffleArray([...deck.cards]);
+      cardsToReview = shuffled.slice(0, count);
     } else {
       cardsToReview = deck.cards.filter(c => c.nextReview <= now);
     }
@@ -1541,6 +1545,11 @@ function App() {
       .trim();
   };
 
+  // Normalizar leitura em japonês (só trim e espaços; não alterar caracteres)
+  const normalizeReading = (text) => {
+    return (text || '').trim().replace(/\s+/g, '');
+  };
+
   const checkWritingAnswer = () => {
     const card = reviewQueue[currentCardIndex];
     if (!card || !writingInput.trim()) return;
@@ -1548,14 +1557,23 @@ function App() {
     const correctAnswer = writingAnswerType === 'meaning' ? card.meaning : card.reading;
     const userAnswer = writingInput.trim();
     
-    // Normaliza ambas as respostas para comparação
-    const normalizedCorrect = normalizeText(correctAnswer);
-    const normalizedUser = normalizeText(userAnswer);
+    // Normaliza para comparação conforme o tipo (português vs japonês)
+    const normalizedCorrect = writingAnswerType === 'meaning' ? normalizeText(correctAnswer) : normalizeReading(correctAnswer);
+    const normalizedUserMeaning = normalizeText(userAnswer);
+    const normalizedUserReading = normalizeReading(userAnswer);
     
-    // Comparação exata ou com pequena tolerância
-    const isCorrect = normalizedCorrect === normalizedUser || 
-                     normalizedCorrect.includes(normalizedUser) ||
-                     normalizedUser.includes(normalizedCorrect);
+    // Correto se bater com a resposta esperada (significado ou leitura)
+    let isCorrect = writingAnswerType === 'meaning'
+      ? (normalizedCorrect === normalizedUserMeaning || normalizedCorrect.includes(normalizedUserMeaning) || normalizedUserMeaning.includes(normalizedCorrect))
+      : (normalizedCorrect === normalizedUserReading || normalizedCorrect.includes(normalizedUserReading) || normalizedUserReading.includes(normalizedCorrect));
+    
+    // No modo "significado": também aceita a leitura em japonês como correta (teste de escrita em japonês)
+    if (writingAnswerType === 'meaning' && !isCorrect) {
+      const normalizedReading = normalizeReading(card.reading);
+      isCorrect = normalizedReading === normalizedUserReading ||
+                  normalizedReading.includes(normalizedUserReading) ||
+                  normalizedUserReading.includes(normalizedReading);
+    }
 
     setWritingResult(isCorrect ? 'correct' : 'wrong');
     
@@ -1655,14 +1673,16 @@ function App() {
   // --- TEST LOGIC ---
   const startTest = (deckId, testType) => {
     const deck = decks.find(d => d.id === deckId);
-    if (!deck || deck.cards.length < 10) {
+    if (!deck) return;
+    const count = Math.min(Math.max(10, testQuestionsCount), deck.cards.length);
+    if (deck.cards.length < 10) {
       showAlert('Este baralho precisa ter pelo menos 10 cards para fazer um teste.');
       return;
     }
 
-    // Seleciona 10 cards aleatórios
+    // Seleciona N cards aleatórios (N = até o total de cards do baralho)
     const shuffled = shuffleArray([...deck.cards]);
-    const selectedCards = shuffled.slice(0, 10);
+    const selectedCards = shuffled.slice(0, count);
     
     setTestQueue(selectedCards);
     setTestCurrentIndex(0);
@@ -1724,10 +1744,11 @@ function App() {
         wrong: isCorrect ? prev.wrong : prev.wrong + 1
       };
       
-      // Verifica se perdeu (4 ou mais erros) ou completou todas as questões
+      // Verifica se perdeu (40% ou mais erros) ou completou todas as questões
       const isLastQuestion = testCurrentIndex === testQueue.length - 1;
+      const maxErrors = Math.floor(testQueue.length * 0.4);
       
-      if (newScore.wrong >= 4) {
+      if (newScore.wrong >= maxErrors) {
         // Perdeu - vai direto para resultado após um pequeno delay
         setTimeout(() => {
           setTestCompleted(true);
@@ -1748,8 +1769,9 @@ function App() {
   };
 
   const nextTestQuestion = () => {
-    // Se já perdeu ou completou, não deve chegar aqui
-    if (testScore.wrong >= 4 || testCurrentIndex >= testQueue.length - 1) {
+    // Se já perdeu (40% ou mais erros) ou completou, não deve chegar aqui
+    const maxErrors = Math.floor(testQueue.length * 0.4);
+    if (testScore.wrong >= maxErrors || testCurrentIndex >= testQueue.length - 1) {
       return;
     }
     
@@ -3066,7 +3088,7 @@ Exemplo de formato válido:
              reading={card.reading}
              meaning={card.meaning}
              showBack={false}
-             furiganaMode={writingAnswerType === 'reading' ? 'never' : 'always'}
+             furiganaMode="never"
              size="large"
            />
         </div>
@@ -3106,7 +3128,11 @@ Exemplo de formato válido:
             <div className="bg-red-50 dark:bg-red-900/20 p-3 rounded-lg border border-red-200 dark:border-red-800 animate-fadeIn">
               <p className="text-red-800 dark:text-red-200 font-semibold text-center mb-2">✗ Incorreto</p>
               <p className="text-sm text-red-700 dark:text-red-300 text-center">
-                Resposta correta: <strong>{correctAnswer}</strong>
+                {writingAnswerType === 'meaning' ? (
+                  <>Resposta correta: <strong>{card.meaning}</strong> (significado) ou <strong>{card.reading}</strong> (leitura em japonês)</>
+                ) : (
+                  <>Resposta correta: <strong>{correctAnswer}</strong></>
+                )}
               </p>
             </div>
           )}
@@ -3150,10 +3176,25 @@ Exemplo de formato válido:
           <h2 className="text-xl font-bold text-gray-800 dark:text-white">Escolher Tipo de Teste</h2>
         </div>
 
-        <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg mb-6 border border-blue-200 dark:border-blue-800">
-          <p className="text-sm text-blue-800 dark:text-blue-200">
-            <strong>Regras do Teste:</strong> Você responderá 10 questões. Se errar 4 ou mais, precisará recomeçar o mesmo teste.
+        <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg mb-4 border border-blue-200 dark:border-blue-800">
+          <p className="text-sm text-blue-800 dark:text-blue-200 mb-3">
+            <strong>Regras do Teste:</strong> Você responderá {testQuestionsCount} questões. Para passar, precisa de pelo menos 60% de acertos (máximo {Math.floor(testQuestionsCount * 0.4)} erros permitidos).
           </p>
+          <div className="flex items-center gap-2">
+            <label htmlFor="test-questions-count" className="text-sm font-medium text-blue-800 dark:text-blue-200 whitespace-nowrap">
+              Número de questões:
+            </label>
+            <select
+              id="test-questions-count"
+              value={Math.min(testQuestionsCount, deck.cards.length)}
+              onChange={(e) => setTestQuestionsCount(Number(e.target.value))}
+              className="flex-1 min-w-0 px-3 py-2 bg-white dark:bg-gray-800 border border-blue-300 dark:border-blue-700 rounded-lg text-gray-800 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+            >
+              {Array.from({ length: Math.max(0, deck.cards.length - Math.min(10, deck.cards.length) + 1) }, (_, i) => Math.min(10, deck.cards.length) + i).filter((n) => n >= 1).map((n) => (
+                <option key={n} value={n}>{n}</option>
+              ))}
+            </select>
+          </div>
         </div>
 
         <div className="flex-1 flex flex-col justify-center gap-4">
@@ -3188,10 +3229,10 @@ Exemplo de formato válido:
           </button>
 
           <button
-            onClick={() => startWritingReview(activeDeckId, 'meaning', true)}
-            disabled={deck.cards.length === 0}
+            onClick={() => startWritingReview(activeDeckId, 'meaning', true, testQuestionsCount)}
+            disabled={deck.cards.length < 10}
             className={`w-full p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg border-2 border-gray-200 dark:border-gray-700 hover:border-orange-500 dark:hover:border-orange-500 transition-all ${
-              deck.cards.length === 0 ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer active:scale-95'
+              deck.cards.length < 10 ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer active:scale-95'
             }`}
           >
             <div className="text-left">
@@ -3209,7 +3250,7 @@ Exemplo de formato válido:
         {deck.cards.length < 10 && (
           <div className="mt-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
             <p className="text-sm text-yellow-800 dark:text-yellow-200 text-center">
-              Este baralho precisa ter pelo menos 10 cards para fazer um teste. Atualmente tem {deck.cards.length} cards.
+              O baralho precisa ter pelo menos 10 cards para fazer um teste. Atualmente tem {deck.cards.length} cards.
             </p>
           </div>
         )}
@@ -3223,16 +3264,17 @@ Exemplo de formato válido:
 
     const correctAnswer = testMode === 'translation' ? currentCard.meaning : currentCard.reading;
     const isCorrect = testSelectedAnswer === correctAnswer;
+    const maxErrors = Math.floor(testQueue.length * 0.4);
 
     return (
       <div className="h-full flex flex-col p-4 max-w-xl mx-auto">
         <div className="flex justify-between items-center mb-4">
           <div className="text-sm text-gray-500 dark:text-gray-400">
-            <span className="font-semibold">Questão {testCurrentIndex + 1} / 10</span>
+            <span className="font-semibold">Questão {testCurrentIndex + 1} / {testQueue.length}</span>
           </div>
           <div className="text-sm">
-            <span className={`font-bold ${testScore.wrong >= 3 ? 'text-red-600 dark:text-red-400' : 'text-gray-600 dark:text-gray-400'}`}>
-              Erros: {testScore.wrong} / 4
+            <span className={`font-bold ${testScore.wrong >= maxErrors ? 'text-red-600 dark:text-red-400' : 'text-gray-600 dark:text-gray-400'}`}>
+              Erros: {testScore.wrong} / {maxErrors}
             </span>
           </div>
         </div>
@@ -3292,16 +3334,18 @@ Exemplo de formato válido:
             {isCorrect ? (
               <div className="bg-green-50 dark:bg-green-900/20 p-3 rounded-lg border border-green-200 dark:border-green-800 text-center">
                 <p className="text-green-800 dark:text-green-200 font-semibold">✓ Correto!</p>
+                <p className="text-gray-600 dark:text-gray-400 text-sm mt-1">Significado: {currentCard.meaning}</p>
               </div>
             ) : (
               <div className="bg-red-50 dark:bg-red-900/20 p-3 rounded-lg border border-red-200 dark:border-red-800 text-center">
                 <p className="text-red-800 dark:text-red-200 font-semibold">✗ Incorreto. A resposta correta é: {correctAnswer}</p>
+                <p className="text-gray-600 dark:text-gray-400 text-sm mt-1">Significado: {currentCard.meaning}</p>
               </div>
             )}
           </div>
         )}
 
-        {testShowResult && testScore.wrong < 4 && testCurrentIndex < testQueue.length - 1 && (
+        {testShowResult && testScore.wrong < maxErrors && testCurrentIndex < testQueue.length - 1 && (
           <button
             onClick={nextTestQuestion}
             className="w-full bg-red-600 text-white py-4 rounded-lg font-bold shadow-lg hover:bg-red-700 active:scale-95 transition"
@@ -3310,7 +3354,7 @@ Exemplo de formato válido:
           </button>
         )}
         
-        {testShowResult && (testScore.wrong >= 4 || testCurrentIndex >= testQueue.length - 1) && (
+        {testShowResult && (testScore.wrong >= maxErrors || testCurrentIndex >= testQueue.length - 1) && (
           <div className="w-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 py-4 rounded-lg font-medium text-center">
             Carregando resultado...
           </div>

@@ -1,0 +1,19 @@
+# Dependências
+node_modules/
+
+# Ícones gerados (fonte: favicon.png → npm run icons)
+icon-*.png
+apple-touch-icon.png
+
+# Ambiente e logs
+.env
+.env.local
+*.log
+
+# Sistema e IDE
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.idea/
+.vscode/

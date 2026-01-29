@@ -284,11 +284,6 @@ function App() {
     localStorage.getItem('last_sync_time') || null
   );
 
-  // Geolocation States
-  const [useLocation, setUseLocation] = useState(false);
-  const [currentLocation, setCurrentLocation] = useState(null);
-  const [locationError, setLocationError] = useState(null);
-
   // Push Notifications States
   const [pushEnabled, setPushEnabled] = useState(false);
   const [pushPermission, setPushPermission] = useState('default');
@@ -613,9 +608,6 @@ function App() {
 
   const showPrompt = () => {
     setTempInput('');
-    setUseLocation(false);
-    setCurrentLocation(null);
-    setLocationError(null);
     setModalConfig({ type: 'create_deck', data: null });
   };
 
@@ -725,7 +717,7 @@ function App() {
   };
 
   // Actions
-  const createDeck = async (name) => {
+  const createDeck = (name) => {
     const newDeck = { 
       id: generateId(), 
       name, 
@@ -733,49 +725,8 @@ function App() {
       createdAt: new Date().toISOString()
     };
 
-    // Adicionar localização se solicitado e disponível
-    if (useLocation && currentLocation) {
-      newDeck.location = {
-        latitude: currentLocation.latitude,
-        longitude: currentLocation.longitude,
-        accuracy: currentLocation.accuracy,
-        timestamp: currentLocation.timestamp
-      };
-    }
-
     setDecks([...decks, newDeck]);
     closeModal();
-    setUseLocation(false);
-    setCurrentLocation(null);
-    setLocationError(null);
-  };
-
-  // Obter localização para novo deck
-  const handleGetLocation = async () => {
-    if (!window.geolocationService) {
-      setLocationError('Serviço de geolocalização não disponível');
-      return;
-    }
-
-    if (!window.geolocationService.isAvailable()) {
-      setLocationError('Geolocalização não está disponível neste navegador');
-      return;
-    }
-
-    setLocationError(null);
-    setUseLocation(true);
-
-    const result = await window.geolocationService.getCurrentPosition({
-      enableHighAccuracy: true,
-      timeout: 10000
-    });
-
-    if (result.success) {
-      setCurrentLocation(result.location);
-    } else {
-      setLocationError(result.error);
-      setUseLocation(false);
-    }
   };
 
   const deleteDeck = (id) => {
@@ -3977,39 +3928,6 @@ Exemplo de formato válido:
                 if (e.key === 'Enter' && tempInput.trim()) createDeck(tempInput);
               }}
            />
-           
-           {/* Opção de localização */}
-           <div className="mb-4">
-             <button
-               onClick={handleGetLocation}
-               disabled={useLocation && currentLocation !== null}
-               className={`w-full py-2 px-4 rounded-lg border-2 transition touch-target ${
-                 useLocation && currentLocation
-                   ? 'bg-green-100 dark:bg-green-900 border-green-500 text-green-700 dark:text-green-300'
-                   : 'bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
-               }`}
-             >
-               {useLocation && currentLocation ? (
-                 <span className="flex items-center justify-center gap-2">
-                   <Check size={18} />
-                   Localização obtida
-                 </span>
-               ) : (
-                 <span className="flex items-center justify-center gap-2">
-                   📍 Usar localização atual
-                 </span>
-               )}
-             </button>
-             {locationError && (
-               <p className="mt-2 text-sm text-red-600 dark:text-red-400">{locationError}</p>
-             )}
-             {currentLocation && (
-               <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
-                 {currentLocation.latitude.toFixed(6)}, {currentLocation.longitude.toFixed(6)}
-                 {currentLocation.accuracy && ` (±${Math.round(currentLocation.accuracy)}m)`}
-               </p>
-             )}
-           </div>
 
            <button 
              onClick={() => tempInput.trim() && createDeck(tempInput)}

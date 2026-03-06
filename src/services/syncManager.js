@@ -36,20 +36,62 @@ function resolveConflict(localItem, serverItem) {
   return serverTime > localTime ? serverItem : localItem;
 }
 
-// Sincronizar um item do outbox
+// Sincronizar um item do outbox (API quando logado, senão JSONBin)
 async function syncOutboxItem(item) {
-  if (!window.jsonbinService || !window.offlineStorage) {
+  if (!window.offlineStorage) {
     throw new Error('Serviços não disponíveis');
   }
 
+  const useApi = window.apiService && window.apiService.isLoggedIn();
   const { type, data } = item;
   let result = { success: false, error: null };
+
+  if (useApi) {
+    try {
+      if (type === 'deck_create' || type === 'deck_update') {
+        const payload = { decks: data.decks || [], tags: data.tags || [] };
+        const syncResult = await window.apiService.updateUserData(payload);
+        result.success = syncResult.success;
+        result.error = syncResult.error;
+      } else if (type === 'card_create' || type === 'card_update') {
+        const syncResult = await window.apiService.getSync();
+        if (!syncResult.success || !syncResult.data) {
+          result.error = syncResult.error || 'Erro ao buscar dados';
+          return result;
+        }
+        const userData = syncResult.data;
+        const decks = userData.decks || [];
+        const deckIndex = decks.findIndex(d => d.id === data.deckId);
+        if (deckIndex >= 0) {
+          const deck = decks[deckIndex];
+          const cards = deck.cards || [];
+          if (type === 'card_create') cards.push(data.card);
+          else {
+            const cardIndex = cards.findIndex(c => c.id === data.cardId);
+            if (cardIndex >= 0) cards[cardIndex] = { ...cards[cardIndex], ...data.card };
+            else cards.push(data.card);
+          }
+          deck.cards = cards;
+          decks[deckIndex] = deck;
+          const updateResult = await window.apiService.updateUserData({ decks, tags: userData.tags || [] });
+          result.success = updateResult.success;
+          result.error = updateResult.error;
+        } else result.error = 'Deck não encontrado';
+      } else result.error = `Tipo desconhecido: ${type}`;
+    } catch (err) {
+      result.error = err.message;
+    }
+    return result;
+  }
+
+  if (!window.jsonbinService) {
+    throw new Error('Serviços não disponíveis');
+  }
 
   try {
     switch (type) {
       case 'deck_create':
       case 'deck_update': {
-        // Buscar userId do localStorage
         const userId = localStorage.getItem('jsonbin_bin_id');
         if (!userId) {
           throw new Error('User ID não encontrado');

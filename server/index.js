@@ -182,7 +182,7 @@ app.get('/api/version', (req, res) => {
 // Servir frontend (index.html, app.jsx, scripts, etc.) da raiz do projeto
 app.use(express.static(path.join(__dirname, '..')));
 
-// ----- Start -----
+// ----- Start (só quando rodar node index.js; no Vercel o app é exportado) -----
 async function start() {
   if (!process.env.DATABASE_URL) {
     console.error('⚠️  DATABASE_URL não configurada no .env');
@@ -202,4 +202,8 @@ async function start() {
   });
 }
 
-start();
+if (require.main === module) {
+  start();
+}
+
+module.exports = { app, start };

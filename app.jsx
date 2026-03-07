@@ -25,7 +25,7 @@ const AlertCircle = ({ size, className }) => <Icon size={size} className={classN
 const Sparkles = ({ size, className }) => <Icon size={size} className={className}><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/></Icon>;
 const Check = ({ size, className }) => <Icon size={size} className={className}><polyline points="20 6 9 17 4 12"/></Icon>;
 const Award = ({ size, className }) => <Icon size={size} className={className}><circle cx="12" cy="8" r="6"/><polyline points="9 12 2 22 12 20 22 22 15 12"/></Icon>;
-const Settings = ({ size, className }) => <Icon size={size} className={className}><circle cx="12" cy="12" r="3"/><path d="M12 1v6m0 6v6M5.64 5.64l4.24 4.24m4.24 4.24l4.24 4.24M1 12h6m6 0h6M5.64 18.36l4.24-4.24m4.24-4.24l4.24-4.24"/></Icon>;
+const Settings = ({ size, className }) => <Icon size={size} className={className}><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></Icon>;
 const List = ({ size, className }) => <Icon size={size} className={className}><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></Icon>;
 const Grid = ({ size, className }) => <Icon size={size} className={className}><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></Icon>;
 const Keyboard = ({ size, className }) => <Icon size={size} className={className}><rect x="2" y="4" width="20" height="16" rx="2" ry="2"/><line x1="6" y1="8" x2="8" y2="8"/><line x1="10" y1="8" x2="12" y2="8"/><line x1="14" y1="8" x2="16" y2="8"/><line x1="18" y1="8" x2="18" y2="8"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="16" x2="12" y2="16"/></Icon>;
@@ -34,6 +34,66 @@ const History = ({ size, className }) => <Icon size={size} className={className}
 const Tag = ({ size, className }) => <Icon size={size} className={className}><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><circle cx="7" cy="7" r="1.5"/></Icon>;
 const Search = ({ size, className }) => <Icon size={size} className={className}><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></Icon>;
 const Filter = ({ size, className }) => <Icon size={size} className={className}><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></Icon>;
+const ArrowLeft = ({ size, className }) => <Icon size={size} className={className}><path d="M19 12H5M12 19l-7-7 7-7"/></Icon>;
+const Flame = ({ size, className }) => <Icon size={size} className={className}><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></Icon>;
+const Zap = ({ size, className }) => <Icon size={size} className={className}><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></Icon>;
+const Layers = ({ size, className }) => <Icon size={size} className={className}><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/></Icon>;
+const Target = ({ size, className }) => <Icon size={size} className={className}><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></Icon>;
+const Pencil = ({ size, className }) => <Icon size={size} className={className}><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></Icon>;
+const MessageCircle = ({ size, className }) => <Icon size={size} className={className}><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></Icon>;
+const BarChart2 = ({ size, className }) => <Icon size={size} className={className}><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></Icon>;
+const XCircle = ({ size, className }) => <Icon size={size} className={className}><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></Icon>;
+const ChevronDown = ({ size, className }) => <Icon size={size} className={className}><path d="m6 9 6 6 6-6"/></Icon>;
+const User = ({ size, className }) => <Icon size={size} className={className}><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></Icon>;
+const Mail = ({ size, className }) => <Icon size={size} className={className}><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></Icon>;
+const Lock = ({ size, className }) => <Icon size={size} className={className}><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></Icon>;
+
+// --- DUO DESIGN: BASE COMPONENTS ---
+const DuoButton = ({ children, variant = 'primary', className = '', fullWidth = false, disabled, ...props }) => {
+  const variants = {
+    primary: 'bg-[#58cc02] border-[#46a302] text-white hover:bg-[#61e002]',
+    secondary: 'bg-[#1cb0f6] border-[#1899d6] text-white hover:bg-[#20c4ff]',
+    outline: 'bg-white border-[#e5e5e5] text-[#afafaf] border-b-2 active:border-b-2 dark:bg-[#1b2c35] dark:border-[#37464f] dark:text-white',
+    danger: 'bg-[#ff4b4b] border-[#d33131] text-white',
+    warning: 'bg-[#ff9600] border-[#e18600] text-white',
+    indigo: 'bg-[#5844ed] border-[#4636be] text-white',
+    white: 'bg-white border-[#e5e5e5] text-[#4b4b4b] border-b-4 active:border-b-2 dark:bg-[#1b2c35] dark:border-[#37464f] dark:text-white',
+  };
+  const is3D = !['outline'].includes(variant);
+  return (
+    <button
+      className={`px-6 py-3 rounded-2xl font-black uppercase tracking-wider text-sm transition-all active:translate-y-1 active:border-b-0 disabled:opacity-50 disabled:cursor-not-allowed disabled:active:translate-y-0
+        ${is3D ? 'border-b-4' : 'border-2'}
+        ${variants[variant] || variants.primary}
+        ${fullWidth ? 'w-full' : ''}
+        ${className}
+        flex items-center justify-center gap-2 select-none`}
+      disabled={disabled}
+      {...props}
+    >
+      {children}
+    </button>
+  );
+};
+
+const DuoCard = ({ children, className = '', active = false, interactive = false, ...props }) => (
+  <div className={`bg-white dark:bg-[#1b2c35] border-2 rounded-2xl transition-all p-4
+    ${active ? 'border-[#84d8ff] bg-[#ddf4ff] dark:bg-blue-900/20' : 'border-[#e5e5e5] dark:border-[#37464f] shadow-sm'}
+    ${interactive ? 'active:translate-y-0.5 cursor-pointer' : ''}
+    ${className}`}
+    {...props}>
+    {children}
+  </div>
+);
+
+const ProgressBar = ({ progress, color = '#58cc02' }) => (
+  <div className="h-4 w-full bg-[#e5e5e5] dark:bg-[#37464f] rounded-full overflow-hidden">
+    <div
+      className="h-full transition-all duration-1000 rounded-full"
+      style={{ width: `${Math.min(100, Math.max(0, progress))}%`, backgroundColor: color, boxShadow: 'inset 0 -4px 0 rgba(0,0,0,0.1)' }}
+    />
+  </div>
+);
 
 // --- DATA STRUCTURES & HELPERS ---
 
@@ -90,16 +150,16 @@ const KanjiCard = ({ kanji, reading, meaning, showBack, size = 'normal', furigan
   );
 };
 
-// --- GENERIC MODAL COMPONENT ---
+// --- DUO MODAL (rounded, border-t, font-black) ---
 const Modal = ({ isOpen, onClose, title, children, maxWidthClass = 'max-w-sm' }) => {
   if (!isOpen) return null;
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm safe-top safe-bottom safe-left safe-right">
-      <div className={`bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full ${maxWidthClass} overflow-hidden border border-gray-200 dark:border-gray-700`}>
-        <div className="px-6 py-4 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
-          <h3 className="font-bold text-lg text-gray-800 dark:text-white">{title}</h3>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 touch-target">
-            <X size={20} />
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-black/60 backdrop-blur-sm safe-top safe-bottom safe-left safe-right">
+      <div className={`bg-white dark:bg-[#131f24] w-full ${maxWidthClass} rounded-[40px] overflow-hidden shadow-2xl border-t-4 border-[#e5e5e5] dark:border-[#37464f] animate-in slide-in-from-bottom-20`}>
+        <div className="px-6 pt-6 pb-2 flex justify-between items-center">
+          <h3 className="font-black text-xl uppercase tracking-tighter text-[#4b4b4b] dark:text-white">{title}</h3>
+          <button onClick={onClose} className="p-2 text-[#afafaf] hover:text-[#4b4b4b] dark:hover:text-white touch-target rounded-2xl">
+            <X size={24} />
           </button>
         </div>
         <div className="p-6">
@@ -112,16 +172,18 @@ const Modal = ({ isOpen, onClose, title, children, maxWidthClass = 'max-w-sm' })
 
 // --- UX MOBILE COMPONENTS ---
 
-// Indicador de Status Online/Offline
+// Indicador de Status Online/Offline (estilo Duo: paleta e tipografia)
 const OfflineIndicator = ({ isOnline, pendingCount = 0 }) => {
   if (isOnline && pendingCount === 0) return null;
-  
   return (
-    <div className={`fixed top-0 left-0 right-0 z-40 safe-top ${isOnline ? 'bg-blue-500' : 'bg-red-500'} text-white text-center py-2 px-4 text-sm font-medium shadow-md`}>
+    <div
+      className="fixed top-0 left-0 right-0 max-w-md mx-auto z-40 safe-top text-white text-center py-2 px-4 text-sm font-black uppercase tracking-wider shadow-md"
+      style={{ backgroundColor: !isOnline ? '#ff4b4b' : '#1cb0f6' }}
+    >
       {!isOnline ? (
-        <span>🔴 Sem conexão - Modo offline</span>
+        <span>Sem conexão — Modo offline</span>
       ) : pendingCount > 0 ? (
-        <span>🔄 {pendingCount} item(s) pendente(s) de sincronização</span>
+        <span>{pendingCount} item(s) pendente(s) de sincronização</span>
       ) : null}
     </div>
   );
@@ -168,27 +230,143 @@ const SyncStatus = ({ isSyncing, lastSync, onSync }) => {
   );
 };
 
-// Notificação de Atualização do App
+// Notificação de Atualização do App (estilo Duo: bordas, DuoButtons)
 const UpdateNotification = ({ onUpdate, onDismiss }) => {
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 bg-blue-600 text-white p-4 shadow-lg safe-bottom safe-left safe-right">
-      <div className="flex items-center justify-between gap-4">
+    <div className="fixed bottom-0 left-0 right-0 max-w-md mx-auto z-50 bg-white dark:bg-[#1b2c35] border-t-2 border-[#e5e5e5] dark:border-[#37464f] p-4 shadow-[0_-4px_12px_rgba(0,0,0,0.08)] dark:shadow-[0_-4px_12px_rgba(0,0,0,0.3)] safe-bottom safe-left safe-right">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex-1">
-          <p className="font-medium">Nova versão disponível!</p>
-          <p className="text-sm opacity-90">Atualize para obter as últimas melhorias.</p>
+          <p className="font-black text-[#4b4b4b] dark:text-white uppercase tracking-tighter">Nova versão disponível!</p>
+          <p className="text-sm font-bold text-[#afafaf] dark:text-zinc-400 mt-1">Atualize para obter as últimas melhorias.</p>
         </div>
-        <div className="flex gap-2">
-          <button
-            onClick={onDismiss}
-            className="px-3 py-2 bg-blue-700 rounded touch-target text-sm"
-          >
-            Depois
+        <div className="flex gap-3">
+          <DuoButton variant="outline" onClick={onDismiss} className="shrink-0">Depois</DuoButton>
+          <DuoButton variant="primary" onClick={onUpdate} className="shrink-0">Atualizar</DuoButton>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// --- TELA DE LOGIN FULL-SCREEN (estilo Nihongo Deck) ---
+const LoginView = ({ onBack, onLoginSuccess, showAlert }) => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
+  const [isRegister, setIsRegister] = useState(false);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    if (!email.trim() || !password) {
+      setError('Preencha e-mail e senha.');
+      return;
+    }
+    if (isRegister && password.length < 6) {
+      setError('Senha deve ter no mínimo 6 caracteres.');
+      return;
+    }
+    if (!window.apiService) {
+      setError('Serviço não carregado. Recarregue a página.');
+      return;
+    }
+    setLoading(true);
+    try {
+      const result = isRegister
+        ? await window.apiService.register(email.trim(), password, name.trim())
+        : await window.apiService.login(email.trim(), password);
+      if (result.success) {
+        onLoginSuccess(result.user);
+        showAlert('Login realizado com sucesso!');
+        onBack();
+      } else {
+        setError(result.error || 'Erro ao entrar.');
+      }
+    } catch (err) {
+      setError(err.message || 'Erro de conexão.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const green = '#5ACD00';
+  const blue = '#00AEEF';
+  const inputClass = 'w-full bg-[#F3F4F6] dark:bg-[#1b2c35] border-none rounded-2xl py-4 pl-12 pr-4 text-gray-700 dark:text-white placeholder:text-gray-400 focus:ring-2 focus:ring-[#5ACD00] outline-none transition-all font-medium';
+
+  return (
+    <div className="min-h-screen bg-white dark:bg-[#131f24] flex flex-col items-center justify-center p-6 font-sans select-none safe-top safe-bottom">
+      <button onClick={onBack} className="absolute top-4 left-4 p-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white" aria-label="Voltar">
+        <ArrowLeft size={28} strokeWidth={3} />
+      </button>
+
+      <div className="w-full max-w-sm flex flex-col items-center">
+        {/* Logo e balão ようこそ */}
+        <div className="relative mb-6 flex justify-center">
+          <div className="w-20 h-20 flex items-center justify-center rounded-[28px] shadow-lg shadow-green-200 dark:shadow-none bg-[#5ACD00]" style={{ backgroundColor: green }}>
+            <Brain size={48} className="text-white shrink-0" style={{ color: 'white' }} />
+          </div>
+          <div className="absolute left-1/2 top-0 ml-10 sm:ml-12 bg-white dark:bg-[#1b2c35] px-3 py-1.5 rounded-2xl shadow-md border border-gray-100 dark:border-[#37464f] flex items-center gap-1 whitespace-nowrap">
+            <span className="text-xs font-bold text-gray-700 dark:text-gray-200">ようこそ!</span>
+            <span className="text-xs">✍️</span>
+          </div>
+        </div>
+
+        <h1 className="text-[#5ACD00] text-3xl font-black tracking-wider mb-1 text-center">NIHONGO DECK</h1>
+        <p className="text-gray-400 dark:text-gray-500 text-sm font-medium mb-10 text-center">Aprenda japonês do jeito viciante</p>
+
+        <form onSubmit={handleSubmit} className="w-full space-y-4">
+          {error && <p className="text-sm font-bold text-[#ff4b4b] text-center">{error}</p>}
+
+          <div className="relative group">
+            <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+              <Mail size={20} className="text-gray-400 group-focus-within:text-[#5ACD00] transition-colors" />
+            </div>
+            <input type="email" placeholder="E-mail" className={inputClass} value={email} onChange={(e) => setEmail(e.target.value)} required autoComplete="email" />
+          </div>
+
+          {isRegister && (
+            <div className="relative group">
+              <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+                <User size={20} className="text-gray-400 group-focus-within:text-[#5ACD00] transition-colors" />
+              </div>
+              <input type="text" placeholder="Nome (opcional)" className={inputClass} value={name} onChange={(e) => setName(e.target.value)} autoComplete="name" />
+            </div>
+          )}
+
+          <div className="relative group">
+            <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+              <Lock size={20} className="text-gray-400 group-focus-within:text-[#5ACD00] transition-colors" />
+            </div>
+            <input type="password" placeholder={isRegister ? 'Mínimo 6 caracteres' : 'Senha'} className={inputClass} value={password} onChange={(e) => setPassword(e.target.value)} required autoComplete={isRegister ? 'new-password' : 'current-password'} />
+          </div>
+
+          {!isRegister && (
+            <div className="flex justify-end pr-1">
+              <button type="button" className="text-[#00AEEF] text-[11px] font-black hover:underline tracking-tight" onClick={() => showAlert('Entre em contato para redefinir a senha.')}>ESQUECEU A SENHA?</button>
+            </div>
+          )}
+
+          <button type="submit" disabled={loading} className="w-full bg-[#5ACD00] hover:bg-[#4eb300] text-white font-black py-4 rounded-2xl shadow-lg shadow-green-100 dark:shadow-none transition-all active:scale-[0.98] mt-2 tracking-widest disabled:opacity-70">
+            {loading ? <span className="flex items-center justify-center gap-2"><RefreshCw size={20} className="animate-spin" /> Aguarde...</span> : (isRegister ? 'CADASTRAR' : 'ENTRAR')}
           </button>
-          <button
-            onClick={onUpdate}
-            className="px-4 py-2 bg-white text-blue-600 rounded font-medium touch-target text-sm"
-          >
-            Atualizar
+        </form>
+
+        <div className="w-full flex items-center my-8">
+          <div className="flex-grow h-[1px] bg-gray-200 dark:bg-[#37464f]" />
+          <span className="px-4 text-[10px] font-bold text-gray-400 tracking-widest">OU USE</span>
+          <div className="flex-grow h-[1px] bg-gray-200 dark:bg-[#37464f]" />
+        </div>
+
+        <button type="button" disabled className="w-full flex items-center justify-center gap-3 bg-white dark:bg-[#1b2c35] border border-gray-100 dark:border-[#37464f] rounded-2xl py-3 shadow-sm opacity-60 cursor-not-allowed">
+          <span className="text-gray-500 dark:text-gray-400 font-bold text-xs tracking-wider">CONTINUAR COM GOOGLE (em breve)</span>
+        </button>
+
+        <div className="mt-20 text-xs font-bold text-gray-400 dark:text-gray-500 tracking-tight">
+          {isRegister ? 'Já tem conta? ' : 'Ainda não tem conta? '}
+          <button type="button" className="text-[#00AEEF] hover:underline font-black" onClick={() => { setIsRegister(!isRegister); setError(''); }}>
+            {isRegister ? 'ENTRAR' : 'CADASTRE-SE'}
           </button>
         </div>
       </div>
@@ -204,7 +382,12 @@ function App() {
     return saved ? JSON.parse(saved) : INITIAL_DECKS;
   });
   
-  const [view, setView] = useState('home');
+  const [view, setView] = useState(() => {
+    try {
+      if (typeof window !== 'undefined' && window.apiService && window.apiService.isLoggedIn()) return 'home';
+    } catch (_) {}
+    return 'login';
+  });
   const [activeDeckId, setActiveDeckId] = useState(null);
   const [theme, setTheme] = useState('dark');
   const [reviewQueue, setReviewQueue] = useState([]);
@@ -244,6 +427,33 @@ function App() {
   const [jsonbinBinIdInput, setJsonbinBinIdInput] = useState('');
   const [showBinIdModal, setShowBinIdModal] = useState(false);
   const [binIdModalMode, setBinIdModalMode] = useState('insert'); // 'insert' ou 'edit'
+
+  // API Auth States (backend flashcard-api)
+  const [apiUser, setApiUser] = useState(() => {
+    try {
+      return (typeof window !== 'undefined' && window.apiService && window.apiService.getStoredUser()) || null;
+    } catch (_) {
+      return null;
+    }
+  });
+  const skipNextAutoSync = useRef(false);
+  const hasLoadedFromApi = useRef(false); // true após o primeiro getSync aplicar dados
+  const authCheckedOnMount = useRef(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [authMode, setAuthMode] = useState('login'); // 'login' | 'register'
+  const [authEmail, setAuthEmail] = useState('');
+  const [authPassword, setAuthPassword] = useState('');
+  const [authName, setAuthName] = useState('');
+  const [authError, setAuthError] = useState('');
+  const [authLoading, setAuthLoading] = useState(false);
+  const [showEditProfileModal, setShowEditProfileModal] = useState(false);
+  const [editProfileName, setEditProfileName] = useState('');
+  const [editProfileEmail, setEditProfileEmail] = useState('');
+  const [editProfileCurrentPassword, setEditProfileCurrentPassword] = useState('');
+  const [editProfileNewPassword, setEditProfileNewPassword] = useState('');
+  const [editProfileConfirmPassword, setEditProfileConfirmPassword] = useState('');
+  const [editProfileError, setEditProfileError] = useState('');
+  const [editProfileLoading, setEditProfileLoading] = useState(false);
 
   // Writing Mode States
   const [reviewMode, setReviewMode] = useState('visual'); // 'visual' | 'writing'
@@ -316,6 +526,106 @@ function App() {
     }
   }, [theme]);
 
+  // Validar token ao montar e forçar login se não logado
+  useEffect(() => {
+    if (authCheckedOnMount.current || typeof window === 'undefined' || !window.apiService) return;
+    authCheckedOnMount.current = true;
+    (async () => {
+      if (!window.apiService.isLoggedIn()) {
+        setView('login');
+        setApiUser(null);
+        return;
+      }
+      const result = await window.apiService.getMe();
+      if (result.success && result.user) {
+        setApiUser(result.user);
+        setView('home');
+      } else {
+        setApiUser(null);
+        setView('login');
+      }
+    })();
+  }, []);
+
+  // Guard: redirecionar para login se não estiver logado ao sair da tela de login
+  useEffect(() => {
+    if (typeof window === 'undefined' || !window.apiService) return;
+    if (view !== 'login' && !window.apiService.isLoggedIn()) {
+      setApiUser(null);
+      setView('login');
+    }
+  }, [view, apiUser]);
+
+  // Ao abrir a tela Editar perfil, preencher formulário com dados do usuário
+  useEffect(() => {
+    if (view === 'edit-profile' && apiUser) {
+      setEditProfileName(apiUser.name || '');
+      setEditProfileEmail(apiUser.email || '');
+      setEditProfileCurrentPassword('');
+      setEditProfileNewPassword('');
+      setEditProfileConfirmPassword('');
+      setEditProfileError('');
+    }
+  }, [view, apiUser]);
+
+  // Quando estiver logado na API, carregar baralhos e tags da API preservando reviewHistory local (estatísticas)
+  useEffect(() => {
+    if (!apiUser || !window.apiService || !window.apiService.isLoggedIn()) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const result = await window.apiService.getSync();
+        if (cancelled) return;
+        hasLoadedFromApi.current = true;
+        if (!result.success || !result.data) return;
+        const decksFromApi = result.data.decks || [];
+        const tagsFromApi = result.data.tags || [];
+        skipNextAutoSync.current = true;
+        setDecks(prev => {
+          const merged = decksFromApi.map(apiDeck => {
+            const localDeck = prev.find(d => d.id === apiDeck.id);
+            const cards = (apiDeck.cards || []).map(apiCard => {
+              const localCard = localDeck?.cards?.find(c => c.id === apiCard.id);
+              const reviewHistory = (localCard?.reviewHistory?.length ? localCard.reviewHistory : apiCard.reviewHistory) || [];
+              const qualityHistory = (localCard?.qualityHistory?.length ? localCard.qualityHistory : apiCard.qualityHistory) || [];
+              return { ...apiCard, reviewHistory, qualityHistory };
+            });
+            return { ...apiDeck, cards };
+          });
+          return merged;
+        });
+        setAvailableTags(tagsFromApi);
+        localStorage.setItem('nihongo_tags', JSON.stringify(tagsFromApi));
+        if (result.data.lastSync) {
+          setLastSyncTime(result.data.lastSync);
+          localStorage.setItem('last_sync_time', result.data.lastSync);
+        }
+      } catch (_) {}
+    })();
+    return () => { cancelled = true; };
+  }, [apiUser]);
+
+  // Sincronização automática com a API quando logado: envia decks/tags após alterações (debounce)
+  useEffect(() => {
+    if (!apiUser || !window.apiService || !window.apiService.isLoggedIn()) return;
+    if (!hasLoadedFromApi.current) return; // esperar o primeiro carregamento da API
+    if (skipNextAutoSync.current) {
+      skipNextAutoSync.current = false;
+      return;
+    }
+    const timer = setTimeout(async () => {
+      try {
+        const payload = { decks, tags: availableTags };
+        const result = await window.apiService.updateUserData(payload);
+        if (result.success && result.lastSync) {
+          setLastSyncTime(result.lastSync);
+          localStorage.setItem('last_sync_time', result.lastSync);
+        }
+      } catch (_) {}
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, [apiUser, decks, availableTags]);
+
   useEffect(() => {
     // Verifica se a chave API já foi salva
     const savedApiKey = localStorage.getItem('gemini_api_key');
@@ -324,14 +634,14 @@ function App() {
     }
   }, []);
 
-  // Monitorar status online/offline e sincronizar
+  // Monitorar status online/offline e sincronizar (API ou JSONBin)
+  const canSync = jsonbinBinId || (typeof window !== 'undefined' && window.apiService && window.apiService.isLoggedIn());
   useEffect(() => {
     const handleOnline = async () => {
       setIsOnline(true);
       console.log('Conexão restaurada');
       
-      // Sincronizar dados pendentes
-      if (window.syncManager && jsonbinBinId) {
+      if (window.syncManager && canSync) {
         try {
           const result = await window.syncManager.syncAll();
           if (result.success && result.synced > 0) {
@@ -354,7 +664,6 @@ function App() {
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
 
-    // Atualizar contagem de pendentes periodicamente
     const updatePendingCount = async () => {
       if (window.offlineStorage) {
         const count = await window.offlineStorage.getPendingCount();
@@ -363,14 +672,14 @@ function App() {
     };
 
     updatePendingCount();
-    const interval = setInterval(updatePendingCount, 30000); // A cada 30 segundos
+    const interval = setInterval(updatePendingCount, 30000);
 
     return () => {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
       clearInterval(interval);
     };
-  }, [jsonbinBinId]);
+  }, [jsonbinBinId, apiUser]);
 
   // Registrar Service Worker e detectar atualizações
   useEffect(() => {
@@ -829,25 +1138,60 @@ function App() {
     }));
   };
 
+  // Importar JSON da versão antiga: normaliza formato e salva direto na API (migração única)
   const handleImport = (e) => {
-    const file = e.target.files[0];
+    const file = e.target.files?.[0];
     if (!file) return;
     const reader = new FileReader();
-    reader.onload = (event) => {
+    reader.onload = async (event) => {
       try {
-        const imported = JSON.parse(event.target.result);
-        if (Array.isArray(imported)) {
-          setDecks([...decks, ...imported]);
-        } else if (imported.cards) {
-          setDecks([...decks, { ...imported, id: generateId() }]);
+        const raw = JSON.parse(event.target.result);
+        // Formato antigo: array de decks [ { id, name, cards: [ { id, kanji, reading, meaning, interval, nextReview, easeFactor?, ... } ] } ]
+        let decksOld = Array.isArray(raw) ? raw : (raw.cards ? [raw] : []);
+        const tagsSet = new Set();
+        const normalizedDecks = decksOld.map((d) => {
+          const deckId = d.id || 'deck_' + generateId();
+          const cards = (d.cards || []).map((c) => {
+            const tags = Array.isArray(c.tags) ? c.tags : [];
+            tags.forEach((t) => t && tagsSet.add(t));
+            return {
+              id: c.id || 'c_' + generateId(),
+              kanji: c.kanji ?? '',
+              reading: c.reading ?? '',
+              meaning: c.meaning ?? '',
+              interval: typeof c.interval === 'number' ? c.interval : 0,
+              nextReview: c.nextReview ?? Date.now(),
+              easeFactor: typeof c.easeFactor === 'number' ? c.easeFactor : 2.5,
+              tags,
+            };
+          });
+          return { id: deckId, name: d.name || 'Sem nome', cards };
+        });
+        const tagsArray = Array.from(tagsSet).filter(Boolean).sort();
+        setDecks(normalizedDecks);
+        setAvailableTags(tagsArray);
+        localStorage.setItem('nihongo_decks', JSON.stringify(normalizedDecks));
+        localStorage.setItem('nihongo_tags', JSON.stringify(tagsArray));
+        if (window.apiService && window.apiService.isLoggedIn()) {
+          const result = await window.apiService.updateUserData({ decks: normalizedDecks, tags: tagsArray });
+          if (result.success) {
+            if (result.lastSync) {
+              setLastSyncTime(result.lastSync);
+              localStorage.setItem('last_sync_time', result.lastSync);
+            }
+            showAlert(`Importação concluída!\n\n${normalizedDecks.length} baralho(s) e ${normalizedDecks.reduce((s, d) => s + (d.cards?.length || 0), 0)} card(s) foram salvos na sua conta.`);
+          } else {
+            showAlert('Dados importados localmente, mas falha ao salvar na nuvem: ' + (result.error || ''));
+          }
+        } else {
+          showAlert('Importação concluída localmente. Faça login para sincronizar na nuvem.');
         }
-        showAlert('Importação concluída com sucesso!');
       } catch (err) {
-        showAlert('Erro ao importar arquivo. Formato inválido.');
+        showAlert('Erro ao importar: ' + (err.message || 'formato inválido. Use o JSON da versão antiga.'));
       }
+      if (e.target) e.target.value = '';
     };
     reader.readAsText(file);
-    e.target.value = '';
   };
 
   const handleExportAll = () => {
@@ -947,89 +1291,151 @@ function App() {
     return Array.from(tagsSet).filter(tag => tag && tag.trim());
   };
 
-  // JSONBin Sync Functions
+  // API Auth Handlers
+  const handleLogin = async () => {
+    if (!authEmail.trim() || !authPassword) {
+      setAuthError('Preencha email e senha.');
+      return;
+    }
+    setAuthLoading(true);
+    setAuthError('');
+    try {
+      const result = window.apiService ? await window.apiService.login(authEmail.trim(), authPassword) : { success: false, error: 'Serviço não carregado.' };
+      if (result.success) {
+        setApiUser(result.user);
+        setShowAuthModal(false);
+        setAuthEmail('');
+        setAuthPassword('');
+        setAuthName('');
+        setAuthError('');
+        showAlert('Login realizado com sucesso!');
+      } else {
+        setAuthError(result.error || 'Erro ao entrar.');
+      }
+    } catch (e) {
+      setAuthError(e.message || 'Erro ao entrar.');
+    } finally {
+      setAuthLoading(false);
+    }
+  };
+
+  const handleRegister = async () => {
+    if (!authEmail.trim() || !authPassword) {
+      setAuthError('Preencha email e senha.');
+      return;
+    }
+    if (authPassword.length < 6) {
+      setAuthError('Senha deve ter no mínimo 6 caracteres.');
+      return;
+    }
+    setAuthLoading(true);
+    setAuthError('');
+    try {
+      const result = window.apiService ? await window.apiService.register(authEmail.trim(), authPassword, authName.trim()) : { success: false, error: 'Serviço não carregado.' };
+      if (result.success) {
+        setApiUser(result.user);
+        setShowAuthModal(false);
+        setAuthEmail('');
+        setAuthPassword('');
+        setAuthName('');
+        setAuthError('');
+        showAlert('Conta criada com sucesso!');
+      } else {
+        setAuthError(result.error || 'Erro ao registrar.');
+      }
+    } catch (e) {
+      setAuthError(e.message || 'Erro ao registrar.');
+    } finally {
+      setAuthLoading(false);
+    }
+  };
+
+  const handleLogout = () => {
+    if (window.apiService) window.apiService.logout();
+    setApiUser(null);
+    setShowAuthModal(false);
+    setAuthError('');
+    showAlert('Você saiu da conta.');
+  };
+
+  const openAuthModal = (mode) => {
+    setAuthMode(mode || 'login');
+    setAuthError('');
+    setAuthEmail('');
+    setAuthPassword('');
+    setAuthName('');
+    setShowAuthModal(true);
+  };
+
+  const closeAuthModal = () => {
+    setShowAuthModal(false);
+    setAuthError('');
+    setAuthEmail('');
+    setAuthPassword('');
+    setAuthName('');
+  };
+
+  // JSONBin / API Sync Functions
   const saveData = async () => {
+    const useApi = typeof window !== 'undefined' && window.apiService && window.apiService.isLoggedIn();
+
+    if (useApi) {
+      try {
+        const decksData = localStorage.getItem('nihongo_decks');
+        const tagsData = localStorage.getItem('nihongo_tags');
+        let decks = [];
+        let tags = [];
+        try { decks = decksData ? JSON.parse(decksData) : []; } catch (_) {}
+        try { tags = tagsData ? JSON.parse(tagsData) : []; } catch (_) {}
+        const result = await window.apiService.updateUserData({ decks, tags });
+        if (result.success) {
+          setLastSyncTime(result.lastSync || new Date().toISOString());
+          localStorage.setItem('last_sync_time', result.lastSync || new Date().toISOString());
+          return { success: true };
+        }
+        showAlert(`Erro ao salvar na nuvem: ${result.error}`);
+        return { success: false };
+      } catch (e) {
+        showAlert(`Erro ao salvar dados: ${e.message}`);
+        return { success: false };
+      }
+    }
+
     if (!window.jsonbinService) {
       showAlert('Serviço JSONBin não carregado. Recarregue a página.');
       return { success: false };
     }
-
     if (!jsonbinBinId) {
-      showAlert('Configure o ID de usuário primeiro.');
+      showAlert('Faça login ou configure o ID de usuário primeiro.');
       return { success: false };
     }
 
     try {
-      // Serializa dados do localStorage
       const decksData = localStorage.getItem('nihongo_decks');
       const tagsData = localStorage.getItem('nihongo_tags');
-      
       let decks = [];
       let tags = [];
-      
-      try {
-        decks = decksData ? JSON.parse(decksData) : [];
-      } catch (e) {
-        console.error('Erro ao parsear decks:', e);
-        decks = [];
-      }
-      
-      try {
-        tags = tagsData ? JSON.parse(tagsData) : [];
-      } catch (e) {
-        console.error('Erro ao parsear tags:', e);
-        tags = [];
-      }
-      
-      const syncData = {
-        decks: decks,
-        tags: tags,
-        lastSync: new Date().toISOString()
-      };
+      try { decks = decksData ? JSON.parse(decksData) : []; } catch (e) { console.error('Erro ao parsear decks:', e); }
+      try { tags = tagsData ? JSON.parse(tagsData) : []; } catch (e) { console.error('Erro ao parsear tags:', e); }
+      const syncData = { decks, tags, lastSync: new Date().toISOString() };
 
-      console.log('Salvando dados do usuário:', jsonbinBinId, {
-        decksCount: decks.length,
-        tagsCount: tags.length
-      });
-
-      // Usa a nova função que trabalha com banco de dados compartilhado
-      // jsonbinBinId aqui é o ID do usuário, não o bin do JSONBin.io
-      const result = await window.jsonbinService.updateUserData(
-        jsonbinBinId,
-        null, // Usa a Master Key padrão do código
-        syncData
-      );
+      const result = await window.jsonbinService.updateUserData(jsonbinBinId, null, syncData);
 
       if (!result.success) {
         let errorMessage = result.error;
-        
-        // Se o bin compartilhado não existe, cria automaticamente
-        if (errorMessage.includes('não encontrado') || errorMessage.includes('404') || 
-            errorMessage.includes('banco de dados')) {
-          
-          // Cria o bin compartilhado com os dados do usuário atual
-          const createResult = await window.jsonbinService.createSharedBin(null, {
-            [jsonbinBinId]: syncData
-          });
-          
+        if (errorMessage.includes('não encontrado') || errorMessage.includes('404') || errorMessage.includes('banco de dados')) {
+          const createResult = await window.jsonbinService.createSharedBin(null, { [jsonbinBinId]: syncData });
           if (createResult.success) {
-            showAlert(`Banco de dados criado automaticamente!\n\n${decks.length} baralho(s) e ${tags.length} tag(s) foram salvos na nuvem.`);
+            showAlert(`Banco de dados criado!\n\n${decks.length} baralho(s) e ${tags.length} tag(s) foram salvos na nuvem.`);
             return { success: true };
-          } else {
-            showAlert(`Erro ao criar banco de dados: ${createResult.error}`);
-            return { success: false };
           }
-        } else if (errorMessage.includes('Master Key')) {
-          errorMessage = `Erro de autenticação: ${errorMessage}. Verifique a configuração da Master Key.`;
-          showAlert(`Erro ao salvar: ${errorMessage}`);
-        } else {
-          showAlert(`Erro ao salvar: ${errorMessage}`);
+          showAlert(`Erro ao criar banco: ${createResult.error}`);
+          return { success: false };
         }
-        
+        if (errorMessage.includes('Master Key')) errorMessage = `Erro de autenticação: ${errorMessage}`;
+        showAlert(`Erro ao salvar: ${errorMessage}`);
         return { success: false };
       }
-
-      console.log('Dados salvos com sucesso na nuvem para o usuário:', jsonbinBinId);
       return { success: true };
     } catch (error) {
       showAlert(`Erro ao salvar dados: ${error.message}`);
@@ -1038,87 +1444,73 @@ function App() {
   };
 
   const loadData = async () => {
+    const useApi = typeof window !== 'undefined' && window.apiService && window.apiService.isLoggedIn();
+
+    if (useApi) {
+      try {
+        const result = await window.apiService.getSync();
+        if (!result.success) {
+          showAlert(`Erro ao carregar: ${result.error}`);
+          return { success: false };
+        }
+        const { decks: cloudDecks, tags: cloudTags } = result.data || {};
+        const hasDecks = Array.isArray(cloudDecks) && cloudDecks.length > 0;
+        const hasTags = Array.isArray(cloudTags) && cloudTags.length > 0;
+        if (!hasDecks && !hasTags) {
+          showAlert('Não há dados salvos na nuvem. Os dados locais serão mantidos.');
+          return { success: true };
+        }
+        if (hasDecks) {
+          localStorage.setItem('nihongo_decks', JSON.stringify(cloudDecks));
+          setDecks(cloudDecks);
+        }
+        if (hasTags) {
+          localStorage.setItem('nihongo_tags', JSON.stringify(cloudTags));
+          setAvailableTags(cloudTags);
+        }
+        if (hasDecks) showAlert(`Dados carregados!\n\n${cloudDecks.length} baralho(s) sincronizado(s).`);
+        return { success: true };
+      } catch (e) {
+        showAlert(`Erro ao carregar dados: ${e.message}`);
+        return { success: false };
+      }
+    }
+
     if (!window.jsonbinService) {
       showAlert('Serviço JSONBin não carregado. Recarregue a página.');
       return { success: false };
     }
-
     if (!jsonbinBinId) {
-      showAlert('Configure o ID de usuário primeiro.');
+      showAlert('Faça login ou configure o ID de usuário primeiro.');
       return { success: false };
     }
 
     try {
-      // Busca dados do usuário específico do banco compartilhado
-      // jsonbinBinId aqui é o ID do usuário, não o bin do JSONBin.io
       const result = await window.jsonbinService.getUserData(jsonbinBinId, null);
-
       if (!result.success) {
-        let errorMessage = result.error;
-        
-        if (errorMessage.includes('Master Key')) {
-          errorMessage = `Erro de autenticação: ${errorMessage}. Verifique a configuração da Master Key.`;
-        }
-        
-        showAlert(`Erro ao carregar: ${errorMessage}`);
+        showAlert(`Erro ao carregar: ${result.error}`);
         return { success: false };
       }
-
       const cloudData = result.data;
-
-      // Se o usuário não existe ainda no banco
       if (!cloudData) {
-        // Tenta listar usuários disponíveis para ajudar no debug
-        try {
-          const allUsersResult = await window.jsonbinService.getSharedBin(null);
-          if (allUsersResult.success && allUsersResult.data) {
-            const availableUsers = Object.keys(allUsersResult.data);
-            const usersList = availableUsers.length > 0 
-              ? `\n\nUsuários encontrados no banco: ${availableUsers.join(', ')}`
-              : '\n\nNenhum usuário encontrado no banco ainda.';
-            
-            showAlert(`Usuário "${jsonbinBinId}" não encontrado no banco de dados.${usersList}\n\nCertifique-se de usar o mesmo ID de usuário em ambos os dispositivos.`);
-          } else {
-            showAlert(`Usuário "${jsonbinBinId}" não encontrado no banco de dados.\n\nOs dados locais serão mantidos.\n\nPara sincronizar, primeiro salve seus dados no outro dispositivo usando o mesmo ID de usuário.`);
-          }
-        } catch (e) {
-          showAlert(`Usuário "${jsonbinBinId}" não encontrado no banco de dados.\n\nOs dados locais serão mantidos.\n\nPara sincronizar, primeiro salve seus dados no outro dispositivo.`);
-        }
+        showAlert(`Usuário "${jsonbinBinId}" não encontrado no banco.\n\nOs dados locais serão mantidos.`);
         return { success: true };
       }
-
-      // Verifica se há dados para carregar
       const hasDecks = cloudData.decks && Array.isArray(cloudData.decks) && cloudData.decks.length > 0;
       const hasTags = cloudData.tags && Array.isArray(cloudData.tags) && cloudData.tags.length > 0;
-
       if (!hasDecks && !hasTags) {
-        showAlert(`Usuário "${jsonbinBinId}" encontrado, mas não há dados salvos na nuvem.\n\nOs dados locais serão mantidos.`);
+        showAlert('Nenhum dado na nuvem. Os dados locais serão mantidos.');
         return { success: true };
       }
-
-      // Atualiza localStorage com os dados do usuário
-      let loadedCount = 0;
-      
       if (hasDecks) {
         localStorage.setItem('nihongo_decks', JSON.stringify(cloudData.decks));
         setDecks(cloudData.decks);
-        loadedCount += cloudData.decks.length;
-        console.log('Decks carregados:', cloudData.decks.length);
-      } else {
-        // Se não há decks na nuvem, mantém os locais
-        console.log('Nenhum deck encontrado na nuvem, mantendo dados locais');
       }
-
       if (hasTags) {
         localStorage.setItem('nihongo_tags', JSON.stringify(cloudData.tags));
         setAvailableTags(cloudData.tags);
-        console.log('Tags carregadas:', cloudData.tags.length);
       }
-
-      if (hasDecks) {
-        showAlert(`Dados carregados com sucesso!\n\n${cloudData.decks.length} baralho(s) sincronizado(s).`);
-      }
-
+      if (hasDecks) showAlert(`Dados carregados!\n\n${cloudData.decks.length} baralho(s) sincronizado(s).`);
       return { success: true };
     } catch (error) {
       showAlert(`Erro ao carregar dados: ${error.message}`);
@@ -1129,137 +1521,95 @@ function App() {
   const syncData = async () => {
     if (isSyncing) return;
 
+    const useApi = typeof window !== 'undefined' && window.apiService && window.apiService.isLoggedIn();
+
     setIsSyncing(true);
     try {
-      if (!window.jsonbinService) {
-        showAlert('Serviço JSONBin não carregado. Recarregue a página.');
-        setIsSyncing(false);
-        return;
-      }
-
-      if (!jsonbinBinId) {
-        showAlert('Configure o ID de usuário primeiro.');
-        setIsSyncing(false);
-        return;
-      }
-
-      // 1. Carrega dados locais
       const decksData = localStorage.getItem('nihongo_decks');
       const tagsData = localStorage.getItem('nihongo_tags');
-      
       let localDecks = [];
       let localTags = [];
-      
-      try {
-        localDecks = decksData ? JSON.parse(decksData) : [];
-      } catch (e) {
-        console.error('Erro ao parsear decks locais:', e);
-        localDecks = [];
-      }
-      
-      try {
-        localTags = tagsData ? JSON.parse(tagsData) : [];
-      } catch (e) {
-        console.error('Erro ao parsear tags locais:', e);
-        localTags = [];
-      }
+      try { localDecks = decksData ? JSON.parse(decksData) : []; } catch (_) {}
+      try { localTags = tagsData ? JSON.parse(tagsData) : []; } catch (_) {}
 
-      console.log('📥 Dados locais:', {
-        decks: localDecks.length,
-        totalCards: localDecks.reduce((sum, d) => sum + (d.cards?.length || 0), 0),
-        tags: localTags.length
-      });
-
-      // 2. Busca dados da nuvem
-      const cloudResult = await window.jsonbinService.getUserData(jsonbinBinId, null);
-      
       let cloudDecks = [];
       let cloudTags = [];
-      
-      if (cloudResult.success && cloudResult.data) {
-        cloudDecks = cloudResult.data.decks || [];
-        cloudTags = cloudResult.data.tags || [];
-        
-        console.log('☁️ Dados da nuvem:', {
-          decks: cloudDecks.length,
-          totalCards: cloudDecks.reduce((sum, d) => sum + (d.cards?.length || 0), 0),
-          tags: cloudTags.length
-        });
+
+      if (useApi) {
+        const cloudResult = await window.apiService.getSync();
+        if (!cloudResult.success) {
+          showAlert(`Erro ao carregar da nuvem: ${cloudResult.error}`);
+          setIsSyncing(false);
+          return;
+        }
+        const data = cloudResult.data || {};
+        cloudDecks = data.decks || [];
+        cloudTags = data.tags || [];
       } else {
-        console.log('⚠️ Nenhum dado encontrado na nuvem para este usuário');
+        if (!window.jsonbinService) {
+          showAlert('Serviço não carregado. Recarregue a página.');
+          setIsSyncing(false);
+          return;
+        }
+        if (!jsonbinBinId) {
+          showAlert('Faça login ou configure o ID de usuário primeiro.');
+          setIsSyncing(false);
+          return;
+        }
+        const cloudResult = await window.jsonbinService.getUserData(jsonbinBinId, null);
+        if (cloudResult.success && cloudResult.data) {
+          cloudDecks = cloudResult.data.decks || [];
+          cloudTags = cloudResult.data.tags || [];
+        }
       }
 
-      // 3. Faz merge inteligente dos dados
       const mergedDecks = mergeDecksAndCards(localDecks, cloudDecks);
       const mergedTags = mergeTags(localTags, cloudTags);
-
       const mergedCardsCount = mergedDecks.reduce((sum, d) => sum + (d.cards?.length || 0), 0);
       const localCardsCount = localDecks.reduce((sum, d) => sum + (d.cards?.length || 0), 0);
       const cloudCardsCount = cloudDecks.reduce((sum, d) => sum + (d.cards?.length || 0), 0);
 
-      console.log('🔄 Dados mesclados:', {
-        decks: mergedDecks.length,
-        totalCards: mergedCardsCount,
-        tags: mergedTags.length,
-        cardsAdicionados: mergedCardsCount - localCardsCount,
-        cardsDaNuvem: cloudCardsCount
-      });
-
-      // 4. Atualiza localStorage com dados mesclados
       localStorage.setItem('nihongo_decks', JSON.stringify(mergedDecks));
       localStorage.setItem('nihongo_tags', JSON.stringify(mergedTags));
       setDecks(mergedDecks);
       setAvailableTags(mergedTags);
 
-      // 5. Salva dados mesclados na nuvem
-      const syncData = {
-        decks: mergedDecks,
-        tags: mergedTags,
-        lastSync: new Date().toISOString()
-      };
+      const payload = { decks: mergedDecks, tags: mergedTags, lastSync: new Date().toISOString() };
 
-      const saveResult = await window.jsonbinService.updateUserData(
-        jsonbinBinId,
-        null,
-        syncData
-      );
-
-      if (!saveResult.success) {
-        // Se o bin compartilhado não existe, cria automaticamente
-        if (saveResult.error.includes('não encontrado') || saveResult.error.includes('404') || 
-            saveResult.error.includes('banco de dados')) {
-          
-          const createResult = await window.jsonbinService.createSharedBin(null, {
-            [jsonbinBinId]: syncData
-          });
-          
-          if (!createResult.success) {
-            showAlert(`Erro ao criar banco de dados: ${createResult.error}`);
-            setIsSyncing(false);
-            return;
-          }
-        } else {
+      if (useApi) {
+        const saveResult = await window.apiService.updateUserData(payload);
+        if (!saveResult.success) {
           showAlert(`Erro ao salvar na nuvem: ${saveResult.error}`);
           setIsSyncing(false);
           return;
         }
+        if (saveResult.lastSync) {
+          setLastSyncTime(saveResult.lastSync);
+          localStorage.setItem('last_sync_time', saveResult.lastSync);
+        }
+      } else {
+        const saveResult = await window.jsonbinService.updateUserData(jsonbinBinId, null, payload);
+        if (!saveResult.success) {
+          if (saveResult.error.includes('não encontrado') || saveResult.error.includes('404') || saveResult.error.includes('banco de dados')) {
+            const createResult = await window.jsonbinService.createSharedBin(null, { [jsonbinBinId]: payload });
+            if (!createResult.success) {
+              showAlert(`Erro ao criar banco: ${createResult.error}`);
+              setIsSyncing(false);
+              return;
+            }
+          } else {
+            showAlert(`Erro ao salvar na nuvem: ${saveResult.error}`);
+            setIsSyncing(false);
+            return;
+          }
+        }
       }
 
-      // 6. Mostra resultado da sincronização
       const newCardsCount = mergedCardsCount - localCardsCount;
-      let message = `✅ Sincronização concluída!\n\n`;
-      message += `📚 ${mergedDecks.length} baralho(s)\n`;
-      message += `🃏 ${mergedCardsCount} card(s) total\n`;
-      message += `🏷️ ${mergedTags.length} tag(s)\n`;
-      
-      if (newCardsCount > 0) {
-        message += `\n✨ ${newCardsCount} novo(s) card(s) adicionado(s) da nuvem!`;
-      } else if (cloudCardsCount > 0 && localCardsCount > 0) {
-        message += `\n🔄 Dados locais e da nuvem foram combinados.`;
-      } else if (cloudCardsCount === 0 && localCardsCount > 0) {
-        message += `\n📤 Seus dados locais foram enviados para a nuvem.`;
-      }
-
+      let message = `✅ Sincronização concluída!\n\n📚 ${mergedDecks.length} baralho(s)\n🃏 ${mergedCardsCount} card(s) total\n🏷️ ${mergedTags.length} tag(s)\n`;
+      if (newCardsCount > 0) message += `\n✨ ${newCardsCount} novo(s) card(s) da nuvem!`;
+      else if (cloudCardsCount > 0 && localCardsCount > 0) message += `\n🔄 Dados locais e nuvem combinados.`;
+      else if (cloudCardsCount === 0 && localCardsCount > 0) message += `\n📤 Dados locais enviados para a nuvem.`;
       showAlert(message);
     } catch (error) {
       console.error('Erro na sincronização:', error);
@@ -1786,7 +2136,7 @@ function App() {
 
     try {
       const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -1860,7 +2210,7 @@ Exemplo de formato válido:
 
     try {
       const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -2022,6 +2372,193 @@ Exemplo de formato válido:
 
   // --- SUB-VIEWS ---
 
+  const ProfileView = () => {
+    const { reviewsByDay, todayStart, dayMs } = getReviewsByDay(decks);
+    const { currentStreak } = getStreaks(reviewsByDay, todayStart, dayMs);
+    const totalReviews = Object.values(reviewsByDay).reduce((a, b) => a + b, 0);
+    const profileName = apiUser ? (apiUser.name || apiUser.email || 'Estudante') : (() => { try { return localStorage.getItem('profile_display_name') || 'Estudante'; } catch (_) { return 'Estudante'; } })();
+    const profileEmail = apiUser ? apiUser.email : '';
+    const joinDate = (() => { try { return localStorage.getItem('profile_join_date') || new Date().toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }); } catch (_) { return '2024'; } })();
+    const defaultDailyGoal = 20;
+    const dailyGoal = (() => { try { const v = localStorage.getItem('stats_daily_goal'); return v ? Math.max(1, parseInt(v, 10) || defaultDailyGoal) : defaultDailyGoal; } catch (_) { return defaultDailyGoal; } })();
+    const reviewsToday = (reviewsByDay[todayStart] || 0);
+    const totalCards = decks.reduce((acc, d) => acc + d.cards.length, 0);
+    const goalKanji = 500;
+    const goalDailyDays = 365;
+    let daysHitGoalYear = 0;
+    for (let i = 0; i < 365; i++) {
+      const dayStart = todayStart - i * dayMs;
+      if ((reviewsByDay[dayStart] || 0) >= dailyGoal) daysHitGoalYear++;
+    }
+    const metaKanjiPct = Math.min(100, totalCards > 0 ? Math.round((totalCards / goalKanji) * 100) : 0);
+    const metaDailyPct = Math.min(100, Math.round((daysHitGoalYear / goalDailyDays) * 100));
+
+    const openEditProfile = () => {
+      if (!apiUser) { showAlert('Faça login para editar seu perfil.'); return; }
+      setEditProfileName(apiUser.name || '');
+      setEditProfileEmail(apiUser.email || '');
+      setEditProfileCurrentPassword('');
+      setEditProfileNewPassword('');
+      setEditProfileConfirmPassword('');
+      setEditProfileError('');
+      setView('edit-profile');
+    };
+
+    return (
+      <div className="p-6 pt-10 animate-in fade-in h-full overflow-y-auto pb-32">
+        <header className="flex justify-between items-center mb-8">
+          <h1 className="font-black text-3xl uppercase tracking-tighter dark:text-white">Perfil</h1>
+          <DuoButton onClick={openEditProfile} variant="secondary" className="h-10 px-4 py-0 text-xs">Editar perfil</DuoButton>
+        </header>
+        <div className="flex items-center gap-6 mb-10 pb-6 border-b-2 border-[#e5e5e5] dark:border-[#37464f]">
+          <div className="w-24 h-24 rounded-full bg-[#ce82ff] border-b-4 border-[#a558e0] flex items-center justify-center text-white text-4xl font-black shadow-md">
+            {(profileName[0] || 'E').toUpperCase()}
+          </div>
+          <div>
+            <h2 className="text-2xl font-black dark:text-white leading-tight">{profileName}</h2>
+            <p className="text-[#afafaf] dark:text-zinc-400 font-bold text-sm">Ingressou em {joinDate}</p>
+          </div>
+        </div>
+        <h3 className="font-black text-[#afafaf] dark:text-zinc-400 uppercase text-xs mb-4 px-2 tracking-widest w-full">Estatísticas</h3>
+        <div className="grid grid-cols-2 gap-4 mb-10 w-full">
+          <DuoCard className="border-b-4 flex items-center gap-3 py-6">
+            <Flame size={24} className="text-[#ff9600]" style={{ fill: '#ff9600' }} />
+            <div>
+              <p className="font-black text-xl leading-none dark:text-white">{currentStreak}</p>
+              <p className="text-[10px] font-black text-[#afafaf] dark:text-zinc-400 uppercase">Ofensiva</p>
+            </div>
+          </DuoCard>
+          <DuoCard className="border-b-4 flex items-center gap-3 py-6">
+            <Zap size={24} className="text-[#1cb0f6]" style={{ fill: '#1cb0f6' }} />
+            <div>
+              <p className="font-black text-xl leading-none dark:text-white">{totalReviews}</p>
+              <p className="text-[10px] font-black text-[#afafaf] dark:text-zinc-400 uppercase">Total revisões</p>
+            </div>
+          </DuoCard>
+        </div>
+        <h3 className="font-black text-[#afafaf] dark:text-zinc-400 uppercase text-xs mb-4 px-2 tracking-widest w-full">Metas</h3>
+        <DuoCard className="mb-10 border-b-4 bg-white dark:bg-[#1b2c35] w-full">
+          <div className="space-y-6">
+            <div>
+              <div className="flex justify-between items-center mb-2">
+                <span className="font-black text-[10px] uppercase dark:text-white">Cards no app</span>
+                <span className="text-[10px] font-black text-zinc-500 dark:text-zinc-400">{totalCards} / {goalKanji}</span>
+              </div>
+              <ProgressBar progress={metaKanjiPct} color="#ff9600" />
+            </div>
+            <div>
+              <div className="flex justify-between items-center mb-2">
+                <span className="font-black text-[10px] uppercase dark:text-white">Meta diária batida</span>
+                <span className="text-[10px] font-black text-zinc-500 dark:text-zinc-400">{daysHitGoalYear} / 365 dias</span>
+              </div>
+              <ProgressBar progress={metaDailyPct} color="#58cc02" />
+            </div>
+          </div>
+          <p className="text-[10px] font-black text-[#afafaf] mt-4">Meta: {dailyGoal} revisões/dia</p>
+        </DuoCard>
+      </div>
+    );
+  };
+
+  const EditProfileView = () => {
+    const handleSave = async () => {
+      setEditProfileError('');
+      const wantPasswordChange = editProfileCurrentPassword || editProfileNewPassword || editProfileConfirmPassword;
+      if (wantPasswordChange) {
+        if (!editProfileCurrentPassword || !editProfileNewPassword || !editProfileConfirmPassword) {
+          setEditProfileError('Preencha senha atual, nova senha e confirmação para alterar a senha.');
+          return;
+        }
+        if (editProfileNewPassword.length < 6) {
+          setEditProfileError('A nova senha deve ter no mínimo 6 caracteres.');
+          return;
+        }
+        if (editProfileNewPassword !== editProfileConfirmPassword) {
+          setEditProfileError('Nova senha e confirmação não coincidem.');
+          return;
+        }
+      }
+      setEditProfileLoading(true);
+      try {
+        if (editProfileName.trim() !== (apiUser?.name || '')) {
+          const result = window.apiService ? await window.apiService.updateProfile({ name: editProfileName.trim() }) : { success: false, error: 'Serviço não disponível.' };
+          if (!result.success) {
+            setEditProfileError(result.error || 'Erro ao salvar.');
+            setEditProfileLoading(false);
+            return;
+          }
+          if (result.user) setApiUser(result.user);
+        }
+        if (wantPasswordChange) {
+          const result = window.apiService ? await window.apiService.updatePassword(editProfileCurrentPassword, editProfileNewPassword) : { success: false, error: 'Serviço não disponível.' };
+          if (!result.success) {
+            setEditProfileError(result.error || 'Erro ao alterar senha.');
+            setEditProfileLoading(false);
+            return;
+          }
+          setEditProfileCurrentPassword('');
+          setEditProfileNewPassword('');
+          setEditProfileConfirmPassword('');
+        }
+        const nameChanged = editProfileName.trim() !== (apiUser?.name || '');
+        if (nameChanged && wantPasswordChange) showAlert('Perfil e senha atualizados!');
+        else if (wantPasswordChange) showAlert('Senha alterada com sucesso!');
+        else if (nameChanged) showAlert('Perfil atualizado com sucesso!');
+        setView('profile');
+      } catch (err) {
+        setEditProfileError(err.message || 'Erro ao salvar.');
+      } finally {
+        setEditProfileLoading(false);
+      }
+    };
+    return (
+      <div className="min-h-screen bg-white dark:bg-[#131f24] pb-24 safe-top safe-bottom">
+        <header className="sticky top-0 z-30 flex items-center gap-4 p-4 bg-white dark:bg-[#131f24] border-b-2 border-[#e5e5e5] dark:border-[#37464f] safe-top">
+          <button onClick={() => setView('profile')} className="p-2 text-[#afafaf] dark:hover:text-white transition-colors touch-target" aria-label="Voltar">
+            <ArrowLeft size={28} strokeWidth={3} />
+          </button>
+          <h1 className="font-black text-xl uppercase tracking-tighter text-[#4b4b4b] dark:text-white flex items-center gap-2">
+            <Pencil size={24} className="text-[#1cb0f6]" />
+            Editar perfil
+          </h1>
+        </header>
+        <div className="p-6 max-w-md mx-auto">
+          {editProfileError && <p className="text-sm font-bold text-[#ff4b4b] mb-4">{editProfileError}</p>}
+          <div className="space-y-4 mb-6">
+            <div>
+              <label className="block font-black text-[10px] text-[#afafaf] dark:text-zinc-400 uppercase tracking-widest mb-2">Nome</label>
+              <input type="text" value={editProfileName} onChange={(e) => setEditProfileName(e.target.value)} placeholder="Seu nome" className="w-full p-4 bg-[#f1f1f1] dark:bg-[#1b2c35] border-2 border-[#e5e5e5] dark:border-[#37464f] rounded-2xl font-bold outline-none focus:border-[#1cb0f6] dark:text-white" />
+            </div>
+          </div>
+          <div className="mb-8">
+            <h3 className="font-black text-[10px] text-[#afafaf] dark:text-zinc-400 uppercase tracking-widest mb-3">Alterar senha</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="block font-bold text-[10px] text-[#afafaf] dark:text-zinc-400 uppercase tracking-widest mb-2">Senha atual</label>
+                <input type="password" value={editProfileCurrentPassword} onChange={(e) => setEditProfileCurrentPassword(e.target.value)} placeholder="••••••••" autoComplete="current-password" className="w-full p-4 bg-[#f1f1f1] dark:bg-[#1b2c35] border-2 border-[#e5e5e5] dark:border-[#37464f] rounded-2xl font-bold outline-none focus:border-[#1cb0f6] dark:text-white" />
+              </div>
+              <div>
+                <label className="block font-bold text-[10px] text-[#afafaf] dark:text-zinc-400 uppercase tracking-widest mb-2">Nova senha</label>
+                <input type="password" value={editProfileNewPassword} onChange={(e) => setEditProfileNewPassword(e.target.value)} placeholder="Mín. 6 caracteres" autoComplete="new-password" className="w-full p-4 bg-[#f1f1f1] dark:bg-[#1b2c35] border-2 border-[#e5e5e5] dark:border-[#37464f] rounded-2xl font-bold outline-none focus:border-[#1cb0f6] dark:text-white" />
+              </div>
+              <div>
+                <label className="block font-bold text-[10px] text-[#afafaf] dark:text-zinc-400 uppercase tracking-widest mb-2">Confirmar nova senha</label>
+                <input type="password" value={editProfileConfirmPassword} onChange={(e) => setEditProfileConfirmPassword(e.target.value)} placeholder="Repita a nova senha" autoComplete="new-password" className="w-full p-4 bg-[#f1f1f1] dark:bg-[#1b2c35] border-2 border-[#e5e5e5] dark:border-[#37464f] rounded-2xl font-bold outline-none focus:border-[#1cb0f6] dark:text-white" />
+              </div>
+            </div>
+            <p className="text-[10px] text-[#afafaf] dark:text-zinc-400 mt-2">Deixe em branco se não quiser alterar a senha.</p>
+          </div>
+          <DuoButton variant="primary" fullWidth className="h-14 mb-4" onClick={handleSave} disabled={editProfileLoading}>
+            {editProfileLoading ? <><RefreshCw size={18} className="animate-spin" /> Salvando...</> : 'Salvar alterações'}
+          </DuoButton>
+          <DuoButton variant="outline" fullWidth className="h-14" onClick={() => setView('settings')}>
+            <Settings size={18} className="text-[#1cb0f6]" /> Configurações
+          </DuoButton>
+        </div>
+      </div>
+    );
+  };
+
   const StatsView = () => {
     const now = Date.now();
     const { reviewsByDay, reviewsToday, reviewsThisWeek, reviewsThisMonth, todayStart, dayMs } = getReviewsByDay(decks);
@@ -2075,801 +2612,284 @@ Exemplo de formato válido:
     const totalQ = q0 + q1 + q2;
 
     return (
-      <div className="p-4 max-w-2xl md:max-w-3xl mx-auto pb-24 overflow-x-hidden">
-        <div className="flex items-center mb-6 min-h-[44px]">
-          <button onClick={() => setView('home')} className="p-2 -ml-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg mr-2 min-h-[44px] min-w-[44px] flex items-center justify-center touch-target" aria-label="Voltar">
-            <ChevronLeft size={20} className="text-gray-800 dark:text-white" />
+      <div className="p-6 pt-10 pb-32 overflow-x-hidden overflow-y-auto h-full">
+        <>
+        <div className="flex items-center gap-4 mb-8 min-h-[44px]">
+          <button onClick={() => setView('home')} className="p-2 text-[#afafaf] hover:text-[#4b4b4b] dark:hover:text-white transition-colors" aria-label="Voltar">
+            <ArrowLeft size={28} strokeWidth={3} />
           </button>
-          <h2 className="text-xl font-bold text-gray-800 dark:text-white">Estatísticas</h2>
+          <h1 className="font-black text-3xl uppercase tracking-tighter dark:text-white">Estatísticas</h1>
         </div>
 
-        <div className="space-y-4">
-          {/* Resumo expandido: Total, Baralhos, Revisões hoje/semana/mês, Taxa de acerto */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-            <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800 min-h-[80px] flex flex-col justify-center">
-              <div className="text-2xl sm:text-3xl font-bold text-blue-600 dark:text-blue-400">{totalCards}</div>
-              <div className="text-xs text-blue-800 dark:text-blue-300 uppercase font-semibold mt-1">Total de Cards</div>
-            </div>
-            <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg border border-purple-200 dark:border-purple-800 min-h-[80px] flex flex-col justify-center">
-              <div className="text-2xl sm:text-3xl font-bold text-purple-600 dark:text-purple-400">{totalDecks}</div>
-              <div className="text-xs text-purple-800 dark:text-purple-300 uppercase font-semibold mt-1">Baralhos</div>
-            </div>
-            <div className="bg-emerald-50 dark:bg-emerald-900/20 p-4 rounded-lg border border-emerald-200 dark:border-emerald-800 min-h-[80px] flex flex-col justify-center">
-              <div className="text-2xl sm:text-3xl font-bold text-emerald-600 dark:text-emerald-400">{reviewsToday}</div>
-              <div className="text-xs text-emerald-800 dark:text-emerald-300 uppercase font-semibold mt-1">Revisões Hoje</div>
-            </div>
-            <div className="bg-teal-50 dark:bg-teal-900/20 p-4 rounded-lg border border-teal-200 dark:border-teal-800 min-h-[80px] flex flex-col justify-center">
-              <div className="text-2xl sm:text-3xl font-bold text-teal-600 dark:text-teal-400">{reviewsThisWeek}</div>
-              <div className="text-xs text-teal-800 dark:text-teal-300 uppercase font-semibold mt-1">Revisões Esta Semana</div>
-            </div>
-            <div className="bg-cyan-50 dark:bg-cyan-900/20 p-4 rounded-lg border border-cyan-200 dark:border-cyan-800 min-h-[80px] flex flex-col justify-center">
-              <div className="text-2xl sm:text-3xl font-bold text-cyan-600 dark:text-cyan-400">{reviewsThisMonth}</div>
-              <div className="text-xs text-cyan-800 dark:text-cyan-300 uppercase font-semibold mt-1">Revisões Este Mês</div>
-            </div>
-            <div className="bg-amber-50 dark:bg-amber-900/20 p-4 rounded-lg border border-amber-200 dark:border-amber-800 min-h-[80px] flex flex-col justify-center">
-              <div className="text-2xl sm:text-3xl font-bold text-amber-600 dark:text-amber-400">{totalReviewCount > 0 ? accuracyGlobal + '%' : '—'}</div>
-              <div className="text-xs text-amber-800 dark:text-amber-300 uppercase font-semibold mt-1">Taxa de Acerto</div>
-            </div>
+        <div className="grid grid-cols-2 gap-4 mb-8">
+          <DuoCard className="border-b-4 flex flex-col items-center gap-1 text-center py-6"><Brain size={28} className="text-[#58cc02]" /><span className="text-2xl font-black dark:text-white leading-none">{reviewsToday}</span><span className="text-[10px] font-black text-[#afafaf] dark:text-zinc-400 uppercase leading-none mt-1">Revisões Hoje</span></DuoCard>
+          <DuoCard className="border-b-4 flex flex-col items-center gap-1 text-center py-6"><RefreshCw size={28} className="text-[#1cb0f6]" /><span className="text-2xl font-black dark:text-white leading-none">{reviewsThisWeek}</span><span className="text-[10px] font-black text-[#afafaf] dark:text-zinc-400 uppercase leading-none mt-1">Esta Semana</span></DuoCard>
+          <DuoCard className="border-b-4 flex flex-col items-center gap-1 text-center py-6"><Flame size={28} style={{ fill: '#ff9600' }} className="text-[#ff9600]" /><span className="text-2xl font-black dark:text-white leading-none">{currentStreak}</span><span className="text-[10px] font-black text-[#afafaf] dark:text-zinc-400 uppercase leading-none mt-1">Ofensiva</span></DuoCard>
+          <DuoCard className="border-b-4 flex flex-col items-center gap-1 text-center py-6"><Zap size={28} style={{ fill: '#ffc800' }} className="text-[#ffc800]" /><span className="text-2xl font-black dark:text-white leading-none">{totalReviewCount > 0 ? accuracyGlobal + '%' : '—'}</span><span className="text-[10px] font-black text-[#afafaf] dark:text-zinc-400 uppercase leading-none mt-1">Taxa Acerto</span></DuoCard>
+        </div>
+
+        <h3 className="font-black text-[#afafaf] dark:text-zinc-400 uppercase text-xs mb-4 px-2 tracking-widest">Atividade Recente</h3>
+        <DuoCard className="border-b-4 p-5 mb-10">
+          <div className="grid grid-cols-7 gap-2">
+            {calendarDays.map((day, i) => {
+              let bgColor = 'bg-[#f1f1f1] dark:bg-[#2c3e47]';
+              if (day.count > 0 && day.count <= 20) bgColor = 'bg-[#1cb0f6]';
+              else if (day.count > 20) bgColor = 'bg-[#58cc02]';
+              return <div key={i} className={`aspect-square rounded-lg flex items-center justify-center transition-all ${bgColor}`} title={`${day.label}: ${day.count}`}>{day.count > 0 && <span className="text-[9px] font-black text-white">{day.count}</span>}</div>;
+            })}
           </div>
+          <div className="flex justify-between mt-6 text-[9px] font-black text-[#afafaf] uppercase px-1"><span>Últimos 30 Dias</span><div className="flex gap-3"><div className="flex items-center gap-1"><div className="w-2.5 h-2.5 rounded-sm bg-[#1cb0f6]" /> Baixa</div><div className="flex items-center gap-1"><div className="w-2.5 h-2.5 rounded-sm bg-[#58cc02]" /> Alta</div></div></div>
+        </DuoCard>
 
           {/* Distribuição por qualidade */}
-          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
-            <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-4">Distribuição por Qualidade</h3>
+          <h3 className="font-black text-[#afafaf] dark:text-zinc-400 uppercase text-xs mb-4 px-2 tracking-widest">Distribuição por Qualidade</h3>
+          <DuoCard className="border-b-4 p-4 mb-6">
             {totalQ === 0 ? (
-              <p className="text-sm text-gray-500 dark:text-gray-400">Nenhuma revisão registrada ainda.</p>
+              <p className="text-sm text-[#afafaf] dark:text-zinc-400">Nenhuma revisão registrada ainda.</p>
             ) : (
               <>
                 <div className="grid grid-cols-3 gap-3 mb-3">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-red-500 shrink-0" aria-hidden />
-                    <span className="text-sm text-gray-700 dark:text-gray-300">Não sei</span>
-                    <span className="text-sm font-bold text-gray-800 dark:text-white ml-auto">{q0} ({totalQ > 0 ? Math.round((q0 / totalQ) * 100) : 0}%)</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-yellow-500 shrink-0" aria-hidden />
-                    <span className="text-sm text-gray-700 dark:text-gray-300">Dúvida</span>
-                    <span className="text-sm font-bold text-gray-800 dark:text-white ml-auto">{q1} ({totalQ > 0 ? Math.round((q1 / totalQ) * 100) : 0}%)</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-green-500 shrink-0" aria-hidden />
-                    <span className="text-sm text-gray-700 dark:text-gray-300">Sei</span>
-                    <span className="text-sm font-bold text-gray-800 dark:text-white ml-auto">{q2} ({totalQ > 0 ? Math.round((q2 / totalQ) * 100) : 0}%)</span>
-                  </div>
+                  <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-[#ff4b4b] shrink-0" /><span className="text-xs font-bold dark:text-white">Não sei</span><span className="text-xs font-black dark:text-white ml-auto">{q0} ({totalQ > 0 ? Math.round((q0 / totalQ) * 100) : 0}%)</span></div>
+                  <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-[#ff9600] shrink-0" /><span className="text-xs font-bold dark:text-white">Dúvida</span><span className="text-xs font-black dark:text-white ml-auto">{q1} ({totalQ > 0 ? Math.round((q1 / totalQ) * 100) : 0}%)</span></div>
+                  <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-[#58cc02] shrink-0" /><span className="text-xs font-bold dark:text-white">Sei</span><span className="text-xs font-black dark:text-white ml-auto">{q2} ({totalQ > 0 ? Math.round((q2 / totalQ) * 100) : 0}%)</span></div>
                 </div>
-                <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden flex min-h-[12px]">
-                  <div className="h-full bg-red-500 rounded-l" style={{ width: `${totalQ > 0 ? (q0 / totalQ) * 100 : 0}%` }} />
-                  <div className="h-full bg-yellow-500" style={{ width: `${totalQ > 0 ? (q1 / totalQ) * 100 : 0}%` }} />
-                  <div className="h-full bg-green-500 rounded-r" style={{ width: `${totalQ > 0 ? (q2 / totalQ) * 100 : 0}%` }} />
-                </div>
+                <div className="h-3 bg-[#e5e5e5] dark:bg-[#37464f] rounded-full overflow-hidden flex"><div className="h-full bg-[#ff4b4b] rounded-l" style={{ width: `${totalQ > 0 ? (q0 / totalQ) * 100 : 0}%` }} /><div className="h-full bg-[#ff9600]" style={{ width: `${totalQ > 0 ? (q1 / totalQ) * 100 : 0}%` }} /><div className="h-full bg-[#58cc02] rounded-r" style={{ width: `${totalQ > 0 ? (q2 / totalQ) * 100 : 0}%` }} /></div>
               </>
             )}
-          </div>
+          </DuoCard>
 
-          {/* Cards por Status — barra única empilhada */}
-          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
-            <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-4">Cards por Status</h3>
+          <h3 className="font-black text-[#afafaf] dark:text-zinc-400 uppercase text-xs mb-4 px-2 tracking-widest mt-6">Cards por Status</h3>
+          <DuoCard className="border-b-4 p-4 mb-6">
             <div className="space-y-3">
-              <div className="flex justify-between items-center">
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-red-500 shrink-0" aria-hidden />
-                  <span className="text-sm text-gray-700 dark:text-gray-300">Novos</span>
-                </div>
-                <span className="text-lg font-bold text-gray-800 dark:text-white">{newCards}</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-yellow-500 shrink-0" aria-hidden />
-                  <span className="text-sm text-gray-700 dark:text-gray-300">Para Revisar</span>
-                </div>
-                <span className="text-lg font-bold text-gray-800 dark:text-white">{dueCards}</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-blue-500 shrink-0" aria-hidden />
-                  <span className="text-sm text-gray-700 dark:text-gray-300">Em Aprendizado</span>
-                </div>
-                <span className="text-lg font-bold text-gray-800 dark:text-white">{inLearning}</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-green-500 shrink-0" aria-hidden />
-                  <span className="text-sm text-gray-700 dark:text-gray-300">Dominados</span>
-                </div>
-                <span className="text-lg font-bold text-gray-800 dark:text-white">{masteredCards}</span>
-              </div>
+              <div className="flex justify-between items-center"><div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-[#ff4b4b] shrink-0" /><span className="text-xs font-bold dark:text-white">Novos</span></div><span className="text-lg font-black dark:text-white">{newCards}</span></div>
+              <div className="flex justify-between items-center"><div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-[#ff9600] shrink-0" /><span className="text-xs font-bold dark:text-white">Para Revisar</span></div><span className="text-lg font-black dark:text-white">{dueCards}</span></div>
+              <div className="flex justify-between items-center"><div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-[#1cb0f6] shrink-0" /><span className="text-xs font-bold dark:text-white">Em Aprendizado</span></div><span className="text-lg font-black dark:text-white">{inLearning}</span></div>
+              <div className="flex justify-between items-center"><div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-[#58cc02] shrink-0" /><span className="text-xs font-bold dark:text-white">Dominados</span></div><span className="text-lg font-black dark:text-white">{masteredCards}</span></div>
             </div>
-            {totalCards > 0 && (
-              <div className="mt-4 min-h-[8px]">
-                <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden flex">
-                  <div className="h-full bg-red-500 rounded-l" style={{ width: `${(newCards / totalCards) * 100}%` }} title={`Novos: ${newCards}`} />
-                  <div className="h-full bg-yellow-500" style={{ width: `${(dueCards / totalCards) * 100}%` }} title={`Para revisar: ${dueCards}`} />
-                  <div className="h-full bg-blue-500" style={{ width: `${(inLearning / totalCards) * 100}%` }} title={`Em aprendizado: ${inLearning}`} />
-                  <div className="h-full bg-green-500 rounded-r" style={{ width: `${(masteredCards / totalCards) * 100}%` }} title={`Dominados: ${masteredCards}`} />
-                </div>
-              </div>
+            {totalCards > 0 && <div className="mt-4"><div className="h-3 bg-[#e5e5e5] dark:bg-[#37464f] rounded-full overflow-hidden flex"><div className="h-full bg-[#ff4b4b] rounded-l" style={{ width: `${(newCards / totalCards) * 100}%` }} /><div className="h-full bg-[#ff9600]" style={{ width: `${(dueCards / totalCards) * 100}%` }} /><div className="h-full bg-[#1cb0f6]" style={{ width: `${(inLearning / totalCards) * 100}%` }} /><div className="h-full bg-[#58cc02] rounded-r" style={{ width: `${(masteredCards / totalCards) * 100}%` }} /></div></div>}
+          </DuoCard>
+
+          <h3 className="font-black text-[#afafaf] dark:text-zinc-400 uppercase text-xs mb-4 px-2 tracking-widest mt-6">Meta e Ofensiva</h3>
+          <DuoCard className="border-b-4 p-4 mb-6">
+            <div className="grid grid-cols-2 gap-3 mb-3">
+              <div><div className="text-2xl font-black dark:text-white">{currentStreak}</div><div className="text-[10px] font-black text-[#afafaf] uppercase">Sequência atual</div></div>
+              <div><div className="text-2xl font-black dark:text-white">{bestStreak}</div><div className="text-[10px] font-black text-[#afafaf] uppercase">Melhor sequência</div></div>
+            </div>
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div><div className="font-black dark:text-white">Meta: {goal}/dia</div><div className="text-[10px] text-[#afafaf]">Hoje: {reviewsToday} {hitGoalToday ? '✓' : ''}</div></div>
+              <label className="flex items-center gap-2 text-sm"><span className="text-[10px] font-black text-[#afafaf]">Meta:</span><input type="number" min={1} value={goal} onChange={(e) => setDailyGoal(e.target.value)} className="w-14 px-2 py-2 rounded-2xl border-2 border-[#e5e5e5] dark:border-[#37464f] bg-[#f1f1f1] dark:bg-[#1b2c35] dark:text-white text-sm font-bold outline-none focus:border-[#1cb0f6]" aria-label="Meta por dia" /></label>
+            </div>
+            <p className="text-[10px] font-black text-[#afafaf] mt-2">Semana: {daysHitGoalWeek} dias meta · Mês: {daysHitGoalMonth}</p>
+          </DuoCard>
+
+          <h3 className="font-black text-[#afafaf] dark:text-zinc-400 uppercase text-xs mb-4 px-2 tracking-widest">Revisões por Período</h3>
+          <DuoCard className="border-b-4 p-4 mb-6">
+            <div className="flex gap-2 mb-4">
+              {[7, 14, 30].map(n => (<button key={n} onClick={() => setChartPeriod(n)} className={`flex-1 py-2 rounded-2xl font-black text-xs uppercase border-b-2 ${chartPeriod === n ? 'bg-[#1cb0f6] border-[#1899d6] text-white' : 'bg-[#f1f1f1] dark:bg-[#37464f] border-[#e5e5e5] dark:border-[#37464f] dark:text-white'}`}>{n}d</button>))}
+            </div>
+            <div className="flex items-end justify-between gap-1 h-28">
+              {chartData.map((day, idx) => (<div key={idx} className="flex-1 flex flex-col items-center justify-end min-w-0"><div className="w-full min-w-[6px] bg-[#1cb0f6] rounded-t" style={{ height: `${(day.count / maxChart) * 100}%`, minHeight: day.count > 0 ? '4px' : 0 }} title={`${day.date}: ${day.count}`} /><span className="text-[9px] text-[#afafaf] mt-1 truncate w-full text-center">{day.date.split('/')[0]}</span></div>))}
+            </div>
+          </DuoCard>
+
+          <h3 className="font-black text-[#afafaf] dark:text-zinc-400 uppercase text-xs mb-4 px-2 tracking-widest">Progresso por Baralho</h3>
+          <div className="space-y-4 pb-12">
+            {decks.length === 0 ? <p className="text-sm text-[#afafaf]">Nenhum baralho.</p> : decks.map(deck => {
+              const { deckTotal, deckNew, deckDue, deckInLearning, deckMastered, deckReviews, deckAccuracy, progressPct } = getDeckStats(deck, now);
+              const deckColor = DECK_COLORS[decks.indexOf(deck) % DECK_COLORS.length] || '#1cb0f6';
+              return (
+                <DuoCard key={deck.id} className="border-b-4">
+                  <div className="flex justify-between items-center mb-2"><span className="font-black text-xs dark:text-white uppercase">{deck.name}</span><span className="font-black text-[10px] text-[#afafaf]">{deckTotal} cards</span></div>
+                  <ProgressBar progress={progressPct} color={deckColor} />
+                  <div className="mt-2 text-[10px] font-bold text-[#afafaf]">Acertos: {deckReviews > 0 ? deckAccuracy + '%' : '—'} · Novos: {deckNew} · Revisar: {deckDue} · Dominados: {deckMastered}</div>
+                </DuoCard>
+              );
+            })}
+          </div>
+        </>
+      </div>
+    );
+  };
+
+  const DECK_COLORS = ['#ff4b4b', '#1cb0f6', '#ff9600', '#58cc02', '#5844ed'];
+
+  const HomeView = () => {
+    const { reviewsByDay, reviewsToday, todayStart, dayMs } = getReviewsByDay(decks);
+    const { currentStreak } = getStreaks(reviewsByDay, todayStart, dayMs);
+    const totalReviews = Object.values(reviewsByDay).reduce((a, b) => a + b, 0);
+    return (
+      <div className="p-4 pt-6 pb-24">
+        <header className="flex justify-between items-center mb-10 px-2 sticky top-0 bg-inherit z-10 py-2">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-1 text-[#ff9600] font-black"><Flame size={22} style={{ fill: '#ff9600' }} /> {currentStreak}</div>
+            <div className="flex items-center gap-1 text-[#1cb0f6] font-black"><Zap size={22} style={{ fill: '#1cb0f6' }} /> {totalReviews}</div>
+          </div>
+          <div className="flex items-center gap-2">
+            {isDevMode() && (
+              <span className="px-2 py-1 text-[10px] font-black bg-[#5844ed] text-white rounded animate-pulse">DEV</span>
             )}
+            <button onClick={() => setView('settings')} className="p-2 text-[#afafaf] dark:hover:text-white transition-colors touch-target" aria-label="Configurações">
+              <Settings size={28} />
+            </button>
           </div>
-
-          {/* Ofensivas: Streaks + Meta + Calendário + Ofensiva da semana */}
-          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
-            <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-4">Ofensivas</h3>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              <div className="space-y-3">
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="p-3 bg-gray-50 dark:bg-gray-900 rounded-lg">
-                    <div className="text-2xl font-bold text-gray-800 dark:text-white">{currentStreak}</div>
-                    <div className="text-xs text-gray-500 dark:text-gray-400 uppercase font-semibold mt-1">Sequência atual (dias)</div>
-                  </div>
-                  <div className="p-3 bg-gray-50 dark:bg-gray-900 rounded-lg">
-                    <div className="text-2xl font-bold text-gray-800 dark:text-white">{bestStreak}</div>
-                    <div className="text-xs text-gray-500 dark:text-gray-400 uppercase font-semibold mt-1">Melhor sequência</div>
-                  </div>
+        </header>
+        <h2 className="font-black text-2xl uppercase tracking-tighter mb-8 px-2 dark:text-white">Meus Baralhos</h2>
+        <div className="grid grid-cols-3 gap-y-12 gap-x-4 justify-items-center">
+          {decks.map((deck, idx) => {
+            const now = Date.now();
+            const { progressPct } = getDeckStats(deck, now);
+            const dueCount = deck.cards.filter(c => c.nextReview <= now).length;
+            const color = DECK_COLORS[idx % DECK_COLORS.length];
+            return (
+              <div key={deck.id} className="relative flex flex-col items-center w-full max-w-[120px] group cursor-pointer" onClick={() => { setActiveDeckId(deck.id); setView('deck'); }}>
+                <div
+                  className="w-22 h-22 rounded-full border-[8px] border-[#e5e5e5] dark:border-[#37464f] relative flex items-center justify-center shadow-lg transition-transform active:scale-95 min-w-[88px] min-h-[88px]"
+                  style={{ borderTopColor: color, borderRightColor: progressPct >= 25 ? color : '', borderBottomColor: progressPct >= 50 ? color : '', borderLeftColor: progressPct >= 75 ? color : '' }}
+                >
+                  <div className="w-14 h-14 rounded-full flex items-center justify-center text-white" style={{ backgroundColor: color }}><Brain size={30} /></div>
                 </div>
-                <div className="p-3 bg-gray-50 dark:bg-gray-900 rounded-lg">
-                  <div className="text-lg font-bold text-gray-800 dark:text-white">Ofensiva da semana</div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">{daysActiveThisWeek}/7 dias ativos</div>
-                </div>
-                <div className="p-3 bg-gray-50 dark:bg-gray-900 rounded-lg flex flex-wrap items-center justify-between gap-2">
-                  <div>
-                    <div className="text-lg font-bold text-gray-800 dark:text-white">Meta: {goal}/dia</div>
-                    <div className="text-xs text-gray-500 dark:text-gray-400">Revisões hoje: {reviewsToday} {hitGoalToday ? '✓' : ''}</div>
-                  </div>
-                  <label className="flex items-center gap-2 text-sm min-h-[44px]">
-                    <span className="text-gray-600 dark:text-gray-400 whitespace-nowrap">Definir meta:</span>
-                    <input
-                      type="number"
-                      min={1}
-                      value={goal}
-                      onChange={(e) => setDailyGoal(e.target.value)}
-                      className="w-16 px-2 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-white text-sm min-h-[44px] touch-target"
-                      aria-label="Meta de revisões por dia"
-                    />
-                  </label>
-                </div>
-                <div className="p-3 bg-gray-50 dark:bg-gray-900 rounded-lg">
-                  <div className="text-sm text-gray-700 dark:text-gray-300">Dias que bateu a meta</div>
-                  <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">Esta semana: {daysHitGoalWeek} · Este mês: {daysHitGoalMonth}</div>
-                </div>
+                <span className="mt-3 font-black text-[10px] uppercase text-center dark:text-zinc-300 leading-tight">{deck.name}</span>
+                {dueCount > 0 && <span className="text-[9px] font-black text-[#ff4b4b] mt-0.5">{dueCount} para revisar</span>}
               </div>
-              <div className="space-y-2">
-                <div className="text-sm font-semibold text-gray-700 dark:text-gray-300">Calendário de atividade (30 dias)</div>
-                <div className="grid grid-cols-7 gap-1" role="grid" aria-label="Calendário de revisões dos últimos 30 dias">
-                  {calendarDays.map((day, idx) => (
-                    <div
-                      key={idx}
-                      className={`aspect-square min-w-[8px] rounded border border-gray-200 dark:border-gray-600 flex items-center justify-center text-[10px] font-medium touch-target ${day.count === 0 ? 'bg-gray-200 dark:bg-gray-600 text-gray-500 dark:text-gray-400' : day.hitGoal ? 'bg-emerald-500 text-white' : 'bg-blue-400 text-white'}`}
-                      title={`${day.label}: ${day.count} revisões${day.hitGoal ? ' (meta batida)' : ''}`}
-                      aria-label={`${day.label} ${day.count} revisões`}
-                    >
-                      {day.count > 0 ? day.count : ''}
-                    </div>
-                  ))}
-                </div>
-                <p className="text-xs text-gray-500 dark:text-gray-400">Toque em um dia para ver detalhes. Cinza = sem revisões; azul = com revisões; verde = meta batida.</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Gráfico revisões — seletor 7 / 14 / 30 dias */}
-          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
-            <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
-              <h3 className="text-lg font-bold text-gray-800 dark:text-white">Revisões por Período</h3>
-              <div className="flex rounded-lg overflow-hidden border border-gray-300 dark:border-gray-600">
-                {[7, 14, 30].map(n => (
-                  <button
-                    key={n}
-                    onClick={() => setChartPeriod(n)}
-                    className={`px-3 py-2 text-sm font-medium min-h-[44px] touch-target ${chartPeriod === n ? 'bg-blue-600 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'}`}
-                  >
-                    {n} dias
-                  </button>
-                ))}
-              </div>
-            </div>
-            <div className="flex items-end justify-between gap-1 h-36 min-h-[120px]">
-              {chartData.map((day, idx) => (
-                <div key={idx} className="flex-1 flex flex-col items-center justify-end min-w-0">
-                  <div
-                    className="w-full min-w-[8px] bg-blue-500 rounded-t transition-all hover:bg-blue-600"
-                    style={{ height: `${(day.count / maxChart) * 100}%`, minHeight: day.count > 0 ? '4px' : 0 }}
-                    title={`${day.date}: ${day.count} revisões`}
-                  />
-                  <span className="text-xs text-gray-500 dark:text-gray-400 mt-1 truncate w-full text-center">{day.date.split('/')[0]}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Estatísticas por Baralho (funções centralizadas + minigráfico) */}
-          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
-            <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-4">Estatísticas por Baralho</h3>
-            {decks.length === 0 ? (
-              <p className="text-sm text-gray-500 dark:text-gray-400">Nenhum baralho.</p>
-            ) : (
-              <div className="space-y-3">
-                {decks.map(deck => {
-                  const { deckTotal, deckNew, deckDue, deckInLearning, deckMastered, deckReviews, deckAccuracy, progressPct } = getDeckStats(deck, now);
-                  return (
-                    <div key={deck.id} className="p-3 bg-gray-50 dark:bg-gray-900 rounded-lg">
-                      <div className="flex justify-between items-start mb-2">
-                        <h4 className="font-semibold text-gray-800 dark:text-white">{deck.name}</h4>
-                        <span className="text-sm text-gray-500 dark:text-gray-400">{deckTotal} cards</span>
-                      </div>
-                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
-                        <div>
-                          <span className="text-gray-500 dark:text-gray-400">Novos:</span>
-                          <span className="ml-1 font-semibold text-red-600 dark:text-red-400">{deckNew}</span>
-                        </div>
-                        <div>
-                          <span className="text-gray-500 dark:text-gray-400">Revisar:</span>
-                          <span className="ml-1 font-semibold text-yellow-600 dark:text-yellow-400">{deckDue}</span>
-                        </div>
-                        <div>
-                          <span className="text-gray-500 dark:text-gray-400">Dominados:</span>
-                          <span className="ml-1 font-semibold text-green-600 dark:text-green-400">{deckMastered}</span>
-                        </div>
-                      </div>
-                      {deckTotal > 0 && (
-                        <>
-                          <div className="mt-2">
-                            <div className="flex justify-between text-xs mb-1">
-                              <span className="text-gray-500 dark:text-gray-400">Progresso</span>
-                              <span className="font-semibold text-gray-700 dark:text-gray-300">{progressPct}%</span>
-                            </div>
-                            <div className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden flex min-h-[8px]">
-                              <div className="h-full bg-red-500 rounded-l" style={{ width: `${(deckNew / deckTotal) * 100}%` }} />
-                              <div className="h-full bg-yellow-500" style={{ width: `${(deckDue / deckTotal) * 100}%` }} />
-                              <div className="h-full bg-blue-500" style={{ width: `${(deckInLearning / deckTotal) * 100}%` }} />
-                              <div className="h-full bg-green-500 rounded-r" style={{ width: `${(deckMastered / deckTotal) * 100}%` }} />
-                            </div>
-                          </div>
-                          <div className="mt-2 text-xs">
-                            <span className="text-gray-500 dark:text-gray-400">Taxa de acerto: </span>
-                            <span className="font-semibold text-gray-700 dark:text-gray-300">{deckReviews > 0 ? deckAccuracy + '%' : '—'}</span>
-                          </div>
-                        </>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
+            );
+          })}
+          <button onClick={showPrompt} className="w-20 h-20 rounded-full border-4 border-dashed border-[#e5e5e5] dark:border-[#37464f] flex items-center justify-center text-[#afafaf] hover:bg-[#f1f1f1] dark:hover:bg-[#1b2c35] shadow-sm active:scale-95 transition-all min-w-[80px] min-h-[80px]">
+            <Plus size={32} />
+          </button>
         </div>
       </div>
     );
   };
 
-  const HomeView = () => (
-    <div className="p-4 max-w-2xl md:max-w-4xl lg:max-w-6xl xl:max-w-7xl mx-auto pb-24">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
-          <img src="logoflashcard.ico" alt="NihonGo Deck" className="w-8 h-8" />
-          NihonGo Deck
-          <span className="text-[10px] font-normal text-gray-500 dark:text-gray-400 opacity-70" title={`Versão ${appVersion}`}>
-            v{appVersion}
-          </span>
-          {isDevMode() && (
-            <span className="px-2 py-1 text-xs font-bold bg-purple-500 text-white rounded animate-pulse" title="Modo Desenvolvedor Ativo">
-              DEV
-            </span>
-          )}
-        </h1>
-        <div className="relative">
-          <button 
-            onClick={() => setShowSettingsMenu(!showSettingsMenu)} 
-            className="p-2 bg-gray-200 dark:bg-gray-700 rounded-full hover:bg-gray-300 dark:hover:bg-gray-600 transition"
-          >
-            <Settings size={20} className="text-gray-700 dark:text-gray-300" />
-          </button>
-          
-          {showSettingsMenu && (
-            <>
-              <div 
-                className="fixed inset-0 z-40" 
-                onClick={() => setShowSettingsMenu(false)}
-              />
-              <div className="absolute right-0 top-12 z-50 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 p-3 min-w-[200px]">
-                <div className="space-y-2">
-                  <label className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer transition">
-                    <Upload size={18} className="text-gray-700 dark:text-gray-300" />
-                    <span className="text-sm text-gray-700 dark:text-gray-300">Importar</span>
-                    <input type="file" onChange={handleImport} className="hidden" accept=".json" />
-                  </label>
-                  <button 
-                    onClick={() => {
-                      handleExportAll();
-                      setShowSettingsMenu(false);
-                    }} 
-                    className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition text-left"
-                  >
-                    <Download size={18} className="text-gray-700 dark:text-gray-300" />
-                    <span className="text-sm text-gray-700 dark:text-gray-300">Exportar</span>
-                  </button>
-                  <div className="border-t border-gray-200 dark:border-gray-700 my-2" />
-                  <button 
-                    onClick={() => {
-                      setView('stats');
-                      setShowSettingsMenu(false);
-                    }} 
-                    className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition text-left"
-                  >
-                    <Award size={18} className="text-gray-700 dark:text-gray-300" />
-                    <span className="text-sm text-gray-700 dark:text-gray-300">Estatísticas</span>
-                  </button>
-                  <div className="border-t border-gray-200 dark:border-gray-700 my-2" />
-                  <button 
-                    onClick={() => {
-                      setTheme(theme === 'dark' ? 'light' : 'dark');
-                      setShowSettingsMenu(false);
-                    }} 
-                    className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition"
-                  >
-                    {theme === 'dark' ? (
-                      <>
-                        <Sun size={18} className="text-yellow-400" />
-                        <span className="text-sm text-gray-700 dark:text-gray-300">Tema Claro</span>
-                      </>
-                    ) : (
-                      <>
-                        <Moon size={18} className="text-gray-700 dark:text-gray-300" />
-                        <span className="text-sm text-gray-700 dark:text-gray-300">Tema Escuro</span>
-                      </>
-                    )}
-                  </button>
-                  <div className="border-t border-gray-200 dark:border-gray-700 my-2" />
-                  <div className="px-2 py-1">
-                    <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Notificações</span>
-                  </div>
-                  {window.pushService && (
-                    <button
-                      onClick={handleTogglePush}
-                      disabled={pushLoading || pushPermission === 'denied'}
-                      className="w-full flex items-center justify-between p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition text-left disabled:opacity-50 touch-target"
-                    >
-                      <div className="flex items-center gap-3">
-                        <Sparkles size={18} className={pushEnabled ? "text-blue-500" : "text-gray-700 dark:text-gray-300"} />
-                        <span className="text-sm text-gray-700 dark:text-gray-300">
-                          {pushLoading ? 'Carregando...' : pushEnabled ? 'Push Ativado' : 'Push Desativado'}
-                        </span>
-                      </div>
-                      {pushPermission !== 'denied' && (
-                        <div className={`w-10 h-6 rounded-full transition-colors ${pushEnabled ? 'bg-blue-500' : 'bg-gray-300 dark:bg-gray-600'}`}>
-                          <div className={`w-4 h-4 bg-white rounded-full mt-1 transition-transform ${pushEnabled ? 'ml-5' : 'ml-1'}`} />
-                        </div>
-                      )}
-                    </button>
-                  )}
-                  {pushPermission === 'denied' && (
-                    <p className="text-xs text-red-500 dark:text-red-400 px-2">
-                      Permissão negada. Ative nas configurações do navegador.
-                    </p>
-                  )}
-                  <div className="border-t border-gray-200 dark:border-gray-700 my-2" />
-                  <div className="px-2 py-1">
-                    <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Sincronização</span>
-                  </div>
-                  {!jsonbinBinId && (
-                    <>
-                      <button 
-                        onClick={() => {
-                          createNewBin();
-                          setShowSettingsMenu(false);
-                        }}
-                        disabled={isSyncing}
-                        className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition text-left disabled:opacity-50"
-                      >
-                        <RefreshCw size={18} className={`text-gray-700 dark:text-gray-300 ${isSyncing ? 'animate-spin' : ''}`} />
-                        <span className="text-sm text-gray-700 dark:text-gray-300">
-                          {isSyncing ? 'Criando...' : 'Criar Novo ID de Usuário'}
-                        </span>
-                      </button>
-                      <button 
-                        onClick={() => {
-                          setShowSettingsMenu(false);
-                          openBinIdModal('insert');
-                        }} 
-                        className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition text-left"
-                      >
-                        <Edit size={18} className="text-gray-700 dark:text-gray-300" />
-                        <span className="text-sm text-gray-700 dark:text-gray-300">Inserir ID de Usuário</span>
-                      </button>
-                    </>
-                  )}
-                  {jsonbinBinId && (
-                    <>
-                      <div className="px-2 py-1">
-                        <div className="text-xs text-gray-500 dark:text-gray-400 truncate" title={jsonbinBinId}>
-                          ID: {jsonbinBinId.length > 20 ? jsonbinBinId.substring(0, 20) + '...' : jsonbinBinId}
-                        </div>
-                      </div>
-                      <button 
-                        onClick={() => {
-                          setShowSettingsMenu(false);
-                          openBinIdModal('edit');
-                        }} 
-                        className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition text-left"
-                      >
-                        <Edit size={18} className="text-gray-700 dark:text-gray-300" />
-                        <span className="text-sm text-gray-700 dark:text-gray-300">Editar ID de Usuário</span>
-                      </button>
-                      <button 
-                        onClick={() => {
-                          syncData();
-                          setShowSettingsMenu(false);
-                        }}
-                        disabled={isSyncing}
-                        className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition text-left disabled:opacity-50"
-                      >
-                        <RefreshCw size={18} className={`text-gray-700 dark:text-gray-300 ${isSyncing ? 'animate-spin' : ''}`} />
-                        <span className="text-sm text-gray-700 dark:text-gray-300">
-                          {isSyncing ? 'Sincronizando...' : 'Sincronizar Dados'}
-                        </span>
-                      </button>
-                    </>
-                  )}
-                  {isDevMode() && (
-                    <>
-                      <div className="border-t border-gray-200 dark:border-gray-700 my-2" />
-                      <div className="px-2 py-1">
-                        <span className="text-xs font-semibold text-purple-600 dark:text-purple-400 uppercase">Modo Desenvolvedor</span>
-                      </div>
-                      <button 
-                        onClick={() => {
-                          setView('dev-panel');
-                          setShowSettingsMenu(false);
-                        }} 
-                        className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-purple-50 dark:hover:bg-purple-900/20 transition text-left border border-purple-200 dark:border-purple-800"
-                      >
-                        <Settings size={18} className="text-purple-600 dark:text-purple-400" />
-                        <span className="text-sm text-purple-700 dark:text-purple-300 font-semibold">Painel Dev</span>
-                      </button>
-                    </>
-                  )}
-                </div>
-              </div>
-            </>
-          )}
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        {decks.map(deck => (
-          <div 
-            key={deck.id} 
-            onClick={() => { setActiveDeckId(deck.id); setView('deck'); }}
-            className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 active:scale-95 transition-transform cursor-pointer relative group"
-          >
-            <h2 className="text-lg font-bold text-gray-800 dark:text-white">{deck.name}</h2>
-            <p className="text-sm text-gray-500 dark:text-gray-400">{deck.cards.length} cards</p>
-            <div className="absolute right-4 top-4 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity">
-               <ChevronLeft size={20} className="rotate-180 text-gray-400" />
-            </div>
-          </div>
-        ))}
-      </div>
-
-      <button 
-        onClick={showPrompt}
-        className="fixed bottom-6 right-6 bg-red-600 hover:bg-red-700 text-white p-4 rounded-full shadow-lg transition-colors flex items-center gap-2 z-40"
-      >
-        <Plus size={24} />
-        <span className="font-bold">Novo Baralho</span>
-      </button>
-    </div>
-  );
-
   const DeckDetailView = () => {
     const deck = decks.find(d => d.id === activeDeckId);
     if (!deck) return null;
-    const dueCardsCount = deck.cards.filter(c => c.nextReview <= Date.now()).length;
-    const isReviewDue = dueCardsCount > 0;
-
-    // Filter and sort cards
     const now = Date.now();
-    let filteredCards = [...deck.cards];
+    const dueCardsCount = deck.cards.filter(c => c.nextReview <= now).length;
+    const isReviewDue = dueCardsCount > 0;
+    const { progressPct } = getDeckStats(deck, now);
+    const deckColor = DECK_COLORS[decks.findIndex(d => d.id === deck.id) % DECK_COLORS.length] || '#1cb0f6';
 
-    // Apply search filter
+    let filteredCards = [...deck.cards];
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase().trim();
-      filteredCards = filteredCards.filter(card => 
-        card.kanji.toLowerCase().includes(query) ||
-        card.reading.toLowerCase().includes(query) ||
-        card.meaning.toLowerCase().includes(query)
+      filteredCards = filteredCards.filter(card =>
+        card.kanji.toLowerCase().includes(query) || card.reading.toLowerCase().includes(query) || card.meaning.toLowerCase().includes(query)
       );
     }
-
-    // Apply status filter
     if (filterStatus !== 'all') {
       filteredCards = filteredCards.filter(card => {
-        if (filterStatus === 'new') {
-          return card.interval === 0 && card.nextReview <= now;
-        } else if (filterStatus === 'due') {
-          return card.nextReview <= now && card.interval > 0;
-        } else if (filterStatus === 'mastered') {
-          return card.interval > 7;
-        }
+        if (filterStatus === 'new') return card.interval === 0 && card.nextReview <= now;
+        if (filterStatus === 'due') return card.nextReview <= now && card.interval > 0;
+        if (filterStatus === 'mastered') return card.interval > 7;
         return true;
       });
     }
-
-    // Apply tag filter
-    if (tagFilter !== 'all') {
-      filteredCards = filteredCards.filter(card => 
-        (card.tags || []).includes(tagFilter)
-      );
-    }
-
-    // Apply sorting
-    if (sortBy === 'kanji') {
-      filteredCards.sort((a, b) => a.kanji.localeCompare(b.kanji));
-    } else if (sortBy === 'created') {
-      filteredCards.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
-    } else if (sortBy === 'nextReview') {
-      filteredCards.sort((a, b) => a.nextReview - b.nextReview);
-    }
+    if (tagFilter !== 'all') filteredCards = filteredCards.filter(card => (card.tags || []).includes(tagFilter));
+    if (sortBy === 'kanji') filteredCards.sort((a, b) => a.kanji.localeCompare(b.kanji));
+    else if (sortBy === 'created') filteredCards.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+    else if (sortBy === 'nextReview') filteredCards.sort((a, b) => a.nextReview - b.nextReview);
 
     return (
-      <div className="p-4 max-w-2xl md:max-w-4xl lg:max-w-6xl xl:max-w-7xl mx-auto h-full flex flex-col">
-        <div className="flex items-center justify-between mb-6">
-          <button onClick={() => setView('home')} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg">
-            <ChevronLeft size={20} className="text-gray-800 dark:text-white" />
+      <div className="p-6 pt-10 h-full overflow-y-auto pb-24">
+        <header className="flex justify-between items-center mb-8">
+          <button onClick={() => setView('home')} className="text-[#afafaf] hover:text-[#4b4b4b] dark:hover:text-white transition-colors p-2">
+            <ArrowLeft size={28} strokeWidth={3} />
           </button>
-          <h2 className="text-xl font-bold text-gray-800 dark:text-white truncate max-w-[200px]">{deck.name}</h2>
-          <div className="flex gap-2">
-            <button 
-              onClick={() => setCardViewMode(cardViewMode === 'list' ? 'grid' : 'list')} 
-              className="p-2 text-gray-600 dark:text-gray-400 hover:text-indigo-500 transition"
-              title={cardViewMode === 'list' ? 'Alternar para Grid' : 'Alternar para Lista'}
-            >
-              {cardViewMode === 'list' ? <Grid size={20} /> : <List size={20} />}
-            </button>
-            <button onClick={() => handleExportDeck(deck)} className="p-2 text-gray-600 dark:text-gray-400 hover:text-red-500">
-              <Download size={20} />
-            </button>
-            <button onClick={() => deleteDeck(deck.id)} className="p-2 text-gray-600 dark:text-gray-400 hover:text-red-500">
-              <Trash2 size={20} />
-            </button>
+          <div className="flex gap-4">
+            <button onClick={() => deleteDeck(deck.id)} className="text-[#ff4b4b] p-2" aria-label="Excluir baralho"><Trash2 size={24} /></button>
+          </div>
+        </header>
+        <div className="flex items-center gap-4 mb-10">
+          <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-white shadow-lg min-w-[64px] min-h-[64px]" style={{ backgroundColor: deckColor }}><Layers size={32} strokeWidth={2.5} /></div>
+          <div>
+            <h1 className="text-2xl font-black uppercase tracking-tighter dark:text-white leading-none mb-1">{deck.name}</h1>
+            <p className="font-bold text-[#afafaf] dark:text-zinc-400 text-[10px] uppercase tracking-wider">{deck.cards.length} CARDS NO TOTAL</p>
           </div>
         </div>
-
-        <div className="grid grid-cols-2 gap-4 mb-6">
-          <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg text-center">
-            <span className="block text-2xl font-bold text-blue-600 dark:text-blue-400">{deck.cards.length}</span>
-            <span className="text-xs text-blue-800 dark:text-blue-300 uppercase font-semibold">Total Cards</span>
+        <DuoCard className="mb-10 border-b-4 dark:bg-[#1b2c35]">
+          <div className="flex justify-between items-center mb-3">
+            <span className="font-black text-[10px] text-[#afafaf] dark:text-zinc-400 uppercase tracking-widest leading-none">PROGRESSO DE DOMÍNIO</span>
+            <span className="font-black text-sm text-[#58cc02] leading-none">{progressPct}%</span>
           </div>
-          <div className={`p-4 rounded-lg text-center transition-colors ${isReviewDue ? 'bg-red-50 dark:bg-red-900/20' : 'bg-green-50 dark:bg-green-900/20'}`}>
-             <span className={`block text-2xl font-bold ${isReviewDue ? 'text-red-600 dark:text-red-400' : 'text-green-600 dark:text-green-400'}`}>
-               {dueCardsCount}
-             </span>
-             <span className={`text-xs uppercase font-semibold ${isReviewDue ? 'text-red-800 dark:text-red-300' : 'text-green-800 dark:text-green-300'}`}>
-               Para Revisar
-             </span>
+          <ProgressBar progress={progressPct} color={deckColor} />
+        </DuoCard>
+        <DuoCard className="mb-6 p-4 flex justify-between items-center">
+          <div className="flex items-center gap-2 text-[#4b4b4b] dark:text-white">
+            {furiganaMode === 'always' ? <Eye size={18} /> : <EyeOff size={18} />}
+            <span className="text-sm font-black uppercase">{furiganaMode === 'always' ? 'Furigana visível' : 'Furigana oculto'}</span>
           </div>
+          <button onClick={() => setFuriganaMode(prev => prev === 'always' ? 'answer' : 'always')} className={`relative w-14 h-8 rounded-full border-b-2 transition-colors ${furiganaMode === 'always' ? 'bg-[#58cc02] border-[#46a302]' : 'bg-[#e5e5e5] dark:bg-[#37464f] border-[#afafaf]'}`}>
+            <div className={`absolute top-0.5 w-6 h-6 bg-white rounded-full shadow transition-all ${furiganaMode === 'always' ? 'left-7' : 'left-0.5'}`} />
+          </button>
+        </DuoCard>
+        <div className="grid grid-cols-2 gap-4 mb-8">
+          {isReviewDue ? (
+            <DuoButton onClick={() => startReview(deck.id, false)} variant="primary" className="h-28 flex-col relative" fullWidth>
+              <Brain size={28} /><span>REVISÃO</span>
+              <div className="absolute bottom-4 bg-white/20 px-3 py-0.5 rounded-full text-[10px] font-black">{dueCardsCount}</div>
+            </DuoButton>
+          ) : (
+            <DuoButton onClick={() => startReview(deck.id, true)} disabled={deck.cards.length === 0} variant="primary" className="h-28 flex-col" fullWidth>
+              <RotateCw size={28} /><span>{deck.cards.length === 0 ? 'VAZIO' : 'REVISÃO'}</span>
+            </DuoButton>
+          )}
+          <DuoButton onClick={() => setView('test-mode-selection')} disabled={deck.cards.length < 10} variant="indigo" className="h-28 flex-col" fullWidth><Target size={28} /><span>TESTES</span></DuoButton>
+          <DuoButton onClick={() => setView('generator')} variant="secondary" className="h-20" fullWidth><Sparkles size={18} /><span className="text-[10px]">GERAR COM IA</span></DuoButton>
+          <DuoButton onClick={showAddCardModal} variant="white" className="h-20 border-2" fullWidth><Plus size={18} /><span className="text-[10px]">ADD CARD</span></DuoButton>
         </div>
-
-        <div className="grid grid-cols-1 gap-3 mb-6">
-           <div className="bg-white dark:bg-gray-800 p-3 rounded-lg border border-gray-200 dark:border-gray-700 flex justify-between items-center mb-2">
-             <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
-               {furiganaMode === 'always' ? <Eye size={18} /> : <EyeOff size={18} />}
-               <span className="text-sm font-medium">
-                 {furiganaMode === 'always' ? 'Furigana Visível' : 'Furigana Oculto na Frente'}
-               </span>
-             </div>
-             <button 
-               onClick={() => setFuriganaMode(prev => prev === 'always' ? 'answer' : 'always')}
-               className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${furiganaMode === 'always' ? 'bg-indigo-600' : 'bg-gray-400'}`}
-             >
-               <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${furiganaMode === 'always' ? 'translate-x-6' : 'translate-x-1'}`} />
-             </button>
-           </div>
-
-           <div className="grid grid-cols-2 gap-3 mb-3">
-             <button 
-               onClick={showAddCardModal}
-               className="w-full bg-green-600 text-white py-3 rounded-lg font-bold shadow-md hover:bg-green-700 active:scale-95 transition flex items-center justify-center gap-2"
-             >
-               <Plus size={20} />
-               Adicionar Card
-             </button>
-             <button 
-               onClick={() => setView('generator')}
-               className="w-full bg-indigo-600 text-white py-3 rounded-lg font-bold shadow-md hover:bg-indigo-700 active:scale-95 transition flex items-center justify-center gap-2"
-             >
-               <Sparkles size={20} />
-               Gerar com IA
-             </button>
-             <button 
-               onClick={showNotesToCardsModal}
-               className="col-span-2 w-full bg-gray-600 text-white py-3 rounded-lg font-bold shadow-md hover:bg-gray-700 active:scale-95 transition flex items-center justify-center gap-2"
-             >
-               <List size={20} />
-               Anotações
-             </button>
-           </div>
-           
-           <div className="grid grid-cols-2 gap-3">
-             {isReviewDue ? (
-               <button 
-                 onClick={() => startReview(deck.id, false)}
-                 className="w-full bg-red-600 text-white py-3 rounded-lg font-bold shadow-md hover:bg-red-700 active:scale-95 transition flex items-center justify-center gap-2 animate-pulse"
-               >
-                 <Play size={18} fill="currentColor" />
-                 Revisão
-                 <span>({dueCardsCount})</span>
-               </button>
-             ) : (
-               <button 
-                 onClick={() => startReview(deck.id, true)}
-                 disabled={deck.cards.length === 0}
-                 className={`w-full text-white py-3 rounded-lg font-bold shadow-md active:scale-95 transition flex items-center justify-center gap-2
-                   ${deck.cards.length === 0 ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}
-                 `}
-               >
-                 {deck.cards.length === 0 ? (
-                   <span className="text-xs">Vazio</span>
-                 ) : (
-                   <>
-                     <RotateCw size={18} />
-                     Revisão
-                   </>
-                 )}
-               </button>
-             )}
-             
-             <button 
-               onClick={() => setView('test-mode-selection')}
-               disabled={deck.cards.length < 10}
-               className={`w-full text-white py-3 rounded-lg font-bold shadow-md active:scale-95 transition flex items-center justify-center gap-2
-                 ${deck.cards.length < 10 ? 'bg-gray-400 cursor-not-allowed' : 'bg-purple-600 hover:bg-purple-700'}
-               `}
-             >
-               <Award size={18} />
-               Teste
-             </button>
-           </div>
-        </div>
-
-        <div className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-900 rounded-lg p-2 border border-gray-200 dark:border-gray-700">
-          <div className="mb-3 space-y-2">
-            <div className="relative">
-              <Search size={18} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Buscar cards..."
-                className="w-full pl-10 pr-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-800 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none text-sm"
-              />
-            </div>
-            <div className="flex gap-2 flex-wrap">
-              <select
-                value={filterStatus}
-                onChange={(e) => setFilterStatus(e.target.value)}
-                className="flex-1 min-w-[120px] px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-800 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-              >
-                <option value="all">Todos</option>
-                <option value="new">Novos</option>
-                <option value="due">Para Revisar</option>
-                <option value="mastered">Dominados</option>
-              </select>
-              <select
-                value={tagFilter}
-                onChange={(e) => setTagFilter(e.target.value)}
-                className="flex-1 min-w-[120px] px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-800 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-              >
-                <option value="all">Todas Tags</option>
-                {availableTags.map(tag => (
-                  <option key={tag} value={tag}>{tag}</option>
-                ))}
-              </select>
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="flex-1 min-w-[120px] px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-800 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-              >
-                <option value="default">Padrão</option>
-                <option value="kanji">Por Kanji</option>
-                <option value="created">Por Data</option>
-                <option value="nextReview">Próxima Revisão</option>
-              </select>
-            </div>
+        <div className="space-y-4 pb-12">
+          <div className="flex justify-between items-center px-2">
+            <h3 className="font-black text-[#afafaf] dark:text-zinc-400 uppercase text-xs tracking-widest">LISTA DE CARDS</h3>
+            <Search size={18} className="text-[#afafaf]" />
           </div>
-          <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-2 px-2">
-            Cards Existentes {filteredCards.length !== deck.cards.length && `(${filteredCards.length} de ${deck.cards.length})`}
-          </h3>
+          <div className="relative mb-3">
+            <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#afafaf]" />
+            <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Buscar..." className="w-full pl-10 pr-4 py-3 bg-[#f1f1f1] dark:bg-[#1b2c35] border-2 border-[#e5e5e5] dark:border-[#37464f] rounded-2xl font-bold outline-none focus:border-[#1cb0f6] dark:text-white text-sm" />
+          </div>
+          <div className="flex gap-2 flex-wrap">
+            <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)} className="flex-1 min-w-[100px] px-3 py-2 bg-[#f1f1f1] dark:bg-[#1b2c35] border-2 border-[#e5e5e5] dark:border-[#37464f] rounded-2xl text-[#4b4b4b] dark:text-white text-xs font-bold outline-none focus:border-[#1cb0f6]">
+              <option value="all">Todos</option><option value="new">Novos</option><option value="due">Revisar</option><option value="mastered">Dominados</option>
+            </select>
+            <select value={tagFilter} onChange={(e) => setTagFilter(e.target.value)} className="flex-1 min-w-[100px] px-3 py-2 bg-[#f1f1f1] dark:bg-[#1b2c35] border-2 border-[#e5e5e5] dark:border-[#37464f] rounded-2xl text-[#4b4b4b] dark:text-white text-xs font-bold outline-none focus:border-[#1cb0f6]">
+              <option value="all">Tags</option>
+              {availableTags.map(tag => <option key={tag} value={tag}>{tag}</option>)}
+            </select>
+            <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className="flex-1 min-w-[100px] px-3 py-2 bg-[#f1f1f1] dark:bg-[#1b2c35] border-2 border-[#e5e5e5] dark:border-[#37464f] rounded-2xl text-[#4b4b4b] dark:text-white text-xs font-bold outline-none focus:border-[#1cb0f6]">
+              <option value="default">Padrão</option><option value="kanji">Kanji</option><option value="created">Data</option><option value="nextReview">Revisão</option>
+            </select>
+          </div>
           {deck.cards.length === 0 ? (
-            <div className="text-center py-8 text-gray-400">Nenhum card ainda. Crie ou Gere um!</div>
+            <div className="text-center py-12 text-[#afafaf] font-bold text-sm">Nenhum card ainda. Crie ou gere com IA!</div>
           ) : filteredCards.length === 0 ? (
-            <div className="text-center py-8 text-gray-400">Nenhum card encontrado com os filtros aplicados.</div>
+            <div className="text-center py-12 text-[#afafaf] font-bold text-sm">Nenhum card com os filtros.</div>
           ) : cardViewMode === 'list' ? (
-            <div className="space-y-2">
-              {filteredCards.map((card, idx) => (
-                <div key={idx} className="bg-white dark:bg-gray-800 p-3 rounded shadow-sm flex justify-between items-center group animate-fadeIn hover:shadow-md transition-all">
-                  <div className="flex-1">
-                    <ruby className="text-lg font-bold text-gray-800 dark:text-gray-200">
-                      {card.kanji}
-                      <rt className="text-xs text-gray-500">{card.reading}</rt>
-                    </ruby>
-                    <div className="text-sm text-gray-600 dark:text-gray-400">{card.meaning}</div>
-                    {card.tags && card.tags.length > 0 && (
-                      <div className="flex flex-wrap gap-1 mt-1">
-                        {card.tags.map((tag, tagIdx) => (
-                          <span key={tagIdx} className="px-1.5 py-0.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded text-xs">
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                    )}
+            <div className="grid grid-cols-2 gap-4">
+              {filteredCards.map((card, i) => (
+                <DuoCard key={card.id || i} className="flex flex-col items-center justify-center border-b-4 py-6 relative" interactive onClick={() => startEditCard(card)}>
+                  <div className="absolute top-3 left-3 w-2.5 h-2.5 rounded-full" style={{ backgroundColor: deckColor }} />
+                  <div className="flex flex-col items-center text-center">
+                    <ruby className="font-black text-2xl dark:text-white leading-tight mb-2">{card.kanji} <rt className="text-[10px] text-[#ff4b4b] uppercase font-black tracking-tighter">{card.reading}</rt></ruby>
+                    <p className="text-[11px] font-bold text-[#afafaf] dark:text-zinc-400 uppercase tracking-wide">{card.meaning}</p>
                   </div>
-                  <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button 
-                      onClick={() => startEditCard(card)}
-                      className="text-gray-400 hover:text-blue-500"
-                      title="Editar card"
-                    >
-                      <Edit size={16} />
-                    </button>
-                    <button 
-                      onClick={() => {
-                        const newCards = deck.cards.filter(c => c.id !== card.id);
-                        setDecks(decks.map(d => d.id === deck.id ? {...d, cards: newCards} : d));
-                      }}
-                      className="text-gray-400 hover:text-red-500"
-                      title="Excluir card"
-                    >
-                      <Trash2 size={16} />
-                    </button>
+                  <div className="absolute top-2 right-2 flex gap-1">
+                    <button onClick={(e) => { e.stopPropagation(); startEditCard(card); }} className="text-[#afafaf] hover:text-[#1cb0f6] p-1"><Edit size={14} /></button>
+                    <button onClick={(e) => { e.stopPropagation(); const newCards = deck.cards.filter(c => c.id !== card.id); setDecks(decks.map(d => d.id === deck.id ? { ...d, cards: newCards } : d)); }} className="text-[#afafaf] hover:text-[#ff4b4b] p-1"><Trash2 size={14} /></button>
                   </div>
-                </div>
+                </DuoCard>
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
-              {filteredCards.map((card, idx) => (
-                <div 
-                  key={idx} 
-                  className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 aspect-square flex flex-col justify-between relative group hover:shadow-md transition-all animate-fadeIn"
-                >
-                  <div className="flex-1 flex flex-col items-center justify-center text-center">
-                    <ruby className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-gray-200 mb-2">
-                      {card.kanji}
-                      <rt className="text-xs sm:text-sm text-gray-500">{card.reading}</rt>
-                    </ruby>
-                    <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 line-clamp-2 mb-1">{card.meaning}</div>
-                    {card.tags && card.tags.length > 0 && (
-                      <div className="flex flex-wrap gap-0.5 justify-center">
-                        {card.tags.slice(0, 2).map((tag, tagIdx) => (
-                          <span key={tagIdx} className="px-1 py-0.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded text-[10px]">
-                            {tag}
-                          </span>
-                        ))}
-                        {card.tags.length > 2 && (
-                          <span className="px-1 py-0.5 text-gray-500 text-[10px]">+{card.tags.length - 2}</span>
-                        )}
-                      </div>
-                    )}
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+              {filteredCards.map((card, i) => (
+                <DuoCard key={card.id || i} className="p-4 flex flex-col items-center justify-center border-b-4 relative min-h-[140px]" interactive onClick={() => startEditCard(card)}>
+                  <ruby className="font-black text-xl dark:text-white mb-1">{card.kanji} <rt className="text-[9px] text-[#ff4b4b]">{card.reading}</rt></ruby>
+                  <p className="text-[10px] font-bold text-[#afafaf] dark:text-zinc-400 line-clamp-2">{card.meaning}</p>
+                  <div className="absolute top-2 right-2 flex gap-1">
+                    <button onClick={(e) => { e.stopPropagation(); startEditCard(card); }} className="text-[#afafaf] hover:text-[#1cb0f6] p-1"><Edit size={12} /></button>
+                    <button onClick={(e) => { e.stopPropagation(); const newCards = deck.cards.filter(c => c.id !== card.id); setDecks(decks.map(d => d.id === deck.id ? { ...d, cards: newCards } : d)); }} className="text-[#afafaf] hover:text-[#ff4b4b] p-1"><Trash2 size={12} /></button>
                   </div>
-                  <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button 
-                      onClick={() => startEditCard(card)}
-                      className="text-gray-400 hover:text-blue-500 p-1"
-                      title="Editar card"
-                    >
-                      <Edit size={14} />
-                    </button>
-                    <button 
-                      onClick={() => {
-                        const newCards = deck.cards.filter(c => c.id !== card.id);
-                        setDecks(decks.map(d => d.id === deck.id ? {...d, cards: newCards} : d));
-                      }}
-                      className="text-gray-400 hover:text-red-500 p-1"
-                      title="Excluir card"
-                    >
-                      <Trash2 size={14} />
-                    </button>
-                  </div>
-                </div>
+                </DuoCard>
               ))}
             </div>
           )}
@@ -2879,463 +2899,185 @@ Exemplo de formato válido:
   };
 
   const GeneratorView = () => {
+    const [showNotes, setShowNotes] = useState(false);
     const inputRef = useRef(null);
-    
     const handleGenerateClick = () => {
       const value = inputRef.current?.value || '';
       if (value.trim() && !isGenerating) {
-        // Passa o valor diretamente para handleGenerate sem atualizar o estado
         const count = isDevMode() ? devCustomCount : cardsCount;
         handleGenerate(value, count);
-        // Limpa o input após gerar
-        if (inputRef.current) {
-          inputRef.current.value = '';
-        }
+        if (inputRef.current) inputRef.current.value = '';
       }
     };
-    
-    const handleKeyDown = (e) => {
-      if (e.key === 'Enter' && !isGenerating) {
-        e.preventDefault();
-        handleGenerateClick();
-      }
-    };
-    
+    const handleKeyDown = (e) => { if (e.key === 'Enter' && !isGenerating) { e.preventDefault(); handleGenerateClick(); } };
     return (
-      <div className="p-4 max-w-2xl mx-auto h-full flex flex-col">
-         <div className="flex items-center mb-6">
-            <button onClick={() => setView('deck')} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg mr-2">
-              <ChevronLeft size={20} className="text-gray-800 dark:text-white" />
-            </button>
-            <h2 className="text-xl font-bold text-gray-800 dark:text-white">Gerador de Cards IA</h2>
+      <div className="p-6 pt-10 h-screen flex flex-col overflow-y-auto bg-white dark:bg-[#131f24]">
+        <header className="flex items-center gap-4 mb-10">
+          <button onClick={() => setView('deck')} className="text-[#afafaf] hover:text-[#4b4b4b] dark:hover:text-white transition-colors p-2"><ArrowLeft size={28} strokeWidth={3} /></button>
+          <h1 className="font-black text-2xl uppercase tracking-tighter dark:text-white leading-none">Gerador IA</h1>
+        </header>
+        <div className="flex-1 space-y-10 pb-32 px-1">
+          <div className="space-y-3">
+            <label className="block font-black text-xs text-[#afafaf] dark:text-zinc-400 uppercase px-2 tracking-widest">O que você quer estudar?</label>
+            <input ref={inputRef} type="text" defaultValue={generatorPrompt} placeholder="Ex: Frutas, Anime..." onKeyDown={handleKeyDown} className="w-full bg-[#f1f1f1] dark:bg-[#1b2c35] border-2 border-[#e5e5e5] dark:border-[#37464f] rounded-2xl px-5 py-5 font-bold outline-none focus:border-[#5844ed] dark:text-white shadow-sm" />
           </div>
-
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 mb-6">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              O que você quer estudar?
-            </label>
-            <input 
-              ref={inputRef}
-              type="text" 
-              defaultValue={generatorPrompt}
-              placeholder="Ex: Frutas, Negócios, Gírias de Anime..."
-              className="w-full p-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-800 dark:text-white focus:ring-2 focus:ring-red-500 outline-none transition"
-              onKeyDown={handleKeyDown}
-            />
-            <p className="text-xs text-gray-500 mt-2">
-              *Dica: Seja específico. Ex: "Verbos de cozinha" ou "Palavras médicas".
-            </p>
-          </div>
-
-          <div className={`bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border ${isDevMode() ? 'border-purple-500 dark:border-purple-400' : 'border-gray-200 dark:border-gray-700'} mb-6`}>
-            <div className="flex items-center justify-between mb-3">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Quantidade de cards:
-              </label>
-              {isDevMode() && (
-                <span className="px-2 py-1 text-xs font-bold bg-purple-500 text-white rounded">DEV</span>
-              )}
-            </div>
+          <div className="space-y-3">
+            <label className="block font-black text-xs text-[#afafaf] dark:text-zinc-400 uppercase px-2 tracking-widest">Quantidade de Cards</label>
             {isDevMode() ? (
               <div className="space-y-2">
-                <input
-                  type="number"
-                  min="1"
-                  max="1000"
-                  value={devCustomCount}
-                  onChange={(e) => {
-                    const val = parseInt(e.target.value) || 1;
-                    setDevCustomCount(Math.min(Math.max(1, val), 1000));
-                  }}
-                  className="w-full p-3 bg-gray-50 dark:bg-gray-900 border border-purple-300 dark:border-purple-600 rounded-lg text-gray-800 dark:text-white focus:ring-2 focus:ring-purple-500 outline-none transition"
-                  placeholder="Quantidade de cards"
-                />
-                <p className="text-xs text-purple-600 dark:text-purple-400">
-                  Modo Dev: Você pode gerar até 1000 cards por vez
-                </p>
+                <input type="number" min="1" max="1000" value={devCustomCount} onChange={(e) => setDevCustomCount(Math.min(Math.max(1, parseInt(e.target.value) || 1), 1000))} className="w-full bg-[#f1f1f1] dark:bg-[#1b2c35] border-2 border-[#5844ed] rounded-2xl px-5 py-5 font-bold outline-none dark:text-white" />
+                <p className="text-[10px] font-bold text-[#5844ed]">DEV: até 1000 cards</p>
               </div>
             ) : (
-              <div className="flex gap-2">
-                {[3, 5, 8].map((num) => (
-                  <button
-                    key={num}
-                    onClick={() => setCardsCount(num)}
-                    className={`flex-1 py-2 px-4 rounded-lg font-bold transition-all ${
-                      cardsCount === num
-                        ? 'bg-indigo-600 text-white shadow-md'
-                        : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
-                    }`}
-                  >
-                    {num} cards
-                  </button>
+              <div className="grid grid-cols-3 gap-3">
+                {[3, 5, 8].map(qty => (
+                  <button key={qty} onClick={() => setCardsCount(qty)} className={`py-5 rounded-2xl font-black uppercase text-sm transition-all border-b-4 active:translate-y-1 active:border-b-0 ${cardsCount === qty ? 'bg-[#5844ed] border-[#4636be] text-white shadow-lg' : 'bg-white dark:bg-[#1b2c35] border-[#e5e5e5] dark:border-[#37464f] text-[#afafaf]'}`}>{qty} Cards</button>
                 ))}
               </div>
             )}
           </div>
-
-          <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 mb-6">
-            <button
-              onClick={showNotesToCardsModal}
-              className="w-full py-3 rounded-lg font-medium text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600 flex items-center justify-center gap-2 transition"
-            >
-              <List size={20} />
-              Criar a partir de anotações
+          <div className="space-y-4">
+            <button onClick={() => setShowNotes(!showNotes)} className="w-full flex justify-between items-center bg-white dark:bg-[#1b2c35] border-2 border-[#e5e5e5] dark:border-[#37464f] border-b-4 rounded-2xl p-6 active:translate-y-1 active:border-b-0 transition-all shadow-sm">
+              <div className="flex items-center gap-4"><Pencil size={22} className="text-[#1cb0f6]" /><span className="font-black text-xs uppercase text-[#4b4b4b] dark:text-white tracking-widest">Criar a partir de anotações</span></div>
+              <ChevronDown size={24} className={`text-[#afafaf] transition-transform ${showNotes ? 'rotate-180' : ''}`} />
             </button>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 text-center">
-              Cole suas anotações de aula e a IA criará a quantidade de flashcards adequada.
-            </p>
-          </div>
-
-        <div className="bg-indigo-50 dark:bg-indigo-900/20 p-4 rounded-lg border border-indigo-200 dark:border-indigo-800 mb-6">
-           <h4 className="font-bold text-indigo-800 dark:text-indigo-200 text-sm flex items-center gap-2">
-             <Sparkles size={16} />
-             Power by Google Gemini
-           </h4>
-           <p className="text-sm text-indigo-700 dark:text-indigo-300 mt-1">
-             A IA criará {isDevMode() ? devCustomCount : cardsCount} cards únicos para você. O processo pode levar alguns segundos.
-           </p>
-        </div>
-
-          <button 
-            onClick={handleGenerateClick}
-            disabled={isGenerating}
-            className={`w-full py-4 rounded-lg font-bold text-white shadow-lg flex items-center justify-center gap-3 transition-all
-              ${isGenerating ? 'bg-gray-400 cursor-not-allowed' : 'bg-indigo-600 hover:bg-indigo-700 active:scale-95'}
-            `}
-          >
-            {isGenerating ? (
-              <>
-                <RefreshCw size={20} className="animate-spin" /> Gerando com IA...
-              </>
-            ) : (
-              <>
-                <Sparkles size={20} /> Gerar Cards
-              </>
+            {showNotes && (
+              <div className="animate-in slide-in-from-top-2">
+                <p className="text-[10px] font-bold text-[#afafaf] mb-2">Ou abra pelo botão no baralho.</p>
+                <button type="button" onClick={showNotesToCardsModal} className="w-full py-3 rounded-2xl font-black uppercase text-sm bg-[#1b2c35] dark:bg-[#37464f] text-white border-b-4 border-[#1cb0f6]">Abrir Anotações</button>
+              </div>
             )}
-          </button>
+          </div>
+        </div>
+        <div className="fixed bottom-24 left-1/2 -translate-x-1/2 w-full max-w-md px-6">
+          <DuoButton onClick={handleGenerateClick} disabled={isGenerating} variant="primary" fullWidth className="h-16 text-lg shadow-xl">
+            {isGenerating ? <><RefreshCw size={20} className="animate-spin" /> GERANDO...</> : <><Zap size={20} style={{ fill: 'white' }} /> GERAR CARDS</>}
+          </DuoButton>
+        </div>
       </div>
     );
   };
 
   const QuickReviewView = () => {
     const card = reviewQueue[currentCardIndex];
-    if (!card) return <div>Erro ao carregar card.</div>;
-    
+    if (!card) return <div className="p-6 text-[#afafaf]">Erro ao carregar card.</div>;
     const cardRef = useRef(null);
     const touchStartX = useRef(0);
     const touchStartY = useRef(0);
-
-    const handleTouchStart = (e) => {
-      touchStartX.current = e.touches[0].clientX;
-      touchStartY.current = e.touches[0].clientY;
-    };
-
+    const handleTouchStart = (e) => { touchStartX.current = e.touches[0].clientX; touchStartY.current = e.touches[0].clientY; };
     const handleTouchEnd = (e) => {
       if (!touchStartX.current || !touchStartY.current) return;
-      
       const touchEndX = e.changedTouches[0].clientX;
       const touchEndY = e.changedTouches[0].clientY;
       const diffX = touchEndX - touchStartX.current;
       const diffY = touchEndY - touchStartY.current;
-      
-      // Swipe horizontal (esquerda/direita) tem prioridade
       if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
-        if (diffX > 0) {
-          // Swipe direito = correto (qualidade 2)
-          if (showAnswer) {
-            processReview(2);
-            if (currentCardIndex < reviewQueue.length - 1) {
-              setCurrentCardIndex(prev => prev + 1);
-              setShowAnswer(false);
-            } else {
-              showAlert('Revisão rápida concluída!');
-              setView('deck');
-            }
-          }
-        } else {
-          // Swipe esquerdo = incorreto (qualidade 0)
-          if (showAnswer) {
-            processReview(0);
-            if (currentCardIndex < reviewQueue.length - 1) {
-              setCurrentCardIndex(prev => prev + 1);
-              setShowAnswer(false);
-            } else {
-              showAlert('Revisão rápida concluída!');
-              setView('deck');
-            }
-          }
+        if (showAnswer) {
+          if (diffX > 0) processReview(2); else processReview(0);
+          if (currentCardIndex < reviewQueue.length - 1) { setCurrentCardIndex(prev => prev + 1); setShowAnswer(false); } else { showAlert('Revisão rápida concluída!'); setView('deck'); }
         }
       } else if (Math.abs(diffY) > 50) {
-        // Swipe vertical = mostrar/esconder resposta
-        if (diffY < 0 && !showAnswer) {
-          setShowAnswer(true);
-        } else if (diffY > 0 && showAnswer) {
-          setShowAnswer(false);
-        }
+        if (diffY < 0 && !showAnswer) setShowAnswer(true); else if (diffY > 0 && showAnswer) setShowAnswer(false);
       }
-      
-      touchStartX.current = 0;
-      touchStartY.current = 0;
+      touchStartX.current = 0; touchStartY.current = 0;
     };
-
+    const progress = reviewQueue.length ? ((currentCardIndex + 1) / reviewQueue.length) * 100 : 0;
     return (
-      <div className="h-full flex flex-col p-4 max-w-xl mx-auto">
-        <div className="flex justify-between items-center mb-4 text-sm text-gray-500 dark:text-gray-400">
-           <span>Revisão Rápida</span>
-           <span>{currentCardIndex + 1} / {reviewQueue.length}</span>
+      <div className="h-screen flex flex-col p-6 bg-white dark:bg-[#131f24] overflow-hidden">
+        <header className="flex items-center gap-4 mb-8">
+          <button onClick={() => setView('deck')} className="text-[#afafaf] p-2"><XCircle size={32} /></button>
+          <ProgressBar progress={progress} />
+        </header>
+        <div ref={cardRef} onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd} className="flex-1 flex items-center justify-center">
+          <DuoCard className="p-10 border-b-8 min-w-[300px] cursor-pointer touch-pan-y" interactive onClick={() => setShowAnswer(!showAnswer)}>
+            <KanjiCard kanji={card.kanji} reading={card.reading} meaning={card.meaning} showBack={showAnswer} furiganaMode={furiganaMode} size="large" />
+          </DuoCard>
         </div>
-        <div className="text-xs text-gray-400 dark:text-gray-500 mb-2 text-center">
-          {!showAnswer ? '⬆️ Deslize para cima ou toque para revelar' : '⬅️ Errado | ➡️ Correto | ⬇️ Esconder'}
-        </div>
-
-        <div 
-          ref={cardRef}
-          onTouchStart={handleTouchStart}
-          onTouchEnd={handleTouchEnd}
-          className="flex-1 flex items-center justify-center min-h-[300px] bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 mb-8 cursor-pointer relative overflow-hidden group touch-pan-y"
-          onClick={() => setShowAnswer(!showAnswer)}
-        >
-           <KanjiCard 
-             kanji={card.kanji}
-             reading={card.reading}
-             meaning={card.meaning}
-             showBack={showAnswer}
-             furiganaMode={furiganaMode}
-             size="large"
-           />
-        </div>
-
-        {showAnswer ? (
-          <div className="grid grid-cols-2 gap-3">
-             <button 
-               onClick={() => {
-                 processReview(0);
-                 if (currentCardIndex < reviewQueue.length - 1) {
-                   setCurrentCardIndex(prev => prev + 1);
-                   setShowAnswer(false);
-                 } else {
-                   showAlert('Revisão rápida concluída!');
-                   setView('deck');
-                 }
-               }}
-               className="bg-red-100 hover:bg-red-200 dark:bg-red-900/30 dark:hover:bg-red-900/50 text-red-700 dark:text-red-300 py-4 rounded-lg font-bold border border-red-200 dark:border-red-800 transition"
-             >
-               ❌ Errado
-             </button>
-             <button 
-               onClick={() => {
-                 processReview(2);
-                 if (currentCardIndex < reviewQueue.length - 1) {
-                   setCurrentCardIndex(prev => prev + 1);
-                   setShowAnswer(false);
-                 } else {
-                   showAlert('Revisão rápida concluída!');
-                   setView('deck');
-                 }
-               }}
-               className="bg-green-100 hover:bg-green-200 dark:bg-green-900/30 dark:hover:bg-green-900/50 text-green-700 dark:text-green-300 py-4 rounded-lg font-bold border border-green-200 dark:border-green-800 transition"
-             >
-               ✅ Correto
-             </button>
-          </div>
-        ) : (
-          <button 
-            onClick={() => setShowAnswer(true)}
-            className="w-full bg-gray-800 dark:bg-gray-700 text-white py-4 rounded-lg font-bold shadow hover:bg-gray-700 dark:hover:bg-gray-600 transition"
-          >
-            Mostrar Resposta
-          </button>
-        )}
-        
-        <button onClick={() => setView('deck')} className="mt-6 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-sm text-center w-full">
-          Cancelar Revisão
-        </button>
+        <footer className="pt-8 mb-4">
+          {showAnswer ? (
+            <div className="grid grid-cols-2 gap-3">
+              <DuoButton variant="danger" fullWidth className="h-14" onClick={() => { processReview(0); if (currentCardIndex < reviewQueue.length - 1) { setCurrentCardIndex(prev => prev + 1); setShowAnswer(false); } else { showAlert('Revisão rápida concluída!'); setView('deck'); } }}>Errado</DuoButton>
+              <DuoButton variant="primary" fullWidth className="h-14" onClick={() => { processReview(2); if (currentCardIndex < reviewQueue.length - 1) { setCurrentCardIndex(prev => prev + 1); setShowAnswer(false); } else { showAlert('Revisão rápida concluída!'); setView('deck'); } }}>Correto</DuoButton>
+            </div>
+          ) : (
+            <DuoButton variant="primary" fullWidth className="h-16 text-lg" onClick={() => setShowAnswer(true)}>Ver Resposta</DuoButton>
+          )}
+          <button onClick={() => setView('deck')} className="mt-4 w-full text-[#afafaf] font-black uppercase text-[10px]">Cancelar</button>
+        </footer>
       </div>
     );
   };
 
   const ReviewSessionView = () => {
     const card = reviewQueue[currentCardIndex];
-    if (!card) return <div>Erro ao carregar card.</div>;
-
+    if (!card) return <div className="p-6 text-[#afafaf]">Erro ao carregar card.</div>;
+    const progress = reviewQueue.length ? ((currentCardIndex + 1) / reviewQueue.length) * 100 : 0;
     return (
-      <div className="h-full flex flex-col p-4 max-w-xl mx-auto">
-        <div className="flex justify-between items-center mb-4 text-sm text-gray-500 dark:text-gray-400">
-           <span>Revisão</span>
-           <span>{currentCardIndex + 1} / {reviewQueue.length}</span>
+      <div className="h-screen flex flex-col p-6 bg-white dark:bg-[#131f24] overflow-hidden">
+        <header className="flex items-center gap-4 mb-8">
+          <button onClick={() => setView('deck')} className="text-[#afafaf] hover:text-[#4b4b4b] dark:hover:text-white transition-colors p-2"><XCircle size={32} /></button>
+          <ProgressBar progress={progress} />
+        </header>
+        <div className="flex-1 flex flex-col items-center justify-center text-center">
+          <DuoCard className="p-10 border-b-8 mb-12 min-w-[300px] flex flex-col items-center justify-center shadow-xl cursor-pointer" interactive onClick={() => setShowAnswer(true)}>
+            <KanjiCard kanji={card.kanji} reading={card.reading} meaning={card.meaning} showBack={showAnswer} furiganaMode={furiganaMode} size="large" />
+          </DuoCard>
+          {!showAnswer ? (
+            <p className="text-[#afafaf] dark:text-zinc-500 font-black text-sm uppercase animate-pulse">Toque no card para revelar</p>
+          ) : (
+            <p className="text-2xl font-black text-[#4b4b4b] dark:text-white uppercase">Significado: {card.meaning}</p>
+          )}
         </div>
-        <div className="text-xs text-gray-400 dark:text-gray-500 mb-2 text-center">
-          {!showAnswer ? 'Espaço: Mostrar resposta' : '0: Não sei | 1: Dúvida | 2: Sei'}
-        </div>
-
-        <div 
-          className="flex-1 flex items-center justify-center min-h-[300px] bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 mb-8 cursor-pointer relative overflow-hidden group"
-          onClick={() => setShowAnswer(true)}
-        >
-           <KanjiCard 
-             kanji={card.kanji}
-             reading={card.reading}
-             meaning={card.meaning}
-             showBack={showAnswer}
-             furiganaMode={furiganaMode}
-             size="large"
-           />
-           {!showAnswer && (
-             <div className="absolute bottom-4 text-xs text-gray-400 uppercase tracking-widest group-hover:text-red-500 transition-colors">
-               Toque para revelar
-             </div>
-           )}
-        </div>
-
-        {showAnswer ? (
-          <div className="grid grid-cols-3 gap-3">
-             <button onClick={() => processReview(0)} className="bg-red-100 hover:bg-red-200 dark:bg-red-900/30 dark:hover:bg-red-900/50 text-red-700 dark:text-red-300 py-4 rounded-lg font-bold border border-red-200 dark:border-red-800 transition">
-               Não sei
-             </button>
-             <button onClick={() => processReview(1)} className="bg-yellow-100 hover:bg-yellow-200 dark:bg-yellow-900/30 dark:hover:bg-yellow-900/50 text-yellow-700 dark:text-yellow-300 py-4 rounded-lg font-bold border border-yellow-200 dark:border-yellow-800 transition">
-               Dúvida
-             </button>
-             <button onClick={() => processReview(2)} className="bg-green-100 hover:bg-green-200 dark:bg-green-900/30 dark:hover:bg-green-900/50 text-green-700 dark:text-green-300 py-4 rounded-lg font-bold border border-green-200 dark:border-green-800 transition">
-               Sei
-             </button>
-          </div>
-        ) : (
-          <button 
-            onClick={() => setShowAnswer(true)}
-            className="w-full bg-gray-800 dark:bg-gray-700 text-white py-4 rounded-lg font-bold shadow hover:bg-gray-700 dark:hover:bg-gray-600 transition"
-          >
-            Mostrar Resposta
-          </button>
-        )}
-        
-        <button onClick={() => setView('deck')} className="mt-6 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-sm text-center w-full">
-          Cancelar Revisão
-        </button>
+        <footer className="pt-8 mb-4">
+          {showAnswer ? (
+            <div className="grid grid-cols-3 gap-3">
+              <DuoButton onClick={() => processReview(0)} variant="danger" fullWidth className="h-14 text-xs">Não sei</DuoButton>
+              <DuoButton onClick={() => processReview(1)} variant="warning" fullWidth className="h-14 text-xs">Dúvida</DuoButton>
+              <DuoButton onClick={() => processReview(2)} variant="primary" fullWidth className="h-14 text-xs">Sei</DuoButton>
+            </div>
+          ) : (
+            <DuoButton onClick={() => setShowAnswer(true)} variant="primary" fullWidth className="h-16 text-lg">Ver Resposta</DuoButton>
+          )}
+          <button onClick={() => setView('deck')} className="mt-4 w-full text-[#afafaf] font-black uppercase text-[10px] text-center">Cancelar</button>
+        </footer>
       </div>
     );
   };
 
   const WritingReviewView = () => {
     const card = reviewQueue[currentCardIndex];
-    if (!card) return <div>Erro ao carregar card.</div>;
-
+    if (!card) return <div className="p-6 text-[#afafaf]">Erro ao carregar card.</div>;
     const correctAnswer = writingAnswerType === 'meaning' ? card.meaning : card.reading;
     const inputRef = useRef(null);
-
-    useEffect(() => {
-      if (inputRef.current) {
-        inputRef.current.focus();
-      }
-    }, [currentCardIndex]);
-
-    const handleSubmit = (e) => {
-      e.preventDefault();
-      if (writingInput.trim() && !writingResult) {
-        checkWritingAnswer();
-      }
-    };
-
+    useEffect(() => { if (inputRef.current) inputRef.current.focus(); }, [currentCardIndex]);
+    const handleSubmit = (e) => { e.preventDefault(); if (writingInput.trim() && !writingResult) checkWritingAnswer(); };
     const handleNext = () => {
-      if (writingResult === 'wrong') {
-        processReview(0); // Não sabe
-      }
-      setWritingInput('');
-      setWritingResult(null);
-      if (currentCardIndex < reviewQueue.length - 1) {
-        setCurrentCardIndex(prev => prev + 1);
-      } else {
-        showAlert('Sessão de revisão concluída!');
-        setView('deck');
-      }
+      if (writingResult === 'wrong') processReview(0);
+      setWritingInput(''); setWritingResult(null);
+      if (currentCardIndex < reviewQueue.length - 1) setCurrentCardIndex(prev => prev + 1); else { showAlert('Sessão de revisão concluída!'); setView('deck'); }
     };
-
+    const progress = reviewQueue.length ? ((currentCardIndex + 1) / reviewQueue.length) * 100 : 0;
     return (
-      <div className="h-full flex flex-col p-4 max-w-xl mx-auto">
-        <div className="flex justify-between items-center mb-4 text-sm text-gray-500 dark:text-gray-400">
-           <span>Revisão por Escrita</span>
-           <span>{currentCardIndex + 1} / {reviewQueue.length}</span>
+      <div className="h-screen flex flex-col p-6 bg-white dark:bg-[#131f24] overflow-y-auto">
+        <header className="flex items-center gap-4 mb-8">
+          <button onClick={() => setView('deck')} className="text-[#afafaf] p-2"><XCircle size={32} /></button>
+          <ProgressBar progress={progress} />
+        </header>
+        <div className="flex-1 flex flex-col items-center justify-center">
+          <DuoCard className="p-10 border-b-8 mb-8 min-w-[300px]">
+            <KanjiCard kanji={card.kanji} reading={card.reading} meaning={card.meaning} showBack={false} furiganaMode="never" size="large" />
+          </DuoCard>
         </div>
-        <div className="text-xs text-gray-400 dark:text-gray-500 mb-2 text-center">
-          Enter: {!writingResult ? 'Verificar' : 'Próximo'} | ESC: Cancelar
-        </div>
-
-        <div className="flex-1 flex items-center justify-center min-h-[300px] bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 mb-6">
-           <KanjiCard 
-             kanji={card.kanji}
-             reading={card.reading}
-             meaning={card.meaning}
-             showBack={false}
-             furiganaMode="never"
-             size="large"
-           />
-        </div>
-
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4 pb-8">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              {writingAnswerType === 'meaning' ? 'Digite o significado:' : 'Digite a leitura:'}
-            </label>
-            <input
-              ref={inputRef}
-              type="text"
-              value={writingInput}
-              onChange={(e) => {
-                setWritingInput(e.target.value);
-                setWritingResult(null);
-              }}
-              disabled={writingResult !== null}
-              className={`w-full p-4 text-lg rounded-lg border-2 transition-all ${
-                writingResult === 'correct' 
-                  ? 'bg-green-50 dark:bg-green-900/20 border-green-500 text-green-700 dark:text-green-300' 
-                  : writingResult === 'wrong'
-                  ? 'bg-red-50 dark:bg-red-900/20 border-red-500 text-red-700 dark:text-red-300'
-                  : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-800 dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500'
-              }`}
-              placeholder={writingAnswerType === 'meaning' ? 'Ex: Gato' : 'Ex: ねこ'}
-            />
+            <label className="block font-black text-[10px] text-[#afafaf] dark:text-zinc-400 uppercase tracking-widest mb-2">{writingAnswerType === 'meaning' ? 'Digite o significado' : 'Digite a leitura'}</label>
+            <input ref={inputRef} type="text" value={writingInput} onChange={(e) => { setWritingInput(e.target.value); setWritingResult(null); }} disabled={writingResult !== null} placeholder={writingAnswerType === 'meaning' ? 'Ex: Gato' : 'Ex: ねこ'} className={`w-full p-5 rounded-2xl border-2 font-bold outline-none transition-all ${writingResult === 'correct' ? 'bg-[#58cc02]/20 border-[#58cc02] text-[#46a302] dark:text-[#61e002]' : writingResult === 'wrong' ? 'bg-[#ff4b4b]/20 border-[#ff4b4b] text-[#d33131] dark:text-[#ff6b6b]' : 'bg-[#f1f1f1] dark:bg-[#1b2c35] border-[#e5e5e5] dark:border-[#37464f] dark:text-white focus:border-[#1cb0f6]'}`} />
           </div>
-
-          {writingResult === 'correct' && (
-            <div className="bg-green-50 dark:bg-green-900/20 p-3 rounded-lg border border-green-200 dark:border-green-800 text-center animate-bounce">
-              <p className="text-green-800 dark:text-green-200 font-semibold">✓ Correto!</p>
-            </div>
-          )}
-
-          {writingResult === 'wrong' && (
-            <div className="bg-red-50 dark:bg-red-900/20 p-3 rounded-lg border border-red-200 dark:border-red-800 animate-fadeIn">
-              <p className="text-red-800 dark:text-red-200 font-semibold text-center mb-2">✗ Incorreto</p>
-              <p className="text-sm text-red-700 dark:text-red-300 text-center">
-                {writingAnswerType === 'meaning' ? (
-                  <>Resposta correta: <strong>{card.meaning}</strong> (significado) ou <strong>{card.reading}</strong> (leitura em japonês)</>
-                ) : (
-                  <>Resposta correta: <strong>{correctAnswer}</strong></>
-                )}
-              </p>
-            </div>
-          )}
-
-          {!writingResult ? (
-            <button
-              type="submit"
-              disabled={!writingInput.trim()}
-              className="w-full bg-blue-600 text-white py-4 rounded-lg font-bold shadow hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
-            >
-              Verificar
-            </button>
-          ) : (
-            <button
-              type="button"
-              onClick={handleNext}
-              className="w-full bg-blue-600 text-white py-4 rounded-lg font-bold shadow hover:bg-blue-700 transition"
-            >
-              {currentCardIndex < reviewQueue.length - 1 ? 'Próximo Card' : 'Finalizar'}
-            </button>
-          )}
+          {writingResult === 'correct' && <DuoCard className="border-[#58cc02] bg-[#58cc02]/10"><p className="font-black text-[#58cc02] text-center">✓ Correto!</p></DuoCard>}
+          {writingResult === 'wrong' && <DuoCard className="border-[#ff4b4b] bg-[#ff4b4b]/10"><p className="font-black text-[#ff4b4b] text-center mb-2">✗ Incorreto</p><p className="text-xs font-bold text-[#afafaf] text-center">Correto: {correctAnswer}</p></DuoCard>}
+          {!writingResult ? <DuoButton type="submit" disabled={!writingInput.trim()} variant="secondary" fullWidth className="h-14">Verificar</DuoButton> : <DuoButton type="button" onClick={handleNext} variant="primary" fullWidth className="h-14">{currentCardIndex < reviewQueue.length - 1 ? 'Próximo Card' : 'Finalizar'}</DuoButton>}
         </form>
-        
-        <button onClick={() => setView('deck')} className="mt-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-sm text-center w-full">
-          Cancelar Revisão
-        </button>
+        <button onClick={() => setView('deck')} className="text-[#afafaf] font-black uppercase text-[10px] text-center w-full pb-4">Cancelar</button>
       </div>
     );
   };
@@ -3343,93 +3085,40 @@ Exemplo de formato válido:
   const TestModeSelectionView = () => {
     const deck = decks.find(d => d.id === activeDeckId);
     if (!deck) return null;
-
+    const challenges = [
+      { title: 'Teste de Tradução', desc: 'Kanji -> Tradução', color: '#58cc02', icon: <MessageCircle size={32} />, onClick: () => startTest(activeDeckId, 'translation') },
+      { title: 'Teste de Leitura', desc: 'Kanji -> Hiragana', color: '#1cb0f6', icon: <Layers size={32} />, onClick: () => startTest(activeDeckId, 'reading') },
+      { title: 'Teste de Escrita', desc: 'Significado -> Kanji', color: '#ff9600', icon: <Pencil size={32} />, onClick: () => startWritingReview(activeDeckId, 'meaning', true, testQuestionsCount) },
+    ];
     return (
-      <div className="p-4 max-w-2xl mx-auto h-full flex flex-col">
-        <div className="flex items-center mb-6">
-          <button onClick={() => setView('deck')} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg mr-2">
-            <ChevronLeft size={20} className="text-gray-800 dark:text-white" />
-          </button>
-          <h2 className="text-xl font-bold text-gray-800 dark:text-white">Escolher Tipo de Teste</h2>
+      <div className="p-6 pt-10 h-screen bg-white dark:bg-[#131f24] overflow-y-auto">
+        <header className="flex items-center gap-4 mb-10">
+          <button onClick={() => setView('deck')} className="text-[#afafaf] dark:hover:text-white transition-colors p-2"><ArrowLeft size={28} strokeWidth={3} /></button>
+          <h1 className="font-black text-2xl uppercase tracking-tighter dark:text-white">Desafios</h1>
+        </header>
+        <DuoCard className="mb-6 border-b-4">
+          <p className="text-xs font-bold text-[#4b4b4b] dark:text-white mb-3">{testQuestionsCount} questões • 60% para passar (máx. {Math.floor(testQuestionsCount * 0.4)} erros)</p>
+          <label className="block text-[10px] font-black text-[#afafaf] uppercase mb-2">Questões</label>
+          <select value={Math.min(testQuestionsCount, deck.cards.length)} onChange={(e) => setTestQuestionsCount(Number(e.target.value))} className="w-full px-4 py-3 rounded-2xl bg-[#f1f1f1] dark:bg-[#37464f] border-2 border-[#e5e5e5] dark:border-[#37464f] font-bold dark:text-white outline-none focus:border-[#1cb0f6]">
+            {Array.from({ length: Math.max(0, deck.cards.length - Math.min(10, deck.cards.length) + 1) }, (_, i) => Math.min(10, deck.cards.length) + i).filter((n) => n >= 1).map((n) => <option key={n} value={n}>{n}</option>)}
+          </select>
+        </DuoCard>
+        <div className="space-y-4">
+          {challenges.map((c, i) => (
+            <DuoCard key={i} className="p-6 border-b-8 flex items-center gap-6 cursor-pointer active:translate-y-1 active:border-b-4" interactive onClick={deck.cards.length >= 10 ? c.onClick : undefined}>
+              <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-white shadow-md min-w-[64px]" style={{ backgroundColor: c.color }}>{c.icon}</div>
+              <div className="flex-1">
+                <h3 className="font-black text-lg dark:text-white leading-tight mb-1">{c.title}</h3>
+                <p className="text-xs font-bold text-[#afafaf] dark:text-zinc-400">{c.desc}</p>
+              </div>
+              {deck.cards.length < 10 && <span className="text-[10px] font-black text-[#ff9600]">Mín. 10 cards</span>}
+            </DuoCard>
+          ))}
         </div>
-
-        <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg mb-4 border border-blue-200 dark:border-blue-800">
-          <p className="text-sm text-blue-800 dark:text-blue-200 mb-3">
-            <strong>Regras do Teste:</strong> Você responderá {testQuestionsCount} questões. Para passar, precisa de pelo menos 60% de acertos (máximo {Math.floor(testQuestionsCount * 0.4)} erros permitidos).
-          </p>
-          <div className="flex items-center gap-2">
-            <label htmlFor="test-questions-count" className="text-sm font-medium text-blue-800 dark:text-blue-200 whitespace-nowrap">
-              Número de questões:
-            </label>
-            <select
-              id="test-questions-count"
-              value={Math.min(testQuestionsCount, deck.cards.length)}
-              onChange={(e) => setTestQuestionsCount(Number(e.target.value))}
-              className="flex-1 min-w-0 px-3 py-2 bg-white dark:bg-gray-800 border border-blue-300 dark:border-blue-700 rounded-lg text-gray-800 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-            >
-              {Array.from({ length: Math.max(0, deck.cards.length - Math.min(10, deck.cards.length) + 1) }, (_, i) => Math.min(10, deck.cards.length) + i).filter((n) => n >= 1).map((n) => (
-                <option key={n} value={n}>{n}</option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        <div className="flex-1 flex flex-col justify-center gap-4">
-          <button
-            onClick={() => startTest(activeDeckId, 'translation')}
-            disabled={deck.cards.length < 10}
-            className={`w-full p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg border-2 border-gray-200 dark:border-gray-700 hover:border-red-500 dark:hover:border-red-500 transition-all ${
-              deck.cards.length < 10 ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer active:scale-95'
-            }`}
-          >
-            <div className="text-left">
-              <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">Teste de Tradução</h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                Você verá o kanji e precisará escolher a tradução correta entre duas opções.
-              </p>
-            </div>
-          </button>
-
-          <button
-            onClick={() => startTest(activeDeckId, 'reading')}
-            disabled={deck.cards.length < 10}
-            className={`w-full p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg border-2 border-gray-200 dark:border-gray-700 hover:border-red-500 dark:hover:border-red-500 transition-all ${
-              deck.cards.length < 10 ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer active:scale-95'
-            }`}
-          >
-            <div className="text-left">
-              <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">Teste de Leitura</h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                Você verá o kanji e precisará escolher a leitura em hiragana correta entre duas opções.
-              </p>
-            </div>
-          </button>
-
-          <button
-            onClick={() => startWritingReview(activeDeckId, 'meaning', true, testQuestionsCount)}
-            disabled={deck.cards.length < 10}
-            className={`w-full p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg border-2 border-gray-200 dark:border-gray-700 hover:border-orange-500 dark:hover:border-orange-500 transition-all ${
-              deck.cards.length < 10 ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer active:scale-95'
-            }`}
-          >
-            <div className="text-left">
-              <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2 flex items-center gap-2">
-                <Keyboard size={20} />
-                Teste de Escrita
-              </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                Você verá o kanji e precisará escrever o significado ou a leitura correta.
-              </p>
-            </div>
-          </button>
-        </div>
-
         {deck.cards.length < 10 && (
-          <div className="mt-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
-            <p className="text-sm text-yellow-800 dark:text-yellow-200 text-center">
-              O baralho precisa ter pelo menos 10 cards para fazer um teste. Atualmente tem {deck.cards.length} cards.
-            </p>
-          </div>
+          <DuoCard className="mt-6 border-[#ff9600] bg-[#ff9600]/10">
+            <p className="text-sm font-bold text-[#4b4b4b] dark:text-white text-center">O baralho precisa de pelo menos 10 cards. Atualmente: {deck.cards.length}.</p>
+          </DuoCard>
         )}
       </div>
     );
@@ -3437,112 +3126,53 @@ Exemplo de formato válido:
 
   const TestView = () => {
     const currentCard = testQueue[testCurrentIndex];
-    if (!currentCard) return <div>Erro ao carregar card.</div>;
-
+    if (!currentCard) return <div className="p-6 text-[#afafaf]">Erro ao carregar card.</div>;
     const correctAnswer = testMode === 'translation' ? currentCard.meaning : currentCard.reading;
     const isCorrect = testSelectedAnswer === correctAnswer;
     const maxErrors = Math.floor(testQueue.length * 0.4);
 
     return (
-      <div className="h-full flex flex-col p-4 max-w-xl mx-auto">
+      <div className="h-full flex flex-col p-6 bg-white dark:bg-[#131f24] overflow-y-auto">
         <div className="flex justify-between items-center mb-4">
-          <div className="text-sm text-gray-500 dark:text-gray-400">
-            <span className="font-semibold">Questão {testCurrentIndex + 1} / {testQueue.length}</span>
-          </div>
-          <div className="text-sm">
-            <span className={`font-bold ${testScore.wrong >= maxErrors ? 'text-red-600 dark:text-red-400' : 'text-gray-600 dark:text-gray-400'}`}>
-              Erros: {testScore.wrong} / {maxErrors}
-            </span>
-          </div>
+          <span className="text-sm font-black text-[#afafaf] dark:text-zinc-400">Questão {testCurrentIndex + 1} / {testQueue.length}</span>
+          <span className={`text-sm font-black ${testScore.wrong >= maxErrors ? 'text-[#ff4b4b]' : 'text-[#afafaf] dark:text-zinc-400'}`}>Erros: {testScore.wrong} / {maxErrors}</span>
         </div>
-
-        <div className="flex-1 flex items-center justify-center min-h-[250px] bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 mb-6">
-          <KanjiCard 
-            kanji={currentCard.kanji}
-            reading={currentCard.reading}
-            meaning={currentCard.meaning}
-            showBack={false}
-            furiganaMode={testMode === 'reading' ? 'never' : 'always'}
-            size="large"
-          />
-        </div>
-
+        <DuoCard className="flex-1 flex items-center justify-center min-h-[250px] mb-6 border-b-8">
+          <KanjiCard kanji={currentCard.kanji} reading={currentCard.reading} meaning={currentCard.meaning} showBack={false} furiganaMode={testMode === 'reading' ? 'never' : 'always'} size="large" />
+        </DuoCard>
         <div className="space-y-3 mb-4">
           {testOptions.map((option, index) => {
-            let buttonClass = "w-full py-4 px-6 rounded-lg font-bold text-lg transition-all border-2 ";
-            let isSelected = testSelectedAnswer === option;
-            let isCorrectOption = option === correctAnswer;
-
+            const isCorrectOption = option === correctAnswer;
+            const isSelected = testSelectedAnswer === option;
+            let bg = 'bg-white dark:bg-[#1b2c35] border-[#e5e5e5] dark:border-[#37464f] text-[#4b4b4b] dark:text-white hover:border-[#1cb0f6]';
             if (testShowResult) {
-              if (isCorrectOption) {
-                buttonClass += "bg-green-500 text-white border-green-600 dark:bg-green-600 dark:border-green-700";
-              } else if (isSelected && !isCorrectOption) {
-                buttonClass += "bg-red-500 text-white border-red-600 dark:bg-red-600 dark:border-red-700";
-              } else {
-                buttonClass += "bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 border-gray-300 dark:border-gray-600 opacity-50";
-              }
-            } else {
-              buttonClass += "bg-white dark:bg-gray-700 text-gray-800 dark:text-white border-gray-300 dark:border-gray-600 hover:border-red-500 dark:hover:border-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 cursor-pointer active:scale-95";
+              if (isCorrectOption) bg = 'bg-[#58cc02] border-[#46a302] text-white';
+              else if (isSelected && !isCorrectOption) bg = 'bg-[#ff4b4b] border-[#d33131] text-white';
+              else bg = 'bg-[#f1f1f1] dark:bg-[#37464f] text-[#afafaf] dark:text-zinc-500 opacity-70';
             }
-
             return (
-              <button
-                key={index}
-                onClick={() => !testShowResult && handleTestAnswer(option)}
-                disabled={testShowResult}
-                className={buttonClass}
-              >
+              <button key={index} onClick={() => !testShowResult && handleTestAnswer(option)} disabled={testShowResult} className={`w-full py-4 px-6 rounded-2xl font-black text-lg border-2 border-b-4 transition-all ${bg}`}>
                 <div className="flex items-center justify-between">
                   <span>{option}</span>
-                  {testShowResult && isCorrectOption && (
-                    <Check size={24} className="text-white" />
-                  )}
-                  {testShowResult && isSelected && !isCorrectOption && (
-                    <X size={24} className="text-white" />
-                  )}
+                  {testShowResult && isCorrectOption && <Check size={24} className="text-white" />}
+                  {testShowResult && isSelected && !isCorrectOption && <X size={24} className="text-white" />}
                 </div>
               </button>
             );
           })}
         </div>
-
         {testShowResult && (
-          <div className="mb-4">
-            {isCorrect ? (
-              <div className="bg-green-50 dark:bg-green-900/20 p-3 rounded-lg border border-green-200 dark:border-green-800 text-center">
-                <p className="text-green-800 dark:text-green-200 font-semibold">✓ Correto!</p>
-                <p className="text-gray-600 dark:text-gray-400 text-sm mt-1">Significado: {currentCard.meaning}</p>
-              </div>
-            ) : (
-              <div className="bg-red-50 dark:bg-red-900/20 p-3 rounded-lg border border-red-200 dark:border-red-800 text-center">
-                <p className="text-red-800 dark:text-red-200 font-semibold">✗ Incorreto. A resposta correta é: {correctAnswer}</p>
-                <p className="text-gray-600 dark:text-gray-400 text-sm mt-1">Significado: {currentCard.meaning}</p>
-              </div>
-            )}
-          </div>
+          <DuoCard className={`mb-4 ${isCorrect ? 'border-[#58cc02] bg-[#58cc02]/10' : 'border-[#ff4b4b] bg-[#ff4b4b]/10'}`}>
+            <p className={`font-black text-center ${isCorrect ? 'text-[#58cc02]' : 'text-[#ff4b4b]'}`}>{isCorrect ? '✓ Correto!' : '✗ Incorreto. Correta: ' + correctAnswer}</p>
+          </DuoCard>
         )}
-
         {testShowResult && testScore.wrong < maxErrors && testCurrentIndex < testQueue.length - 1 && (
-          <button
-            onClick={nextTestQuestion}
-            className="w-full bg-red-600 text-white py-4 rounded-lg font-bold shadow-lg hover:bg-red-700 active:scale-95 transition"
-          >
-            Próxima Questão
-          </button>
+          <DuoButton onClick={nextTestQuestion} variant="danger" fullWidth className="h-14">Próxima Questão</DuoButton>
         )}
-        
         {testShowResult && (testScore.wrong >= maxErrors || testCurrentIndex >= testQueue.length - 1) && (
-          <div className="w-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 py-4 rounded-lg font-medium text-center">
-            Carregando resultado...
-          </div>
+          <div className="w-full py-4 rounded-2xl font-bold text-center text-[#afafaf] dark:text-zinc-400">Carregando resultado...</div>
         )}
-
-        <button 
-          onClick={() => setView('deck')} 
-          className="mt-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-sm text-center w-full"
-        >
-          Cancelar Teste
-        </button>
+        <button onClick={() => setView('deck')} className="mt-4 w-full text-[#afafaf] font-black uppercase text-[10px] text-center">Cancelar</button>
       </div>
     );
   };
@@ -3646,6 +3276,10 @@ Exemplo de formato válido:
         if (type === 'all') {
           localStorage.removeItem('jsonbin_bin_id');
           setJsonbinBinId('');
+          if (typeof window !== 'undefined' && window.apiService) {
+            window.apiService.clearTokens();
+          }
+          setApiUser(null);
         }
         showAlert('Dados limpos com sucesso!');
       });
@@ -3660,7 +3294,7 @@ Exemplo de formato válido:
       setIsGenerating(true);
       try {
         const response = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`,
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
           {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -3708,38 +3342,22 @@ Exemplo de formato válido:
     const maskedApiKey = apiKey ? apiKey.substring(0, 8) + '...' + apiKey.substring(apiKey.length - 4) : 'Não configurada';
 
     return (
-      <div className="p-4 max-w-4xl mx-auto h-full flex flex-col pb-24">
-        <div className="flex items-center mb-6">
-          <button 
-            onClick={() => setView('home')} 
-            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg mr-2"
-          >
-            <ChevronLeft size={20} className="text-gray-800 dark:text-white" />
+      <div className="p-6 pt-10 h-screen bg-white dark:bg-[#131f24] overflow-y-auto pb-24">
+        <header className="flex items-center gap-4 mb-8">
+          <button onClick={() => setView('home')} className="text-[#afafaf] hover:text-[#4b4b4b] dark:hover:text-white transition-colors p-2">
+            <ArrowLeft size={28} strokeWidth={3} />
           </button>
-          <h2 className="text-xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
-            <Settings size={24} className="text-purple-600 dark:text-purple-400" />
-            Painel Desenvolvedor
-            <span className="px-2 py-1 text-xs font-bold bg-purple-500 text-white rounded">DEV</span>
-          </h2>
-        </div>
+          <h1 className="font-black text-2xl uppercase tracking-tighter text-[#a855f7] dark:text-[#a855f7] flex items-center gap-2">
+            <Settings size={24} className="text-[#a855f7]" />
+            Painel Dev
+          </h1>
+          <span className="px-2 py-1 text-[10px] font-black bg-[#5844ed] text-white rounded">DEV</span>
+        </header>
 
-        <div className="flex gap-2 mb-6 border-b border-gray-200 dark:border-gray-700 overflow-x-auto">
+        <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
           {['info', 'export', 'clear', 'cloud', 'api', 'editor'].map(tab => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`px-4 py-2 text-sm font-medium border-b-2 transition whitespace-nowrap ${
-                activeTab === tab
-                  ? 'border-purple-500 text-purple-600 dark:text-purple-400'
-                  : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
-              }`}
-            >
-              {tab === 'info' && 'Info'}
-              {tab === 'export' && 'Exportar'}
-              {tab === 'clear' && 'Limpar'}
-              {tab === 'cloud' && 'Nuvem'}
-              {tab === 'api' && 'API'}
-              {tab === 'editor' && 'Editor'}
+            <button key={tab} onClick={() => setActiveTab(tab)} className={`px-4 py-3 rounded-2xl font-black text-xs uppercase border-b-2 whitespace-nowrap transition-all ${activeTab === tab ? 'bg-[#5844ed] border-[#4636be] text-white' : 'bg-[#f1f1f1] dark:bg-[#1b2c35] border-[#e5e5e5] dark:border-[#37464f] dark:text-white'}`}>
+              {tab === 'info' && 'Info'}{tab === 'export' && 'Exportar'}{tab === 'clear' && 'Limpar'}{tab === 'cloud' && 'Nuvem'}{tab === 'api' && 'API'}{tab === 'editor' && 'Editor'}
             </button>
           ))}
         </div>
@@ -3943,135 +3561,61 @@ Exemplo de formato válido:
 
   const TestResultView = () => {
     const totalQuestions = 10;
-    const percentage = Math.round((testScore.correct / totalQuestions) * 100);
-
+    const percentage = totalQuestions > 0 ? Math.round((testScore.correct / totalQuestions) * 100) : 0;
     return (
-      <div className="h-full flex flex-col p-4 max-w-xl mx-auto">
+      <div className="h-full flex flex-col p-6 bg-white dark:bg-[#131f24] overflow-y-auto">
         <div className="flex-1 flex flex-col items-center justify-center">
           {testPassed ? (
             <>
-              <div className="mb-6">
-                <Award size={80} className="text-green-500 dark:text-green-400 mx-auto" />
-              </div>
-              <h2 className="text-3xl font-bold text-green-600 dark:text-green-400 mb-4 text-center">
-                Parabéns! Você Passou!
-              </h2>
-              <div className="bg-green-50 dark:bg-green-900/20 p-6 rounded-xl border border-green-200 dark:border-green-800 mb-6 w-full">
+              <Award size={64} className="text-[#58cc02] mx-auto mb-4" />
+              <h2 className="font-black text-2xl uppercase tracking-tighter text-[#58cc02] mb-6 text-center">Parabéns! Você passou!</h2>
+              <DuoCard className="w-full mb-6 border-[#58cc02] bg-[#58cc02]/10 border-b-4">
                 <div className="text-center mb-4">
-                  <div className="text-4xl font-bold text-green-600 dark:text-green-400 mb-2">
-                    {testScore.correct} / {totalQuestions}
-                  </div>
-                  <div className="text-lg text-green-700 dark:text-green-300">
-                    {percentage}% de acertos
-                  </div>
+                  <div className="text-4xl font-black text-[#58cc02] mb-2">{testScore.correct} / {totalQuestions}</div>
+                  <div className="text-sm font-bold text-[#afafaf] dark:text-zinc-400">{percentage}% de acertos</div>
                 </div>
                 <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div className="text-center">
-                    <div className="font-semibold text-green-800 dark:text-green-200">Acertos</div>
-                    <div className="text-2xl font-bold text-green-600 dark:text-green-400">{testScore.correct}</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="font-semibold text-red-800 dark:text-red-200">Erros</div>
-                    <div className="text-2xl font-bold text-red-600 dark:text-red-400">{testScore.wrong}</div>
-                  </div>
+                  <div className="text-center"><span className="text-[10px] font-black text-[#afafaf] uppercase">Acertos</span><div className="text-2xl font-black text-[#58cc02]">{testScore.correct}</div></div>
+                  <div className="text-center"><span className="text-[10px] font-black text-[#afafaf] uppercase">Erros</span><div className="text-2xl font-black text-[#ff4b4b]">{testScore.wrong}</div></div>
                 </div>
-              </div>
-              <button
-                onClick={() => setView('test-mode-selection')}
-                className="w-full bg-red-600 text-white py-4 rounded-lg font-bold shadow-lg hover:bg-red-700 active:scale-95 transition mb-3"
-              >
-                Novo Teste
-              </button>
+              </DuoCard>
+              <DuoButton onClick={() => setView('test-mode-selection')} variant="danger" fullWidth className="mb-3 h-14">Novo Teste</DuoButton>
             </>
           ) : (
             <>
-              <div className="mb-6">
-                <AlertCircle size={80} className="text-red-500 dark:text-red-400 mx-auto" />
-              </div>
-              <h2 className="text-3xl font-bold text-red-600 dark:text-red-400 mb-4 text-center">
-                Você Errou 4 ou Mais
-              </h2>
-              <div className="bg-red-50 dark:bg-red-900/20 p-6 rounded-xl border border-red-200 dark:border-red-800 mb-6 w-full">
+              <AlertCircle size={64} className="text-[#ff4b4b] mx-auto mb-4" />
+              <h2 className="font-black text-2xl uppercase tracking-tighter text-[#ff4b4b] mb-6 text-center">Você errou 4 ou mais</h2>
+              <DuoCard className="w-full mb-6 border-[#ff4b4b] bg-[#ff4b4b]/10 border-b-4">
                 <div className="text-center mb-4">
-                  <div className="text-4xl font-bold text-red-600 dark:text-red-400 mb-2">
-                    {testScore.correct} / {totalQuestions}
-                  </div>
-                  <div className="text-lg text-red-700 dark:text-red-300">
-                    {percentage}% de acertos
-                  </div>
+                  <div className="text-4xl font-black text-[#ff4b4b] mb-2">{testScore.correct} / {totalQuestions}</div>
+                  <div className="text-sm font-bold text-[#afafaf] dark:text-zinc-400">{percentage}% de acertos</div>
                 </div>
                 <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div className="text-center">
-                    <div className="font-semibold text-green-800 dark:text-green-200">Acertos</div>
-                    <div className="text-2xl font-bold text-green-600 dark:text-green-400">{testScore.correct}</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="font-semibold text-red-800 dark:text-red-200">Erros</div>
-                    <div className="text-2xl font-bold text-red-600 dark:text-red-400">{testScore.wrong}</div>
-                  </div>
+                  <div className="text-center"><span className="text-[10px] font-black text-[#afafaf] uppercase">Acertos</span><div className="text-2xl font-black text-[#58cc02]">{testScore.correct}</div></div>
+                  <div className="text-center"><span className="text-[10px] font-black text-[#afafaf] uppercase">Erros</span><div className="text-2xl font-black text-[#ff4b4b]">{testScore.wrong}</div></div>
                 </div>
-                <div className="mt-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
-                  <p className="text-sm text-yellow-800 dark:text-yellow-200 text-center">
-                    Você precisa acertar pelo menos 7 de 10 para passar. Continue estudando!
-                  </p>
-                </div>
-              </div>
-              <button
-                onClick={restartTest}
-                className="w-full bg-red-600 text-white py-4 rounded-lg font-bold shadow-lg hover:bg-red-700 active:scale-95 transition mb-3"
-              >
-                Tentar Novamente (Mesmo Teste)
-              </button>
+                <p className="text-[10px] font-bold text-[#ff9600] text-center mt-4">Precisa de pelo menos 60% para passar. Continue estudando!</p>
+              </DuoCard>
+              <DuoButton onClick={restartTest} variant="danger" fullWidth className="mb-3 h-14">Tentar Novamente</DuoButton>
             </>
           )}
-          
-          <button
-            onClick={() => setView('deck')}
-            className="w-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white py-3 rounded-lg font-medium hover:bg-gray-300 dark:hover:bg-gray-600 transition"
-          >
-            Voltar ao Baralho
-          </button>
+          <DuoButton onClick={() => setView('deck')} variant="outline" fullWidth className="h-14">Voltar ao Baralho</DuoButton>
         </div>
       </div>
     );
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-950 transition-colors duration-300 font-sans">
+    <div className="min-h-screen font-sans bg-white dark:bg-[#131f24] text-[#4b4b4b] dark:text-white transition-colors duration-300">
+      <div className="max-w-md mx-auto min-h-screen flex flex-col shadow-2xl bg-white dark:bg-[#131f24] relative overflow-hidden">
       {/* Modals Layer */}
       {showApiKeyModal && (
         <Modal isOpen={true} onClose={() => {}} title="Configuração Inicial">
-          <div className="space-y-4">
-            <p className="text-sm text-gray-600 dark:text-gray-300">
-              Para usar o gerador de cards com IA, você precisa da sua chave API do Google Gemini.
-            </p>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Chave API do Gemini
-              </label>
-              <input 
-                type="password"
-                autoFocus
-                value={apiKeyInput}
-                onChange={(e) => setApiKeyInput(e.target.value)}
-                placeholder="Cole sua chave API aqui"
-                className="w-full p-3 bg-gray-100 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-800 dark:text-white outline-none focus:ring-2 focus:ring-indigo-500"
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && apiKeyInput.trim()) saveApiKey();
-                }}
-              />
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                Você pode obter sua chave em: <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" className="text-indigo-600 dark:text-indigo-400 hover:underline">Google AI Studio</a>
-              </p>
-            </div>
-            <button 
-              onClick={saveApiKey}
-              disabled={!apiKeyInput.trim()}
-              className="w-full bg-indigo-600 text-white py-3 rounded-lg font-bold hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
-            >
-              Salvar Chave
-            </button>
-          </div>
+          <p className="text-sm font-bold text-[#afafaf] dark:text-zinc-400 mb-4">Para usar o gerador com IA, use sua chave API do Google Gemini.</p>
+          <label className="block font-black text-[10px] text-[#afafaf] dark:text-zinc-400 uppercase tracking-widest mb-2">Chave API do Gemini</label>
+          <input type="password" autoFocus value={apiKeyInput} onChange={(e) => setApiKeyInput(e.target.value)} placeholder="Cole sua chave aqui" onKeyDown={(e) => { if (e.key === 'Enter' && apiKeyInput.trim()) saveApiKey(); }} className="w-full p-4 bg-[#f1f1f1] dark:bg-[#1b2c35] border-2 border-[#e5e5e5] dark:border-[#37464f] rounded-2xl font-bold outline-none focus:border-[#1cb0f6] dark:text-white mb-4" />
+          <p className="text-[10px] font-bold text-[#afafaf] mb-6"><a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" className="text-[#1cb0f6] hover:underline">Google AI Studio</a></p>
+          <DuoButton onClick={saveApiKey} disabled={!apiKeyInput.trim()} variant="primary" fullWidth className="h-14">Salvar Chave</DuoButton>
         </Modal>
       )}
 
@@ -4085,121 +3629,89 @@ Exemplo de formato válido:
           title={binIdModalMode === 'edit' ? 'Editar ID de Usuário' : 'Inserir ID de Usuário'}
         >
           <div className="space-y-4">
-            <p className="text-sm text-gray-600 dark:text-gray-300">
-              {binIdModalMode === 'edit' 
-                ? 'Digite o seu ID de usuário para sincronizar seus dados na nuvem.'
-                : 'Digite o seu ID de usuário para sincronizar seus dados na nuvem. Se você não tem um ID, clique em "Criar Novo Bin" no menu de configurações para gerar um automaticamente.'}
-            </p>
+            <p className="text-sm font-bold text-[#afafaf] dark:text-zinc-400">{binIdModalMode === 'edit' ? 'Altere o ID para sincronizar na nuvem.' : 'Digite seu ID. Sem ID? Use "Criar Novo ID" no menu.'}</p>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                ID de Usuário
-              </label>
-              <input 
-                type="text"
-                autoFocus
-                value={jsonbinBinIdInput}
-                onChange={(e) => setJsonbinBinIdInput(e.target.value)}
-                placeholder="Digite seu ID de usuário (ex: gselvino, user123)"
-                className="w-full p-3 bg-gray-100 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-800 dark:text-white outline-none focus:ring-2 focus:ring-indigo-500 font-mono text-sm"
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && jsonbinBinIdInput.trim()) {
-                    saveJsonbinBinId();
-                  }
-                }}
+              <label className="block font-black text-[10px] text-[#afafaf] uppercase tracking-widest mb-2">ID de Usuário</label>
+              <input type="text" autoFocus value={jsonbinBinIdInput} onChange={(e) => setJsonbinBinIdInput(e.target.value)} placeholder="Ex: user123" onKeyDown={(e) => { if (e.key === 'Enter' && jsonbinBinIdInput.trim()) saveJsonbinBinId(); }} className="w-full p-4 bg-[#f1f1f1] dark:bg-[#1b2c35] border-2 border-[#e5e5e5] dark:border-[#37464f] rounded-2xl font-bold font-mono outline-none focus:border-[#1cb0f6] dark:text-white"
               />
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                O ID de usuário identifica seus dados no banco compartilhado. Cada usuário deve ter seu próprio ID único.
-              </p>
+              <p className="text-[10px] font-bold text-[#afafaf] mt-2">ID único para seus dados na nuvem.</p>
             </div>
-            <div className="flex gap-2">
-              <button 
-                onClick={() => {
-                  setShowBinIdModal(false);
-                  setJsonbinBinIdInput('');
-                }}
-                className="flex-1 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white py-3 rounded-lg font-medium hover:bg-gray-300 dark:hover:bg-gray-600 transition"
-              >
-                Cancelar
-              </button>
-              <button 
-                onClick={saveJsonbinBinId}
-                disabled={!jsonbinBinIdInput.trim() || isSyncing}
-                className="flex-1 bg-indigo-600 text-white py-3 rounded-lg font-bold hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition flex items-center justify-center gap-2"
-              >
-                {isSyncing ? (
-                  <>
-                    <RefreshCw size={16} className="animate-spin" />
-                    <span>Verificando...</span>
-                  </>
-                ) : (
-                  <span>{binIdModalMode === 'edit' ? 'Salvar' : 'Conectar'}</span>
-                )}
-              </button>
+            <div className="grid grid-cols-2 gap-4 mt-6">
+              <DuoButton variant="outline" onClick={() => { setShowBinIdModal(false); setJsonbinBinIdInput(''); }} fullWidth>Cancelar</DuoButton>
+              <DuoButton variant="secondary" onClick={saveJsonbinBinId} disabled={!jsonbinBinIdInput.trim() || isSyncing} fullWidth>{isSyncing ? <><RefreshCw size={18} className="animate-spin" /> Verificando...</> : (binIdModalMode === 'edit' ? 'Salvar' : 'Conectar')}</DuoButton>
             </div>
           </div>
         </Modal>
       )}
 
+      {showAuthModal && (
+        <Modal isOpen={true} onClose={closeAuthModal} title={authMode === 'register' ? 'Criar conta' : 'Entrar'}>
+          <div className="space-y-4">
+            {authError && <p className="text-sm font-bold text-[#ff4b4b]">{authError}</p>}
+            <div>
+              <label className="block font-black text-[10px] text-[#afafaf] uppercase tracking-widest mb-2">Email</label>
+              <input type="email" autoComplete="email" value={authEmail} onChange={(e) => setAuthEmail(e.target.value)} placeholder="seu@email.com" className="w-full p-4 bg-[#f1f1f1] dark:bg-[#1b2c35] border-2 border-[#e5e5e5] dark:border-[#37464f] rounded-2xl font-bold outline-none focus:border-[#1cb0f6] dark:text-white" />
+            </div>
+            {authMode === 'register' && (
+              <div>
+                <label className="block font-black text-[10px] text-[#afafaf] uppercase tracking-widest mb-2">Nome (opcional)</label>
+                <input type="text" autoComplete="name" value={authName} onChange={(e) => setAuthName(e.target.value)} placeholder="Seu nome" className="w-full p-4 bg-[#f1f1f1] dark:bg-[#1b2c35] border-2 border-[#e5e5e5] dark:border-[#37464f] rounded-2xl font-bold outline-none focus:border-[#1cb0f6] dark:text-white" />
+              </div>
+            )}
+            <div>
+              <label className="block font-black text-[10px] text-[#afafaf] uppercase tracking-widest mb-2">Senha</label>
+              <input type="password" autoComplete={authMode === 'register' ? 'new-password' : 'current-password'} value={authPassword} onChange={(e) => setAuthPassword(e.target.value)} placeholder={authMode === 'register' ? 'Mínimo 6 caracteres' : 'Senha'} className="w-full p-4 bg-[#f1f1f1] dark:bg-[#1b2c35] border-2 border-[#e5e5e5] dark:border-[#37464f] rounded-2xl font-bold outline-none focus:border-[#1cb0f6] dark:text-white" />
+            </div>
+            <button type="button" onClick={() => { setAuthMode(authMode === 'login' ? 'register' : 'login'); setAuthError(''); }} className="text-sm font-bold text-[#1cb0f6] hover:underline">
+              {authMode === 'login' ? 'Criar conta' : 'Já tenho conta'}
+            </button>
+            <div className="grid grid-cols-2 gap-4 mt-4">
+              <DuoButton variant="outline" onClick={closeAuthModal} fullWidth>Cancelar</DuoButton>
+              <DuoButton variant="primary" onClick={authMode === 'login' ? handleLogin : handleRegister} disabled={authLoading || !authEmail.trim() || !authPassword} fullWidth>
+                {authLoading ? <><RefreshCw size={18} className="animate-spin" /> Aguarde...</> : (authMode === 'login' ? 'Entrar' : 'Registrar')}
+              </DuoButton>
+            </div>
+          </div>
+        </Modal>
+      )}
 
       {modalConfig.type === 'create_deck' && (
         <Modal isOpen={true} onClose={closeModal} title="Novo Baralho">
-           <input 
-              autoFocus
-              type="text" 
-              placeholder="Nome do baralho (ex: Verbos N5)"
-              value={tempInput}
-              onChange={(e) => setTempInput(e.target.value)}
-              className="w-full p-3 bg-gray-100 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg mb-4 text-gray-800 dark:text-white outline-none focus:ring-2 focus:ring-red-500"
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && tempInput.trim()) createDeck(tempInput);
-              }}
-           />
-
-           <button 
-             onClick={() => tempInput.trim() && createDeck(tempInput)}
-             disabled={!tempInput.trim()}
-             className="w-full bg-red-600 text-white py-3 rounded-lg font-bold hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition touch-target"
-           >
-             Criar
-           </button>
+          <p className="text-sm font-bold text-[#afafaf] dark:text-zinc-400 mb-4">Dê um nome para o baralho.</p>
+          <input autoFocus type="text" placeholder="Ex: Verbos N5" value={tempInput} onChange={(e) => setTempInput(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && tempInput.trim()) createDeck(tempInput); }} className="w-full p-4 bg-[#f1f1f1] dark:bg-[#1b2c35] border-2 border-[#e5e5e5] dark:border-[#37464f] rounded-2xl font-bold outline-none focus:border-[#58cc02] dark:text-white mb-6" />
+          <DuoButton onClick={() => tempInput.trim() && createDeck(tempInput)} disabled={!tempInput.trim()} variant="primary" fullWidth className="h-14">Criar</DuoButton>
         </Modal>
       )}
 
       {modalConfig.type === 'notes_to_cards' && (
         <Modal isOpen={true} onClose={closeModal} title="Anotações de aula → Flashcards" maxWidthClass="max-w-lg">
           <div className="space-y-4">
+            <label className="block font-black text-[10px] text-[#afafaf] dark:text-zinc-400 uppercase tracking-widest mb-2">Texto das anotações</label>
             <textarea
               value={notesInput}
               onChange={(e) => setNotesInput(e.target.value)}
               placeholder="Cole aqui todas as anotações da aula..."
-              className="w-full min-h-[200px] p-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-800 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none transition resize-y"
+              className="w-full min-h-[200px] p-4 bg-[#f1f1f1] dark:bg-[#1b2c35] border-2 border-[#e5e5e5] dark:border-[#37464f] rounded-2xl font-bold text-[#4b4b4b] dark:text-white outline-none focus:border-[#1cb0f6] transition resize-y"
               disabled={isGenerating}
             />
-            <p className="text-xs text-gray-500 dark:text-gray-400">
+            <p className="text-[10px] font-bold text-[#afafaf] dark:text-zinc-400">
               A IA analisará o texto e criará a quantidade de flashcards adequada ao conteúdo (entre 3 e 50).
             </p>
-            <div className="flex gap-3">
-              <button
-                onClick={closeModal}
-                className="flex-1 py-3 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 font-medium"
-              >
-                Cancelar
-              </button>
-              <button
+            <div className="grid grid-cols-2 gap-4 pt-2">
+              <DuoButton variant="outline" onClick={closeModal} fullWidth>Cancelar</DuoButton>
+              <DuoButton
+                variant="indigo"
                 onClick={() => handleGenerateFromNotes(notesInput)}
                 disabled={!notesInput.trim() || isGenerating}
-                className="flex-1 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-bold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                fullWidth
+                className="flex items-center justify-center gap-2"
               >
                 {isGenerating ? (
-                  <>
-                    <RefreshCw size={18} className="animate-spin" /> Gerando...
-                  </>
+                  <><RefreshCw size={18} className="animate-spin" /> Gerando...</>
                 ) : (
-                  <>
-                    <Sparkles size={18} /> Gerar flashcards
-                  </>
+                  <><Sparkles size={18} /> Gerar flashcards</>
                 )}
-              </button>
+              </DuoButton>
             </div>
           </div>
         </Modal>
@@ -4209,16 +3721,14 @@ Exemplo de formato válido:
         <Modal isOpen={true} onClose={closeModal} title="Adicionar Card Manualmente">
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Kanji / Palavra
-              </label>
+              <label className="block font-black text-[10px] text-[#afafaf] dark:text-zinc-400 uppercase tracking-widest mb-2">Kanji / Palavra</label>
               <input 
                 type="text" 
                 autoFocus
                 value={newCardForm.kanji}
                 onChange={(e) => setNewCardForm({...newCardForm, kanji: e.target.value})}
                 placeholder="Ex: 猫"
-                className="w-full p-3 bg-gray-100 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-800 dark:text-white outline-none focus:ring-2 focus:ring-green-500"
+                className="w-full p-4 bg-[#f1f1f1] dark:bg-[#1b2c35] border-2 border-[#e5e5e5] dark:border-[#37464f] rounded-2xl font-bold text-[#4b4b4b] dark:text-white outline-none focus:border-[#58cc02]"
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' && newCardForm.kanji.trim() && newCardForm.reading.trim() && newCardForm.meaning.trim()) {
                     saveNewCard();
@@ -4227,15 +3737,13 @@ Exemplo de formato válido:
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Leitura (Hiragana/Katakana)
-              </label>
+              <label className="block font-black text-[10px] text-[#afafaf] dark:text-zinc-400 uppercase tracking-widest mb-2">Leitura (Hiragana/Katakana)</label>
               <input 
                 type="text" 
                 value={newCardForm.reading}
                 onChange={(e) => setNewCardForm({...newCardForm, reading: e.target.value})}
                 placeholder="Ex: ねこ"
-                className="w-full p-3 bg-gray-100 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-800 dark:text-white outline-none focus:ring-2 focus:ring-green-500"
+                className="w-full p-4 bg-[#f1f1f1] dark:bg-[#1b2c35] border-2 border-[#e5e5e5] dark:border-[#37464f] rounded-2xl font-bold text-[#4b4b4b] dark:text-white outline-none focus:border-[#58cc02]"
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' && newCardForm.kanji.trim() && newCardForm.reading.trim() && newCardForm.meaning.trim()) {
                     saveNewCard();
@@ -4244,15 +3752,13 @@ Exemplo de formato válido:
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Significado
-              </label>
+              <label className="block font-black text-[10px] text-[#afafaf] dark:text-zinc-400 uppercase tracking-widest mb-2">Significado</label>
               <input 
                 type="text" 
                 value={newCardForm.meaning}
                 onChange={(e) => setNewCardForm({...newCardForm, meaning: e.target.value})}
                 placeholder="Ex: Gato"
-                className="w-full p-3 bg-gray-100 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-800 dark:text-white outline-none focus:ring-2 focus:ring-green-500"
+                className="w-full p-4 bg-[#f1f1f1] dark:bg-[#1b2c35] border-2 border-[#e5e5e5] dark:border-[#37464f] rounded-2xl font-bold text-[#4b4b4b] dark:text-white outline-none focus:border-[#58cc02]"
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' && newCardForm.kanji.trim() && newCardForm.reading.trim() && newCardForm.meaning.trim()) {
                     saveNewCard();
@@ -4260,20 +3766,9 @@ Exemplo de formato válido:
                 }}
               />
             </div>
-            <div className="flex gap-3 pt-2">
-              <button 
-                onClick={closeModal}
-                className="flex-1 py-3 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 font-medium transition"
-              >
-                Cancelar
-              </button>
-              <button 
-                onClick={saveNewCard}
-                disabled={!newCardForm.kanji.trim() || !newCardForm.reading.trim() || !newCardForm.meaning.trim()}
-                className="flex-1 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed font-bold transition"
-              >
-                Adicionar
-              </button>
+            <div className="grid grid-cols-2 gap-4 pt-2">
+              <DuoButton variant="outline" onClick={closeModal} fullWidth>Cancelar</DuoButton>
+              <DuoButton variant="primary" onClick={saveNewCard} disabled={!newCardForm.kanji.trim() || !newCardForm.reading.trim() || !newCardForm.meaning.trim()} fullWidth>Adicionar</DuoButton>
             </div>
           </div>
         </Modal>
@@ -4281,21 +3776,21 @@ Exemplo de formato válido:
 
       {modalConfig.type === 'confirm' && (
         <Modal isOpen={true} onClose={closeModal} title="Confirmação">
-           <p className="text-gray-600 dark:text-gray-300 mb-6">{modalConfig.data.message}</p>
-           <div className="flex gap-3">
-             <button onClick={closeModal} className="flex-1 py-3 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 font-medium">Cancelar</button>
-             <button onClick={modalConfig.data.onConfirm} className="flex-1 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 font-bold">Confirmar</button>
-           </div>
+          <p className="text-sm font-bold text-[#afafaf] dark:text-zinc-400 mb-6">{modalConfig.data.message}</p>
+          <div className="grid grid-cols-2 gap-4">
+            <DuoButton variant="outline" onClick={closeModal} fullWidth>Cancelar</DuoButton>
+            <DuoButton variant="danger" onClick={modalConfig.data.onConfirm} fullWidth>Confirmar</DuoButton>
+          </div>
         </Modal>
       )}
 
       {modalConfig.type === 'alert' && (
         <Modal isOpen={true} onClose={closeModal} title="Aviso">
-           <p className="text-gray-600 dark:text-gray-300 mb-6 flex items-start gap-3">
-             <AlertCircle size={20} className="text-indigo-500 shrink-0 mt-1" />
-             {modalConfig.data.message}
-           </p>
-           <button onClick={closeModal} className="w-full bg-indigo-600 text-white py-3 rounded-lg font-bold hover:bg-indigo-700">OK</button>
+          <p className="text-sm font-bold text-[#afafaf] dark:text-zinc-400 mb-6 flex items-start gap-3">
+            <AlertCircle size={22} className="text-[#1cb0f6] shrink-0 mt-0.5" />
+            {modalConfig.data.message}
+          </p>
+          <DuoButton onClick={closeModal} variant="secondary" fullWidth className="h-14">OK</DuoButton>
         </Modal>
       )}
 
@@ -4303,52 +3798,44 @@ Exemplo de formato válido:
         <Modal isOpen={true} onClose={closeModal} title="Editar Card">
           <div className="space-y-4 max-h-[80vh] overflow-y-auto">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Kanji / Palavra
-              </label>
+              <label className="block font-black text-[10px] text-[#afafaf] dark:text-zinc-400 uppercase tracking-widest mb-2">Kanji / Palavra</label>
               <input 
                 type="text" 
                 value={editCardForm.kanji}
                 onChange={(e) => setEditCardForm({...editCardForm, kanji: e.target.value})}
-                className="w-full p-3 bg-gray-100 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-800 dark:text-white outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full p-4 bg-[#f1f1f1] dark:bg-[#1b2c35] border-2 border-[#e5e5e5] dark:border-[#37464f] rounded-2xl font-bold text-[#4b4b4b] dark:text-white outline-none focus:border-[#1cb0f6]"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Leitura (Hiragana/Katakana)
-              </label>
+              <label className="block font-black text-[10px] text-[#afafaf] dark:text-zinc-400 uppercase tracking-widest mb-2">Leitura (Hiragana/Katakana)</label>
               <input 
                 type="text" 
                 value={editCardForm.reading}
                 onChange={(e) => setEditCardForm({...editCardForm, reading: e.target.value})}
-                className="w-full p-3 bg-gray-100 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-800 dark:text-white outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full p-4 bg-[#f1f1f1] dark:bg-[#1b2c35] border-2 border-[#e5e5e5] dark:border-[#37464f] rounded-2xl font-bold text-[#4b4b4b] dark:text-white outline-none focus:border-[#1cb0f6]"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Significado
-              </label>
+              <label className="block font-black text-[10px] text-[#afafaf] dark:text-zinc-400 uppercase tracking-widest mb-2">Significado</label>
               <input 
                 type="text" 
                 value={editCardForm.meaning}
                 onChange={(e) => setEditCardForm({...editCardForm, meaning: e.target.value})}
-                className="w-full p-3 bg-gray-100 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-800 dark:text-white outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full p-4 bg-[#f1f1f1] dark:bg-[#1b2c35] border-2 border-[#e5e5e5] dark:border-[#37464f] rounded-2xl font-bold text-[#4b4b4b] dark:text-white outline-none focus:border-[#1cb0f6]"
               />
             </div>
 
             {/* Tags */}
-            <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Tags
-              </label>
+            <div className="mt-4 pt-4 border-t-2 border-[#e5e5e5] dark:border-[#37464f]">
+              <label className="block font-black text-[10px] text-[#afafaf] dark:text-zinc-400 uppercase tracking-widest mb-2">Tags</label>
               <div className="flex flex-wrap gap-2 mb-2">
                 {(editingCard.tags || []).map((tag, idx) => (
-                  <span key={idx} className="inline-flex items-center gap-1 px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded text-xs">
+                  <span key={idx} className="inline-flex items-center gap-1 px-2 py-1 bg-[#1cb0f6]/20 text-[#1cb0f6] dark:text-[#84d8ff] rounded-xl text-xs font-bold">
                     <Tag size={12} />
                     {tag}
                     <button
                       onClick={() => removeTagFromCard(editingCard.id, tag)}
-                      className="ml-1 text-blue-500 hover:text-blue-700"
+                      className="ml-1 text-[#1cb0f6] hover:opacity-80 touch-target"
                     >
                       <X size={12} />
                     </button>
@@ -4368,31 +3855,26 @@ Exemplo de formato válido:
                     }
                   }}
                   placeholder="Adicionar tag..."
-                  className="flex-1 p-2 bg-gray-100 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-800 dark:text-white outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                  className="flex-1 p-3 bg-[#f1f1f1] dark:bg-[#1b2c35] border-2 border-[#e5e5e5] dark:border-[#37464f] rounded-2xl text-[#4b4b4b] dark:text-white outline-none focus:border-[#1cb0f6] text-sm font-bold"
                 />
-                <button
-                  onClick={() => {
-                    if (newTagInput.trim()) {
-                      addTagToCard(editingCard.id, newTagInput);
-                      setNewTagInput('');
-                    }
-                  }}
-                  className="px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium"
-                >
+                <DuoButton variant="secondary" className="shrink-0" onClick={() => {
+                  if (newTagInput.trim()) {
+                    addTagToCard(editingCard.id, newTagInput);
+                    setNewTagInput('');
+                  }
+                }}>
                   <Plus size={16} />
-                </button>
+                </DuoButton>
               </div>
               {availableTags.length > 0 && (
                 <div className="mt-2">
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Tags disponíveis:</p>
+                  <p className="text-[10px] font-bold text-[#afafaf] dark:text-zinc-400 uppercase tracking-widest mb-1">Tags disponíveis</p>
                   <div className="flex flex-wrap gap-1">
                     {availableTags.filter(tag => !(editingCard.tags || []).includes(tag)).map(tag => (
                       <button
                         key={tag}
-                        onClick={() => {
-                          addTagToCard(editingCard.id, tag);
-                        }}
-                        className="px-2 py-1 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded text-xs hover:bg-gray-300 dark:hover:bg-gray-600"
+                        onClick={() => addTagToCard(editingCard.id, tag)}
+                        className="px-2 py-1 bg-[#f1f1f1] dark:bg-[#37464f] text-[#4b4b4b] dark:text-white rounded-xl text-xs font-bold hover:bg-[#e5e5e5] dark:hover:bg-[#4b5a62] transition"
                       >
                         + {tag}
                       </button>
@@ -4404,30 +3886,27 @@ Exemplo de formato válido:
 
             {/* Histórico de Revisões */}
             {editingCard.reviewHistory && editingCard.reviewHistory.length > 0 && (
-              <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+              <div className="mt-4 pt-4 border-t-2 border-[#e5e5e5] dark:border-[#37464f]">
                 <div className="flex items-center gap-2 mb-3">
-                  <History size={18} className="text-gray-600 dark:text-gray-400" />
-                  <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300">Histórico de Revisões</h4>
+                  <History size={18} className="text-[#afafaf] dark:text-zinc-400" />
+                  <h4 className="text-[10px] font-black text-[#afafaf] dark:text-zinc-400 uppercase tracking-widest">Histórico de Revisões</h4>
                 </div>
                 <div className="space-y-2 max-h-48 overflow-y-auto">
                   {editingCard.reviewHistory.slice().reverse().map((review, idx) => {
                     const date = new Date(review.date);
                     const qualityLabels = { 0: 'Não sei', 1: 'Dúvida', 2: 'Sei' };
-                    const qualityColors = { 0: 'red', 1: 'yellow', 2: 'green' };
-                    
                     return (
-                      <div key={idx} className="p-2 bg-gray-50 dark:bg-gray-900 rounded text-xs">
+                      <div key={idx} className="p-3 bg-[#f1f1f1] dark:bg-[#1b2c35] border-2 border-[#e5e5e5] dark:border-[#37464f] rounded-2xl text-xs">
                         <div className="flex justify-between items-center mb-1">
-                          <span className="text-gray-600 dark:text-gray-400">{date.toLocaleString('pt-BR')}</span>
-                          <span className={`px-2 py-0.5 rounded font-semibold text-white ${
-                            review.quality === 0 ? 'bg-red-500' : review.quality === 1 ? 'bg-yellow-500' : 'bg-green-500'
+                          <span className="text-[#afafaf] dark:text-zinc-400 font-bold">{date.toLocaleString('pt-BR')}</span>
+                          <span className={`px-2 py-0.5 rounded-xl font-black text-white text-[10px] uppercase ${
+                            review.quality === 0 ? 'bg-[#ff4b4b]' : review.quality === 1 ? 'bg-[#ff9600]' : 'bg-[#58cc02]'
                           }`}>
                             {qualityLabels[review.quality]}
                           </span>
                         </div>
-                        <div className="text-gray-500 dark:text-gray-500 text-xs">
-                          Intervalo: {review.intervalBefore} → {review.intervalAfter} dias | 
-                          Facilidade: {review.easeFactorBefore.toFixed(2)} → {review.easeFactorAfter.toFixed(2)}
+                        <div className="text-[#afafaf] dark:text-zinc-400 text-[10px]">
+                          Intervalo: {review.intervalBefore} → {review.intervalAfter} dias | Facilidade: {review.easeFactorBefore.toFixed(2)} → {review.easeFactorAfter.toFixed(2)}
                         </div>
                       </div>
                     );
@@ -4436,31 +3915,127 @@ Exemplo de formato válido:
               </div>
             )}
 
-            <div className="flex gap-3 pt-2">
-              <button 
-                onClick={() => resetCardProgress(editingCard.id)}
-                className="flex-1 py-2 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 rounded-lg hover:bg-yellow-200 dark:hover:bg-yellow-900/50 font-medium text-sm"
-              >
-                Resetar Progresso
-              </button>
+            <div className="pt-4">
+              <DuoButton variant="warning" fullWidth className="mb-3" onClick={() => resetCardProgress(editingCard.id)}>Resetar Progresso</DuoButton>
             </div>
-            <div className="flex gap-3 pt-2">
-              <button onClick={closeModal} className="flex-1 py-3 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 font-medium">Cancelar</button>
-              <button 
-                onClick={saveEditedCard}
-                disabled={!editCardForm.kanji.trim() || !editCardForm.reading.trim() || !editCardForm.meaning.trim()}
-                className="flex-1 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-bold disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                Salvar
-              </button>
+            <div className="grid grid-cols-2 gap-4 pt-2">
+              <DuoButton variant="outline" onClick={closeModal} fullWidth>Cancelar</DuoButton>
+              <DuoButton variant="secondary" onClick={saveEditedCard} disabled={!editCardForm.kanji.trim() || !editCardForm.reading.trim() || !editCardForm.meaning.trim()} fullWidth>Salvar</DuoButton>
             </div>
           </div>
         </Modal>
       )}
 
+      {/* Tela de Configurações (abre ao clicar na engrenagem) */}
+      {view === 'settings' && (
+        <div className="min-h-screen bg-white dark:bg-[#131f24] pb-24 safe-top safe-bottom">
+          <header className="sticky top-0 z-30 flex items-center gap-4 p-4 bg-white dark:bg-[#131f24] border-b-2 border-[#e5e5e5] dark:border-[#37464f] safe-top">
+            <button onClick={() => setView('home')} className="p-2 text-[#afafaf] dark:hover:text-white transition-colors touch-target" aria-label="Voltar">
+              <ArrowLeft size={28} strokeWidth={3} />
+            </button>
+            <h1 className="font-black text-xl uppercase tracking-tighter text-[#4b4b4b] dark:text-white flex items-center gap-2">
+              <Settings size={24} className="text-[#1cb0f6]" />
+              Configurações
+            </h1>
+          </header>
+          <div className="p-4 max-w-md mx-auto space-y-1">
+            <label className="flex items-center gap-3 p-3 rounded-xl hover:bg-[#f1f1f1] dark:hover:bg-[#37464f] cursor-pointer transition">
+              <Upload size={18} className="text-[#4b4b4b] dark:text-white" />
+              <span className="text-sm font-bold text-[#4b4b4b] dark:text-white">Importar dados da versão antiga (JSON)</span>
+              <input type="file" onChange={handleImport} className="hidden" accept=".json" />
+            </label>
+            <div className="border-t-2 border-[#e5e5e5] dark:border-[#37464f] my-2" />
+            <button onClick={() => setView('stats')} className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-[#f1f1f1] dark:hover:bg-[#37464f] transition text-left">
+              <BarChart2 size={18} className="text-[#4b4b4b] dark:text-white" />
+              <span className="text-sm font-bold text-[#4b4b4b] dark:text-white">Estatísticas</span>
+            </button>
+            <div className="border-t-2 border-[#e5e5e5] dark:border-[#37464f] my-2" />
+            <button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-[#f1f1f1] dark:hover:bg-[#37464f] transition">
+              {theme === 'dark' ? <Sun size={18} className="text-[#ff9600]" /> : <Moon size={18} className="text-[#4b4b4b] dark:text-white" />}
+              <span className="text-sm font-bold text-[#4b4b4b] dark:text-white">{theme === 'dark' ? 'Tema Claro' : 'Tema Escuro'}</span>
+            </button>
+            <div className="border-t-2 border-[#e5e5e5] dark:border-[#37464f] my-2" />
+            <div className="px-2 py-1"><span className="text-[10px] font-black text-[#afafaf] uppercase tracking-widest">Notificações</span></div>
+            {window.pushService && (
+              <button onClick={handleTogglePush} disabled={pushLoading || pushPermission === 'denied'} className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-[#f1f1f1] dark:hover:bg-[#37464f] transition text-left disabled:opacity-50">
+                <div className="flex items-center gap-3">
+                  <Sparkles size={18} className={pushEnabled ? 'text-[#1cb0f6]' : 'text-[#afafaf]'} />
+                  <span className="text-sm font-bold text-[#4b4b4b] dark:text-white">{pushLoading ? 'Carregando...' : pushEnabled ? 'Push Ativado' : 'Push Desativado'}</span>
+                </div>
+                {pushPermission !== 'denied' && (
+                  <div className={`relative w-14 h-8 rounded-full border-b-2 transition-colors ${pushEnabled ? 'bg-[#58cc02] border-[#46a302]' : 'bg-[#e5e5e5] dark:bg-[#37464f] border-[#afafaf]'}`}>
+                    <div className={`absolute top-0.5 w-6 h-6 bg-white rounded-full shadow transition-all ${pushEnabled ? 'left-7' : 'left-0.5'}`} />
+                  </div>
+                )}
+              </button>
+            )}
+            {pushPermission === 'denied' && <p className="text-[10px] font-bold text-[#ff4b4b] px-2">Permissão negada.</p>}
+            <div className="border-t-2 border-[#e5e5e5] dark:border-[#37464f] my-2" />
+            <div className="px-2 py-1"><span className="text-[10px] font-black text-[#afafaf] uppercase tracking-widest">Sincronização</span></div>
+            {apiUser ? (
+              <>
+                <div className="px-2 py-1"><div className="text-[10px] font-bold text-[#58cc02] truncate" title={apiUser.email}>Logado: {apiUser.email}</div></div>
+                <button onClick={() => syncData()} disabled={isSyncing} className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-[#f1f1f1] dark:hover:bg-[#37464f] transition text-left disabled:opacity-50">
+                  <RefreshCw size={18} className={isSyncing ? 'animate-spin' : ''} /> <span className="text-sm font-bold">{isSyncing ? 'Sincronizando...' : 'Sincronizar Dados'}</span>
+                </button>
+                <button onClick={() => handleLogout()} className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-[#f1f1f1] dark:hover:bg-[#37464f] transition text-left">
+                  <X size={18} /> <span className="text-sm font-bold">Sair</span>
+                </button>
+              </>
+            ) : (
+              <>
+                <button onClick={() => setView('login')} className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-[#f1f1f1] dark:hover:bg-[#37464f] transition text-left">
+                  <User size={18} /> <span className="text-sm font-bold">Entrar (Login)</span>
+                </button>
+                <button onClick={() => setView('login')} className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-[#f1f1f1] dark:hover:bg-[#37464f] transition text-left">
+                  <Edit size={18} /> <span className="text-sm font-bold">Registrar conta</span>
+                </button>
+                {!jsonbinBinId && (
+                  <>
+                    <button onClick={() => createNewBin()} disabled={isSyncing} className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-[#f1f1f1] dark:hover:bg-[#37464f] transition text-left disabled:opacity-50">
+                      <RefreshCw size={18} className={isSyncing ? 'animate-spin' : ''} /> <span className="text-sm font-bold">{isSyncing ? 'Criando...' : 'Criar Novo ID'}</span>
+                    </button>
+                    <button onClick={() => openBinIdModal('insert')} className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-[#f1f1f1] dark:hover:bg-[#37464f] transition text-left">
+                      <Edit size={18} /> <span className="text-sm font-bold">Inserir ID</span>
+                    </button>
+                  </>
+                )}
+                {jsonbinBinId && (
+                  <>
+                    <div className="px-2 py-1"><div className="text-[10px] font-bold text-[#afafaf] truncate" title={jsonbinBinId}>ID: {jsonbinBinId.length > 18 ? jsonbinBinId.substring(0, 18) + '...' : jsonbinBinId}</div></div>
+                    <button onClick={() => openBinIdModal('edit')} className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-[#f1f1f1] dark:hover:bg-[#37464f] transition text-left"><Edit size={18} /> <span className="text-sm font-bold">Editar ID</span></button>
+                    <button onClick={() => syncData()} disabled={isSyncing} className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-[#f1f1f1] dark:hover:bg-[#37464f] transition text-left disabled:opacity-50">
+                      <RefreshCw size={18} className={isSyncing ? 'animate-spin' : ''} /> <span className="text-sm font-bold">{isSyncing ? 'Sincronizando...' : 'Sincronizar'}</span>
+                    </button>
+                  </>
+                )}
+              </>
+            )}
+            {isDevMode() && (
+              <>
+                <div className="border-t-2 border-[#e5e5e5] dark:border-[#37464f] my-2" />
+                <div className="px-2 py-1"><span className="text-[10px] font-black text-[#a855f7] uppercase">Modo Dev</span></div>
+                <button onClick={() => setView('dev-panel')} className="w-full flex items-center gap-3 p-3 rounded-xl bg-[#5844ed]/10 dark:bg-[#5844ed]/20 border-2 border-[#5844ed] transition text-left">
+                  <Settings size={18} className="text-[#a855f7]" /> <span className="text-sm font-bold text-[#a855f7]">Painel Dev</span>
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Main Views */}
+      {view === 'login' && (
+        <LoginView
+          onBack={() => setView('home')}
+          onLoginSuccess={(user) => setApiUser(user)}
+          showAlert={showAlert}
+        />
+      )}
+      {view === 'edit-profile' && <EditProfileView />}
       {view === 'home' && <HomeView />}
       {view === 'stats' && <StatsView />}
+      {view === 'profile' && <ProfileView />}
       {view === 'deck' && <DeckDetailView />}
       {view === 'generator' && <GeneratorView />}
       {view === 'review' && <ReviewSessionView />}
@@ -4471,6 +4046,38 @@ Exemplo de formato válido:
       {view === 'test-result' && <TestResultView />}
       {view === 'dev-panel' && isDevMode() && <DevPanelView />}
 
+      {/* Bottom Nav (Home / Estatísticas / Perfil) */}
+      {(view === 'home' || view === 'stats' || view === 'profile' || view === 'settings' || view === 'edit-profile') && (
+        <nav className="fixed bottom-0 left-0 right-0 max-w-md mx-auto z-30 bg-white dark:bg-[#1b2c35] border-t-2 border-[#e5e5e5] dark:border-[#37464f] safe-bottom shadow-[0_-4px_12px_rgba(0,0,0,0.08)] dark:shadow-[0_-4px_12px_rgba(0,0,0,0.3)]">
+          <div className="grid grid-cols-3 flex-1 w-full items-stretch py-2">
+            <button
+              onClick={() => setView('home')}
+              className={`flex flex-col items-center justify-center gap-1 py-2 px-2 rounded-2xl transition-colors touch-target min-h-[56px] ${view === 'home' ? 'text-[#1cb0f6] bg-[#1cb0f6]/10' : 'text-[#afafaf] hover:text-[#4b4b4b] dark:hover:text-white'}`}
+              aria-label="Home"
+            >
+              <Layers size={24} />
+              <span className="text-[10px] font-black uppercase tracking-wider">Home</span>
+            </button>
+            <button
+              onClick={() => setView('stats')}
+              className={`flex flex-col items-center justify-center gap-1 py-2 px-2 rounded-2xl transition-colors touch-target min-h-[56px] ${view === 'stats' ? 'text-[#1cb0f6] bg-[#1cb0f6]/10' : 'text-[#afafaf] hover:text-[#4b4b4b] dark:hover:text-white'}`}
+              aria-label="Estatísticas"
+            >
+              <BarChart2 size={24} />
+              <span className="text-[10px] font-black uppercase tracking-wider">Estatísticas</span>
+            </button>
+            <button
+              onClick={() => setView('profile')}
+              className={`flex flex-col items-center justify-center gap-1 py-2 px-2 rounded-2xl transition-colors touch-target min-h-[56px] ${view === 'profile' ? 'text-[#1cb0f6] bg-[#1cb0f6]/10' : 'text-[#afafaf] hover:text-[#4b4b4b] dark:hover:text-white'}`}
+              aria-label="Perfil"
+            >
+              <User size={24} />
+              <span className="text-[10px] font-black uppercase tracking-wider">Perfil</span>
+            </button>
+          </div>
+        </nav>
+      )}
+
       {/* UX Mobile Components */}
       <OfflineIndicator isOnline={isOnline} pendingCount={pendingSyncCount} />
       {showUpdateNotification && (
@@ -4479,6 +4086,7 @@ Exemplo de formato válido:
           onDismiss={() => setShowUpdateNotification(false)}
         />
       )}
+      </div>
     </div>
   );
 }

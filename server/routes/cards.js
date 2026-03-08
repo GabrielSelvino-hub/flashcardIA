@@ -27,6 +27,14 @@ function cardRowToJson(row) {
   try {
     tags = row.tags ? JSON.parse(row.tags) : [];
   } catch (_) {}
+  let reviewHistory = [];
+  let qualityHistory = [];
+  try {
+    reviewHistory = row.review_history ? JSON.parse(row.review_history) : [];
+  } catch (_) {}
+  try {
+    qualityHistory = row.quality_history ? JSON.parse(row.quality_history) : [];
+  } catch (_) {}
   return {
     id: row.id,
     kanji: row.kanji,
@@ -36,6 +44,8 @@ function cardRowToJson(row) {
     nextReview: row.next_review ?? Date.now(),
     easeFactor: row.ease_factor ?? 2.5,
     tags: Array.isArray(tags) ? tags : [],
+    reviewHistory: Array.isArray(reviewHistory) ? reviewHistory : [],
+    qualityHistory: Array.isArray(qualityHistory) ? qualityHistory : [],
   };
 }
 
@@ -48,7 +58,7 @@ router.get('/', async (req, res) => {
     const countRes = await db.query('SELECT COUNT(*) AS total FROM cards WHERE deck_id = $1', [req.deckId]);
     const total = parseInt(countRes.rows[0].total, 10);
     const cardsRows = await db.query(
-      'SELECT id, kanji, reading, meaning, interval, next_review, ease_factor, tags FROM cards WHERE deck_id = $1 ORDER BY created_at LIMIT $2 OFFSET $3',
+      'SELECT id, kanji, reading, meaning, interval, next_review, ease_factor, tags, review_history, quality_history FROM cards WHERE deck_id = $1 ORDER BY created_at LIMIT $2 OFFSET $3',
       [req.deckId, limit, offset]
     );
     return res.json({
@@ -67,7 +77,7 @@ router.get('/', async (req, res) => {
 router.get('/:cardId', async (req, res) => {
   try {
     const r = await db.query(
-      'SELECT id, kanji, reading, meaning, interval, next_review, ease_factor, tags FROM cards WHERE id = $1 AND deck_id = $2',
+      'SELECT id, kanji, reading, meaning, interval, next_review, ease_factor, tags, review_history, quality_history FROM cards WHERE id = $1 AND deck_id = $2',
       [req.params.cardId, req.deckId]
     );
     if (r.rows.length === 0) {
@@ -93,9 +103,11 @@ router.post('/bulk', async (req, res) => {
         ? String(c.id).trim()
         : `card_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
       const tagsStr = JSON.stringify(Array.isArray(c.tags) ? c.tags : []);
+      const reviewHistoryStr = JSON.stringify(Array.isArray(c.reviewHistory) ? c.reviewHistory : []);
+      const qualityHistoryStr = JSON.stringify(Array.isArray(c.qualityHistory) ? c.qualityHistory : []);
       await db.query(
-        `INSERT INTO cards (id, deck_id, kanji, reading, meaning, interval, next_review, ease_factor, tags)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+        `INSERT INTO cards (id, deck_id, kanji, reading, meaning, interval, next_review, ease_factor, tags, review_history, quality_history)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
         [
           id,
           req.deckId,
@@ -106,6 +118,8 @@ router.post('/bulk', async (req, res) => {
           c.nextReview != null ? parseInt(c.nextReview, 10) : Date.now(),
           c.easeFactor != null ? parseFloat(c.easeFactor) : 2.5,
           tagsStr,
+          reviewHistoryStr,
+          qualityHistoryStr,
         ]
       );
       inserted.push(cardRowToJson({
@@ -117,6 +131,8 @@ router.post('/bulk', async (req, res) => {
         next_review: c.nextReview ?? Date.now(),
         ease_factor: c.easeFactor ?? 2.5,
         tags: tagsStr,
+        review_history: reviewHistoryStr,
+        quality_history: qualityHistoryStr,
       }));
     }
     return res.status(201).json({ cards: inserted });
@@ -135,9 +151,11 @@ router.post('/', async (req, res) => {
       ? String(c.id).trim()
       : `card_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
     const tagsStr = JSON.stringify(Array.isArray(c.tags) ? c.tags : []);
+    const reviewHistoryStr = JSON.stringify(Array.isArray(c.reviewHistory) ? c.reviewHistory : []);
+    const qualityHistoryStr = JSON.stringify(Array.isArray(c.qualityHistory) ? c.qualityHistory : []);
     await db.query(
-      `INSERT INTO cards (id, deck_id, kanji, reading, meaning, interval, next_review, ease_factor, tags)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+      `INSERT INTO cards (id, deck_id, kanji, reading, meaning, interval, next_review, ease_factor, tags, review_history, quality_history)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
       [
         id,
         req.deckId,
@@ -148,6 +166,8 @@ router.post('/', async (req, res) => {
         c.nextReview != null ? parseInt(c.nextReview, 10) : Date.now(),
         c.easeFactor != null ? parseFloat(c.easeFactor) : 2.5,
         tagsStr,
+        reviewHistoryStr,
+        qualityHistoryStr,
       ]
     );
     return res.status(201).json(cardRowToJson({
@@ -159,6 +179,8 @@ router.post('/', async (req, res) => {
       next_review: c.nextReview ?? Date.now(),
       ease_factor: c.easeFactor ?? 2.5,
       tags: tagsStr,
+      review_history: reviewHistoryStr,
+      quality_history: qualityHistoryStr,
     }));
   } catch (e) {
     if (e.code === '23505') return res.status(400).json({ error: 'ID de carta já existe.' });
@@ -170,7 +192,7 @@ router.post('/', async (req, res) => {
 // PATCH /api/decks/:deckId/cards/:cardId
 router.patch('/:cardId', async (req, res) => {
   try {
-    const { kanji, reading, meaning, interval, nextReview, easeFactor, tags } = req.body || {};
+    const { kanji, reading, meaning, interval, nextReview, easeFactor, tags, reviewHistory, qualityHistory } = req.body || {};
     const updates = [];
     const values = [];
     let idx = 1;
@@ -181,9 +203,11 @@ router.patch('/:cardId', async (req, res) => {
     if (nextReview !== undefined) { updates.push(`next_review = $${idx++}`); values.push(parseInt(nextReview, 10)); }
     if (easeFactor !== undefined) { updates.push(`ease_factor = $${idx++}`); values.push(parseFloat(easeFactor)); }
     if (tags !== undefined) { updates.push(`tags = $${idx++}`); values.push(JSON.stringify(Array.isArray(tags) ? tags : [])); }
+    if (reviewHistory !== undefined) { updates.push(`review_history = $${idx++}`); values.push(JSON.stringify(Array.isArray(reviewHistory) ? reviewHistory : [])); }
+    if (qualityHistory !== undefined) { updates.push(`quality_history = $${idx++}`); values.push(JSON.stringify(Array.isArray(qualityHistory) ? qualityHistory : [])); }
     if (updates.length === 0) {
       const r = await db.query(
-        'SELECT id, kanji, reading, meaning, interval, next_review, ease_factor, tags FROM cards WHERE id = $1 AND deck_id = $2',
+        'SELECT id, kanji, reading, meaning, interval, next_review, ease_factor, tags, review_history, quality_history FROM cards WHERE id = $1 AND deck_id = $2',
         [req.params.cardId, req.deckId]
       );
       if (r.rows.length === 0) return res.status(404).json({ error: 'Carta não encontrada.' });
@@ -191,7 +215,7 @@ router.patch('/:cardId', async (req, res) => {
     }
     updates.push('updated_at = NOW()');
     values.push(req.params.cardId, req.deckId);
-    const q = `UPDATE cards SET ${updates.join(', ')} WHERE id = $${idx} AND deck_id = $${idx + 1} RETURNING id, kanji, reading, meaning, interval, next_review, ease_factor, tags`;
+    const q = `UPDATE cards SET ${updates.join(', ')} WHERE id = $${idx} AND deck_id = $${idx + 1} RETURNING id, kanji, reading, meaning, interval, next_review, ease_factor, tags, review_history, quality_history`;
     const r = await db.query(q, values);
     if (r.rows.length === 0) {
       return res.status(404).json({ error: 'Carta não encontrada.' });

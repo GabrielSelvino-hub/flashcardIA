@@ -11,6 +11,14 @@ function cardRowToJson(row) {
   try {
     tags = row.tags ? JSON.parse(row.tags) : [];
   } catch (_) {}
+  let reviewHistory = [];
+  let qualityHistory = [];
+  try {
+    reviewHistory = row.review_history ? JSON.parse(row.review_history) : [];
+  } catch (_) {}
+  try {
+    qualityHistory = row.quality_history ? JSON.parse(row.quality_history) : [];
+  } catch (_) {}
   return {
     id: row.id,
     kanji: row.kanji,
@@ -20,6 +28,8 @@ function cardRowToJson(row) {
     nextReview: row.next_review ?? Date.now(),
     easeFactor: row.ease_factor ?? 2.5,
     tags: Array.isArray(tags) ? tags : [],
+    reviewHistory: Array.isArray(reviewHistory) ? reviewHistory : [],
+    qualityHistory: Array.isArray(qualityHistory) ? qualityHistory : [],
   };
 }
 
@@ -33,7 +43,7 @@ router.get('/', async (req, res) => {
     const result = [];
     for (const d of decksRows.rows) {
       const cardsRows = await db.query(
-        'SELECT id, kanji, reading, meaning, interval, next_review, ease_factor, tags FROM cards WHERE deck_id = $1',
+        'SELECT id, kanji, reading, meaning, interval, next_review, ease_factor, tags, review_history, quality_history FROM cards WHERE deck_id = $1',
         [d.id]
       );
       result.push({
@@ -61,7 +71,7 @@ router.get('/:id', async (req, res) => {
     }
     const d = deckRow.rows[0];
     const cardsRows = await db.query(
-      'SELECT id, kanji, reading, meaning, interval, next_review, ease_factor, tags FROM cards WHERE deck_id = $1',
+      'SELECT id, kanji, reading, meaning, interval, next_review, ease_factor, tags, review_history, quality_history FROM cards WHERE deck_id = $1',
       [d.id]
     );
     return res.json({
@@ -110,7 +120,7 @@ router.patch('/:id', async (req, res) => {
     }
     const d = r.rows[0];
     const cardsRows = await db.query(
-      'SELECT id, kanji, reading, meaning, interval, next_review, ease_factor, tags FROM cards WHERE deck_id = $1',
+      'SELECT id, kanji, reading, meaning, interval, next_review, ease_factor, tags, review_history, quality_history FROM cards WHERE deck_id = $1',
       [d.id]
     );
     return res.json({

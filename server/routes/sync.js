@@ -11,6 +11,14 @@ function cardRowToJson(row) {
   try {
     tags = row.tags ? JSON.parse(row.tags) : [];
   } catch (_) {}
+  let reviewHistory = [];
+  let qualityHistory = [];
+  try {
+    reviewHistory = row.review_history ? JSON.parse(row.review_history) : [];
+  } catch (_) {}
+  try {
+    qualityHistory = row.quality_history ? JSON.parse(row.quality_history) : [];
+  } catch (_) {}
   return {
     id: row.id,
     kanji: row.kanji,
@@ -20,6 +28,8 @@ function cardRowToJson(row) {
     nextReview: row.next_review ?? Date.now(),
     easeFactor: row.ease_factor ?? 2.5,
     tags: Array.isArray(tags) ? tags : [],
+    reviewHistory: Array.isArray(reviewHistory) ? reviewHistory : [],
+    qualityHistory: Array.isArray(qualityHistory) ? qualityHistory : [],
   };
 }
 
@@ -34,7 +44,7 @@ router.get('/', async (req, res) => {
     const tagSet = new Set();
     for (const d of decksRows.rows) {
       const cardsRows = await db.query(
-        'SELECT id, kanji, reading, meaning, interval, next_review, ease_factor, tags FROM cards WHERE deck_id = $1',
+        'SELECT id, kanji, reading, meaning, interval, next_review, ease_factor, tags, review_history, quality_history FROM cards WHERE deck_id = $1',
         [d.id]
       );
       const cards = cardsRows.rows.map(row => {
@@ -75,9 +85,11 @@ function upsertDecksAndCards(userId, decksPayload) {
             ? String(card.id).trim()
             : `card_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
           const tagsStr = JSON.stringify(Array.isArray(card.tags) ? card.tags : []);
+          const reviewHistoryStr = JSON.stringify(Array.isArray(card.reviewHistory) ? card.reviewHistory : []);
+          const qualityHistoryStr = JSON.stringify(Array.isArray(card.qualityHistory) ? card.qualityHistory : []);
           await c.query(
-            `INSERT INTO cards (id, deck_id, kanji, reading, meaning, interval, next_review, ease_factor, tags)
-             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+            `INSERT INTO cards (id, deck_id, kanji, reading, meaning, interval, next_review, ease_factor, tags, review_history, quality_history)
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
             [
               cardId,
               deckId,
@@ -88,6 +100,8 @@ function upsertDecksAndCards(userId, decksPayload) {
               card.nextReview != null ? parseInt(card.nextReview, 10) : Date.now(),
               card.easeFactor != null ? parseFloat(card.easeFactor) : 2.5,
               tagsStr,
+              reviewHistoryStr,
+              qualityHistoryStr,
             ]
           );
         }

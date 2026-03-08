@@ -59,6 +59,8 @@ CREATE TABLE IF NOT EXISTS cards (
   next_review BIGINT,
   ease_factor REAL DEFAULT 2.5,
   tags TEXT,
+  review_history TEXT,
+  quality_history TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -95,6 +97,9 @@ async function initSchema() {
   for (const stmt of statements) {
     await query(stmt);
   }
+  // Colunas para histórico de revisões e ofensivas (novas instalações já têm; existentes ganham aqui)
+  await query('ALTER TABLE cards ADD COLUMN IF NOT EXISTS review_history TEXT');
+  await query('ALTER TABLE cards ADD COLUMN IF NOT EXISTS quality_history TEXT');
 }
 
 module.exports = {

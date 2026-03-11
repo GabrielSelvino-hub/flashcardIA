@@ -279,7 +279,6 @@ const LoginView = ({ onBack, onLoginSuccess, showAlert }) => {
         : await window.apiService.login(email.trim(), password);
       if (result.success) {
         onLoginSuccess(result.user);
-        showAlert('Login realizado com sucesso!');
         onBack();
       } else {
         setError(result.error || 'Erro ao entrar.');
@@ -690,14 +689,21 @@ function App() {
           setSwRegistration(registration);
           console.log('Service Worker registrado:', registration.scope);
 
-          // Detectar atualizações
+          // Detectar atualizações — forçar reload para usuário sempre usar versão nova
           registration.addEventListener('updatefound', () => {
             const newWorker = registration.installing;
             if (newWorker) {
               newWorker.addEventListener('statechange', () => {
                 if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                  // Novo SW instalado, mostrar notificação
-                  setShowUpdateNotification(true);
+                  // Forçar atualização: ativar novo SW e recarregar
+                  const onControllerChange = () => {
+                    navigator.serviceWorker.removeEventListener('controllerchange', onControllerChange);
+                    window.location.reload();
+                  };
+                  navigator.serviceWorker.addEventListener('controllerchange', onControllerChange);
+                  if (registration.waiting) {
+                    registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+                  }
                 }
               });
             }
@@ -1317,7 +1323,6 @@ function App() {
         setAuthPassword('');
         setAuthName('');
         setAuthError('');
-        showAlert('Login realizado com sucesso!');
       } else {
         setAuthError(result.error || 'Erro ao entrar.');
       }
@@ -1364,7 +1369,8 @@ function App() {
     setApiUser(null);
     setShowAuthModal(false);
     setAuthError('');
-    showAlert('Você saiu da conta.');
+    setView('login');
+    setShowSettingsMenu(false);
   };
 
   const openAuthModal = (mode) => {
@@ -4001,16 +4007,12 @@ Exemplo de formato válido:
             )}
             {pushPermission === 'denied' && <p className="text-[10px] font-bold text-[#ff4b4b] px-2">Permissão negada.</p>}
             <div className="border-t-2 border-[#e5e5e5] dark:border-[#37464f] my-2" />
-            <div className="px-2 py-1"><span className="text-[10px] font-black text-[#afafaf] uppercase tracking-widest">Sincronização</span></div>
             {apiUser ? (
               <>
-                <div className="px-2 py-1"><div className="text-[10px] font-bold text-[#58cc02] truncate" title={apiUser.email}>Logado: {apiUser.email}</div></div>
-                <button onClick={() => syncData()} disabled={isSyncing} className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-[#f1f1f1] dark:hover:bg-[#37464f] transition text-left disabled:opacity-50">
-                  <RefreshCw size={18} className={isSyncing ? 'animate-spin' : ''} /> <span className="text-sm font-bold">{isSyncing ? 'Sincronizando...' : 'Sincronizar Dados'}</span>
-                </button>
                 <button onClick={() => handleLogout()} className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-[#f1f1f1] dark:hover:bg-[#37464f] transition text-left">
                   <X size={18} /> <span className="text-sm font-bold">Sair</span>
                 </button>
+                <div className="px-2 py-1"><span className="text-[10px] font-bold text-[#afafaf]">Versão {typeof window !== 'undefined' && window.APP_VERSION ? window.APP_VERSION : '1.0.0'}</span></div>
               </>
             ) : (
               <>
@@ -4034,11 +4036,9 @@ Exemplo de formato válido:
                   <>
                     <div className="px-2 py-1"><div className="text-[10px] font-bold text-[#afafaf] truncate" title={jsonbinBinId}>ID: {jsonbinBinId.length > 18 ? jsonbinBinId.substring(0, 18) + '...' : jsonbinBinId}</div></div>
                     <button onClick={() => openBinIdModal('edit')} className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-[#f1f1f1] dark:hover:bg-[#37464f] transition text-left"><Edit size={18} /> <span className="text-sm font-bold">Editar ID</span></button>
-                    <button onClick={() => syncData()} disabled={isSyncing} className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-[#f1f1f1] dark:hover:bg-[#37464f] transition text-left disabled:opacity-50">
-                      <RefreshCw size={18} className={isSyncing ? 'animate-spin' : ''} /> <span className="text-sm font-bold">{isSyncing ? 'Sincronizando...' : 'Sincronizar'}</span>
-                    </button>
                   </>
                 )}
+                <div className="px-2 py-1"><span className="text-[10px] font-bold text-[#afafaf]">Versão {typeof window !== 'undefined' && window.APP_VERSION ? window.APP_VERSION : '1.0.0'}</span></div>
               </>
             )}
             {isDevMode() && (
@@ -4110,12 +4110,6 @@ Exemplo de formato válido:
 
       {/* UX Mobile Components */}
       <OfflineIndicator isOnline={isOnline} pendingCount={pendingSyncCount} />
-      {showUpdateNotification && (
-        <UpdateNotification
-          onUpdate={handleUpdateApp}
-          onDismiss={() => setShowUpdateNotification(false)}
-        />
-      )}
       </div>
     </div>
   );

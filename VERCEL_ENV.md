@@ -43,6 +43,14 @@ As chaves são geradas **no seu computador**, uma vez. Depois você cola os valo
 
 **Importante:** Use o mesmo par de chaves em todos os ambientes (desenvolvimento e produção). Se você já gerou chaves antes no `.env` local, pode reutilizar essas mesmas no Vercel.
 
+## Ícones e logo (evitar 404 no deploy)
+
+Os ícones do app (`icon-*.png`, `favicon.png`, `apple-touch-icon.png`) são gerados a partir de `nihongodeckc.png`.
+
+- **No Vercel:** em **Project → Settings → Build & Development Settings**, defina **Build Command** como `npm run build`. Assim, a cada deploy os ícones são gerados e o logo aparece corretamente.
+- **Garanta** que o arquivo `nihongodeckc.png` está commitado na raiz do projeto.
+- Se não usar Build Command no Vercel, rode `npm run icons` localmente e faça commit dos arquivos gerados (`icon-*.png`, `apple-touch-icon.png`, `favicon.png`).
+
 ## Quando atualizar o deploy
 
 - **Não** é preciso configurar de novo a cada deploy. As variáveis que já estão no dashboard do Vercel continuam valendo.

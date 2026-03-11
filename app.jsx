@@ -301,11 +301,9 @@ const LoginView = ({ onBack, onLoginSuccess, showAlert }) => {
       </button>
 
       <div className="w-full max-w-sm flex flex-col items-center">
-        {/* Logo e balão ようこそ */}
+        {/* Logo NihonGo! deck e balão ようこそ */}
         <div className="relative mb-6 flex justify-center">
-          <div className="w-20 h-20 flex items-center justify-center rounded-[28px] shadow-lg shadow-green-200 dark:shadow-none bg-[#5ACD00]" style={{ backgroundColor: green }}>
-            <Brain size={48} className="text-white shrink-0" style={{ color: 'white' }} />
-          </div>
+          <img src="/icon-192.png" alt="NihonGo Deck" className="w-20 h-20 rounded-[28px] shadow-lg shadow-green-200 dark:shadow-none object-cover" />
           <div className="absolute left-1/2 top-0 ml-10 sm:ml-12 bg-white dark:bg-[#1b2c35] px-3 py-1.5 rounded-2xl shadow-md border border-gray-100 dark:border-[#37464f] flex items-center gap-1 whitespace-nowrap">
             <span className="text-xs font-bold text-gray-700 dark:text-gray-200">ようこそ!</span>
             <span className="text-xs">✍️</span>

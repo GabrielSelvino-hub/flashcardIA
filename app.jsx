@@ -307,9 +307,9 @@ const LoginView = ({ onBack, onLoginSuccess, showAlert }) => {
             src="./icon-384.png"
             srcSet="./icon-192.png 1x, ./icon-384.png 2x, ./icon-512.png 3x"
             alt="NihonGo Deck"
-            className="w-24 h-24 rounded-[28px] shadow-lg shadow-green-200 dark:shadow-none object-contain bg-[#58cc02]/10"
+            className="w-32 h-32 sm:w-36 sm:h-36 rounded-[32px] shadow-lg shadow-green-200 dark:shadow-none object-contain bg-[#58cc02]/10"
           />
-          <div className="absolute left-1/2 top-0 ml-12 sm:ml-14 bg-white dark:bg-[#1b2c35] px-3 py-1.5 rounded-2xl shadow-md border border-gray-100 dark:border-[#37464f] flex items-center gap-1 whitespace-nowrap">
+          <div className="absolute left-1/2 top-0 ml-14 sm:ml-20 bg-white dark:bg-[#1b2c35] px-3 py-1.5 rounded-2xl shadow-md border border-gray-100 dark:border-[#37464f] flex items-center gap-1 whitespace-nowrap">
             <span className="text-xs font-bold text-gray-700 dark:text-gray-200">ようこそ!</span>
             <span className="text-xs">✍️</span>
           </div>

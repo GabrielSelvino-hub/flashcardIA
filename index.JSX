@@ -116,6 +116,7 @@ export default function App() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [furiganaMode, setFuriganaMode] = useState('always');
   const [showApiKeyModal, setShowApiKeyModal] = useState(false);
+  const [apiKeyModalDueToError, setApiKeyModalDueToError] = useState(false);
   const [apiKeyInput, setApiKeyInput] = useState('');
 
   // Modal States
@@ -166,9 +167,17 @@ export default function App() {
     if (apiKeyInput.trim()) {
       localStorage.setItem('gemini_api_key', apiKeyInput.trim());
       setShowApiKeyModal(false);
+      setApiKeyModalDueToError(false);
       setApiKeyInput('');
       showAlert('Chave API salva com sucesso!');
     }
+  };
+
+  const openApiKeyModalDueToError = () => {
+    localStorage.removeItem('gemini_api_key');
+    setApiKeyModalDueToError(true);
+    setApiKeyInput('');
+    setShowApiKeyModal(true);
   };
 
   // Actions
@@ -358,7 +367,11 @@ export default function App() {
         }
       );
 
-      if (!response.ok) throw new Error('Falha na conexão com a IA');
+      if (!response.ok) {
+        showAlert('Ocorreu um problema na API do Gemini. Insira uma nova chave abaixo.');
+        openApiKeyModalDueToError();
+        return;
+      }
 
       const data = await response.json();
       const textResponse = data.candidates?.[0]?.content?.parts?.[0]?.text;
@@ -676,37 +689,76 @@ export default function App() {
     <div className="min-h-screen bg-gray-100 dark:bg-gray-950 transition-colors duration-300 font-sans">
       {/* Modals Layer */}
       {showApiKeyModal && (
-        <Modal isOpen={true} onClose={() => {}} title="Configuração Inicial">
+        <Modal isOpen={true} onClose={() => { if (apiKeyModalDueToError) { setShowApiKeyModal(false); setApiKeyModalDueToError(false); } }} title={apiKeyModalDueToError ? 'Problema na API do Gemini' : 'Configuração Inicial'}>
           <div className="space-y-4">
-            <p className="text-sm text-gray-600 dark:text-gray-300">
-              Para usar o gerador de cards com IA, você precisa da sua chave API do Google Gemini.
-            </p>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Chave API do Gemini
-              </label>
-              <input 
-                type="password"
-                autoFocus
-                value={apiKeyInput}
-                onChange={(e) => setApiKeyInput(e.target.value)}
-                placeholder="Cole sua chave API aqui"
-                className="w-full p-3 bg-gray-100 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-800 dark:text-white outline-none focus:ring-2 focus:ring-indigo-500"
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && apiKeyInput.trim()) saveApiKey();
-                }}
-              />
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                Você pode obter sua chave em: <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" className="text-indigo-600 dark:text-indigo-400 hover:underline">Google AI Studio</a>
-              </p>
-            </div>
-            <button 
-              onClick={saveApiKey}
-              disabled={!apiKeyInput.trim()}
-              className="w-full bg-indigo-600 text-white py-3 rounded-lg font-bold hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
-            >
-              Salvar Chave
-            </button>
+            {apiKeyModalDueToError ? (
+              <>
+                <p className="text-sm text-gray-600 dark:text-gray-300">
+                  Ocorreu um problema na API do Gemini. Insira uma nova chave abaixo.
+                </p>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Nova Chave API do Gemini
+                  </label>
+                  <input 
+                    type="password"
+                    autoFocus
+                    value={apiKeyInput}
+                    onChange={(e) => setApiKeyInput(e.target.value)}
+                    placeholder="Cole sua nova chave aqui"
+                    className="w-full p-3 bg-gray-100 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-800 dark:text-white outline-none focus:ring-2 focus:ring-indigo-500"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && apiKeyInput.trim()) saveApiKey();
+                    }}
+                  />
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                    Obter nova chave: <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" className="text-indigo-600 dark:text-indigo-400 hover:underline">Google AI Studio</a>
+                  </p>
+                </div>
+                <p className="text-xs font-bold text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-700 rounded-lg p-3">
+                  Delete a API Key antiga e crie uma nova para resolver o erro.
+                </p>
+                <button 
+                  onClick={saveApiKey}
+                  disabled={!apiKeyInput.trim()}
+                  className="w-full bg-indigo-600 text-white py-3 rounded-lg font-bold hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                >
+                  Salvar nova chave
+                </button>
+              </>
+            ) : (
+              <>
+                <p className="text-sm text-gray-600 dark:text-gray-300">
+                  Para usar o gerador de cards com IA, você precisa da sua chave API do Google Gemini.
+                </p>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Chave API do Gemini
+                  </label>
+                  <input 
+                    type="password"
+                    autoFocus
+                    value={apiKeyInput}
+                    onChange={(e) => setApiKeyInput(e.target.value)}
+                    placeholder="Cole sua chave API aqui"
+                    className="w-full p-3 bg-gray-100 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-800 dark:text-white outline-none focus:ring-2 focus:ring-indigo-500"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && apiKeyInput.trim()) saveApiKey();
+                    }}
+                  />
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                    Você pode obter sua chave em: <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" className="text-indigo-600 dark:text-indigo-400 hover:underline">Google AI Studio</a>
+                  </p>
+                </div>
+                <button 
+                  onClick={saveApiKey}
+                  disabled={!apiKeyInput.trim()}
+                  className="w-full bg-indigo-600 text-white py-3 rounded-lg font-bold hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                >
+                  Salvar Chave
+                </button>
+              </>
+            )}
           </div>
         </Modal>
       )}

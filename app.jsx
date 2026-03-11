@@ -397,6 +397,7 @@ function App() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [furiganaMode, setFuriganaMode] = useState('always');
   const [showApiKeyModal, setShowApiKeyModal] = useState(false);
+  const [apiKeyModalDueToError, setApiKeyModalDueToError] = useState(false);
   const [apiKeyInput, setApiKeyInput] = useState('');
   const [cardsCount, setCardsCount] = useState(5);
   const [showSettingsMenu, setShowSettingsMenu] = useState(false);
@@ -1020,9 +1021,17 @@ function App() {
     if (apiKeyInput.trim()) {
       localStorage.setItem('gemini_api_key', apiKeyInput.trim());
       setShowApiKeyModal(false);
+      setApiKeyModalDueToError(false);
       setApiKeyInput('');
       showAlert('Chave API salva com sucesso!');
     }
+  };
+
+  const openApiKeyModalDueToError = () => {
+    localStorage.removeItem('gemini_api_key');
+    setApiKeyModalDueToError(true);
+    setApiKeyInput('');
+    setShowApiKeyModal(true);
   };
 
   // Actions
@@ -2146,7 +2155,11 @@ function App() {
         }
       );
 
-      if (!response.ok) throw new Error('Falha na conexão com a IA');
+      if (!response.ok) {
+        showAlert('Ocorreu um problema na API do Gemini. Insira uma nova chave abaixo.');
+        openApiKeyModalDueToError();
+        return;
+      }
 
       const data = await response.json();
       const textResponse = data.candidates?.[0]?.content?.parts?.[0]?.text;
@@ -2220,7 +2233,11 @@ Exemplo de formato válido:
         }
       );
 
-      if (!response.ok) throw new Error('Falha na conexão com a IA');
+      if (!response.ok) {
+        showAlert('Ocorreu um problema na API do Gemini. Insira uma nova chave abaixo.');
+        openApiKeyModalDueToError();
+        return;
+      }
 
       const data = await response.json();
       const textResponse = data.candidates?.[0]?.content?.parts?.[0]?.text;
@@ -3307,8 +3324,8 @@ Exemplo de formato válido:
           const data = await response.json();
           showAlert('✅ Conexão com API bem-sucedida!');
         } else {
-          const error = await response.json();
-          showAlert('❌ Erro na conexão: ' + (error.error?.message || 'Erro desconhecido'));
+          showAlert('❌ Ocorreu um problema na API do Gemini. Insira uma nova chave.');
+          openApiKeyModalDueToError();
         }
       } catch (error) {
         showAlert('❌ Erro ao testar conexão: ' + error.message);
@@ -3610,12 +3627,25 @@ Exemplo de formato válido:
       <div className="max-w-md mx-auto min-h-screen flex flex-col shadow-2xl bg-white dark:bg-[#131f24] relative overflow-hidden">
       {/* Modals Layer */}
       {showApiKeyModal && (
-        <Modal isOpen={true} onClose={() => {}} title="Configuração Inicial">
-          <p className="text-sm font-bold text-[#afafaf] dark:text-zinc-400 mb-4">Para usar o gerador com IA, use sua chave API do Google Gemini.</p>
-          <label className="block font-black text-[10px] text-[#afafaf] dark:text-zinc-400 uppercase tracking-widest mb-2">Chave API do Gemini</label>
-          <input type="password" autoFocus value={apiKeyInput} onChange={(e) => setApiKeyInput(e.target.value)} placeholder="Cole sua chave aqui" onKeyDown={(e) => { if (e.key === 'Enter' && apiKeyInput.trim()) saveApiKey(); }} className="w-full p-4 bg-[#f1f1f1] dark:bg-[#1b2c35] border-2 border-[#e5e5e5] dark:border-[#37464f] rounded-2xl font-bold outline-none focus:border-[#1cb0f6] dark:text-white mb-4" />
-          <p className="text-[10px] font-bold text-[#afafaf] mb-6"><a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" className="text-[#1cb0f6] hover:underline">Google AI Studio</a></p>
-          <DuoButton onClick={saveApiKey} disabled={!apiKeyInput.trim()} variant="primary" fullWidth className="h-14">Salvar Chave</DuoButton>
+        <Modal isOpen={true} onClose={() => { if (apiKeyModalDueToError) { setShowApiKeyModal(false); setApiKeyModalDueToError(false); } }} title={apiKeyModalDueToError ? 'Problema na API do Gemini' : 'Configuração Inicial'}>
+          {apiKeyModalDueToError ? (
+            <>
+              <p className="text-sm font-bold text-[#afafaf] dark:text-zinc-400 mb-4">Ocorreu um problema na API do Gemini. Insira uma nova chave abaixo.</p>
+              <label className="block font-black text-[10px] text-[#afafaf] dark:text-zinc-400 uppercase tracking-widest mb-2">Nova Chave API do Gemini</label>
+              <input type="password" autoFocus value={apiKeyInput} onChange={(e) => setApiKeyInput(e.target.value)} placeholder="Cole sua nova chave aqui" onKeyDown={(e) => { if (e.key === 'Enter' && apiKeyInput.trim()) saveApiKey(); }} className="w-full p-4 bg-[#f1f1f1] dark:bg-[#1b2c35] border-2 border-[#e5e5e5] dark:border-[#37464f] rounded-2xl font-bold outline-none focus:border-[#1cb0f6] dark:text-white mb-3" />
+              <p className="text-[10px] font-bold text-[#afafaf] mb-2"><a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" className="text-[#1cb0f6] hover:underline">Obter nova chave no Google AI Studio</a></p>
+              <p className="text-xs font-bold text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-700 rounded-xl p-3 mb-4">Delete a API Key antiga e crie uma nova para resolver o erro.</p>
+              <DuoButton onClick={saveApiKey} disabled={!apiKeyInput.trim()} variant="primary" fullWidth className="h-14">Salvar nova chave</DuoButton>
+            </>
+          ) : (
+            <>
+              <p className="text-sm font-bold text-[#afafaf] dark:text-zinc-400 mb-4">Para usar o gerador com IA, use sua chave API do Google Gemini.</p>
+              <label className="block font-black text-[10px] text-[#afafaf] dark:text-zinc-400 uppercase tracking-widest mb-2">Chave API do Gemini</label>
+              <input type="password" autoFocus value={apiKeyInput} onChange={(e) => setApiKeyInput(e.target.value)} placeholder="Cole sua chave aqui" onKeyDown={(e) => { if (e.key === 'Enter' && apiKeyInput.trim()) saveApiKey(); }} className="w-full p-4 bg-[#f1f1f1] dark:bg-[#1b2c35] border-2 border-[#e5e5e5] dark:border-[#37464f] rounded-2xl font-bold outline-none focus:border-[#1cb0f6] dark:text-white mb-4" />
+              <p className="text-[10px] font-bold text-[#afafaf] mb-6"><a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" className="text-[#1cb0f6] hover:underline">Google AI Studio</a></p>
+              <DuoButton onClick={saveApiKey} disabled={!apiKeyInput.trim()} variant="primary" fullWidth className="h-14">Salvar Chave</DuoButton>
+            </>
+          )}
         </Modal>
       )}
 

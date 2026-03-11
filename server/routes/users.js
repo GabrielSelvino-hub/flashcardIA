@@ -31,7 +31,8 @@ router.get('/me', async (req, res) => {
     return res.json({ user: toUser(r.rows[0]) });
   } catch (e) {
     console.error('Users me error:', e);
-    return res.status(500).json({ error: 'Erro ao obter perfil.' });
+    const msg = process.env.NODE_ENV === 'production' ? 'Erro ao obter perfil.' : (e.message || 'Erro ao obter perfil.');
+    return res.status(500).json({ error: msg });
   }
 });
 
@@ -73,7 +74,8 @@ router.patch('/me', async (req, res) => {
     return res.json({ user: toUser(r.rows[0]) });
   } catch (e) {
     console.error('Users patch me error:', e);
-    return res.status(500).json({ error: 'Erro ao atualizar perfil.' });
+    const msg = process.env.NODE_ENV === 'production' ? 'Erro ao atualizar perfil.' : (e.message || 'Erro ao atualizar perfil.');
+    return res.status(500).json({ error: msg });
   }
 });
 
@@ -97,10 +99,12 @@ router.patch('/me/password', async (req, res) => {
     }
     const password_hash = await bcrypt.hash(String(newPassword), SALT_ROUNDS);
     await db.query('UPDATE users SET password_hash = $1, updated_at = NOW() WHERE id = $2', [password_hash, req.user.id]);
+    await db.query('DELETE FROM refresh_tokens WHERE user_id = $1', [req.user.id]);
     return res.json({ success: true });
   } catch (e) {
     console.error('Users password error:', e);
-    return res.status(500).json({ error: 'Erro ao alterar senha.' });
+    const msg = process.env.NODE_ENV === 'production' ? 'Erro ao alterar senha.' : (e.message || 'Erro ao alterar senha.');
+    return res.status(500).json({ error: msg });
   }
 });
 
@@ -115,7 +119,8 @@ router.get('/me/sync-metadata', async (req, res) => {
     return res.json({ lastSync });
   } catch (e) {
     console.error('Users sync-metadata error:', e);
-    return res.status(500).json({ error: 'Erro ao obter metadados de sync.' });
+    const msg = process.env.NODE_ENV === 'production' ? 'Erro ao obter metadados de sync.' : (e.message || 'Erro ao obter metadados de sync.');
+    return res.status(500).json({ error: msg });
   }
 });
 

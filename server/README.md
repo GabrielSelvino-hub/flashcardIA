@@ -26,27 +26,27 @@ npm run dev
 ## Endpoints
 
 - `GET /api/push/vapid-public-key` - Obter chave pública VAPID
-- `POST /api/push/subscribe` - Registrar subscription
-- `POST /api/push/unsubscribe` - Remover subscription
-- `POST /api/push/send` - Enviar notificação push
-- `GET /api/push/subscriptions` - Listar subscriptions (debug)
+- `POST /api/push/subscribe` - Registrar subscription (**requer autenticação**)
+- `POST /api/push/unsubscribe` - Remover subscription (**requer autenticação**)
+- `POST /api/push/send` - Enviar notificação push (**requer autenticação**; envia apenas para o próprio usuário)
+- `GET /api/push/subscriptions` - Listar subscriptions (autenticado)
 - `GET /health` - Health check
 
 ## Uso
 
 O frontend deve:
-1. Obter a chave pública VAPID
-2. Solicitar permissão de notificação
-3. Criar subscription usando a API do navegador
-4. Enviar subscription para `/api/push/subscribe`
+1. Estar autenticado (Bearer token).
+2. Obter a chave pública VAPID.
+3. Solicitar permissão de notificação.
+4. Enviar subscription para `/api/push/subscribe` (o usuário é identificado pelo token).
 
-Para enviar notificações, fazer POST para `/api/push/send` com:
+Para enviar notificações, fazer POST para `/api/push/send` com **Authorization: Bearer &lt;accessToken&gt;** e body:
 ```json
 {
-  "userId": "user123",
   "title": "Título",
   "body": "Corpo da notificação",
   "icon": "/icon-192.png",
   "url": "/"
 }
 ```
+(As notificações são enviadas apenas para o usuário autenticado.)

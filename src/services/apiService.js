@@ -7,16 +7,16 @@ const API_BASE = typeof window !== 'undefined' && window.API_BASE_URL
 
 const STORAGE_KEYS = {
   ACCESS_TOKEN: 'api_access_token',
-  REFRESH_TOKEN: 'api_refresh_token',
   USER: 'api_user'
 };
 
+// Refresh token fica apenas em cookie HttpOnly (não em localStorage)
 function getAccessToken() {
   return localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN);
 }
 
 function getRefreshToken() {
-  return localStorage.getItem(STORAGE_KEYS.REFRESH_TOKEN);
+  return null;
 }
 
 function getStoredUser() {
@@ -28,15 +28,13 @@ function getStoredUser() {
   }
 }
 
-function setTokens(accessToken, refreshToken, user) {
+function setTokens(accessToken, _refreshToken, user) {
   if (accessToken) localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, accessToken);
-  if (refreshToken) localStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, refreshToken);
   if (user) localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(user));
 }
 
 function clearTokens() {
   localStorage.removeItem(STORAGE_KEYS.ACCESS_TOKEN);
-  localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN);
   localStorage.removeItem(STORAGE_KEYS.USER);
 }
 
@@ -50,16 +48,12 @@ function authHeaders() {
 }
 
 async function refreshAccessToken() {
-  const refreshToken = getRefreshToken();
-  if (!refreshToken) {
-    clearTokens();
-    return false;
-  }
   try {
     const res = await fetch(API_BASE + '/api/auth/refresh', {
       method: 'POST',
+      credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ refreshToken })
+      body: JSON.stringify({})
     });
     if (!res.ok) {
       clearTokens();
@@ -84,12 +78,12 @@ async function request(method, path, body, options = {}) {
     'Content-Type': 'application/json',
     ...authHeaders()
   };
-  const config = { method, headers };
+  const config = { method, headers, credentials: 'include' };
   if (body != null && method !== 'GET') config.body = JSON.stringify(body);
 
   let res = await fetch(url, config);
 
-  if (res.status === 401 && getRefreshToken() && !options._retry) {
+  if (res.status === 401 && !options._retry) {
     const refreshed = await refreshAccessToken();
     if (refreshed) {
       headers.Authorization = 'Bearer ' + getAccessToken();
@@ -107,9 +101,9 @@ async function register(email, password, name) {
     if (!res.ok) {
       return { success: false, error: data.message || data.error || 'Erro ao registrar.' };
     }
-    if (data.user && data.accessToken && data.refreshToken) {
-      setTokens(data.accessToken, data.refreshToken, data.user);
-      return { success: true, user: data.user, accessToken: data.accessToken, refreshToken: data.refreshToken };
+    if (data.user && data.accessToken) {
+      setTokens(data.accessToken, null, data.user);
+      return { success: true, user: data.user, accessToken: data.accessToken };
     }
     return { success: false, error: 'Resposta inválida do servidor.' };
   } catch (e) {
@@ -124,9 +118,9 @@ async function login(email, password) {
     if (!res.ok) {
       return { success: false, error: data.message || data.error || 'Email ou senha incorretos.' };
     }
-    if (data.user && data.accessToken && data.refreshToken) {
-      setTokens(data.accessToken, data.refreshToken, data.user);
-      return { success: true, user: data.user, accessToken: data.accessToken, refreshToken: data.refreshToken };
+    if (data.user && data.accessToken) {
+      setTokens(data.accessToken, null, data.user);
+      return { success: true, user: data.user, accessToken: data.accessToken };
     }
     return { success: false, error: 'Resposta inválida do servidor.' };
   } catch (e) {
@@ -136,10 +130,7 @@ async function login(email, password) {
 
 async function logout() {
   try {
-    const refreshToken = getRefreshToken();
-    if (refreshToken) {
-      await request('POST', '/api/auth/logout', { refreshToken });
-    }
+    await request('POST', '/api/auth/logout', {});
   } catch (_) {}
   clearTokens();
   return { success: true };

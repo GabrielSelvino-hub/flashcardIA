@@ -1,37 +1,32 @@
 // JSONBin.io Service Module
 // Serviço para comunicação com a API do JSONBin.io
+// Credenciais NÃO ficam no código. Configure via window.__JSONBIN_CONFIG__ = { masterKey, binId }
+// (ex.: em config.js não versionado ou injetado pelo backend para usuários autenticados).
 
 const JSONBIN_API_BASE = 'https://api.jsonbin.io/v3/b';
 
-// Master Key padrão para todos os usuários
-// ATENÇÃO: Esta chave será visível no código-fonte. Use uma chave dedicada apenas para esta aplicação.
-const DEFAULT_MASTER_KEY = '$2a$10$7X2XacpWyeo/Ui/pjevyOuEF9q07kF386hQPD9ImDbhAJvkrjQbwe'; // Master Key do JSONBin.io - Flashcard
+function getConfig() {
+  if (typeof window === 'undefined') return { masterKey: null, binId: null };
+  const c = window.__JSONBIN_CONFIG__;
+  if (!c || typeof c !== 'object') return { masterKey: null, binId: null };
+  return {
+    masterKey: (c.masterKey && String(c.masterKey).trim()) || null,
+    binId: (c.binId && String(c.binId).trim()) || null,
+  };
+}
 
-// Access Key ID (opcional, pode ser usado para leitura)
-const ACCESS_KEY_ID = '69482d3dae596e708fa8d8e8';
-
-// Bin ID fixo compartilhado - Use um dos bins que você já criou
-// IMPORTANTE: Use o mesmo Bin ID em todos os dispositivos (PC e celular) para sincronização funcionar
-// Use um dos seus bins existentes. Exemplos dos que você criou:
-// - '6948372ed0ea881f40384180' (criado às 18:06)
-// - '694836ee43b1c97be9fd27f1' (criado às 18:05)
-// - '694836c543b1c97be9fd27b3' (criado às 18:04)
-// Escolha um e cole aqui. Se deixar null, criará um novo (não recomendado para sincronização)
-const FIXED_SHARED_BIN_ID = '69483c8dd0ea881f403849c0'; // Bin ID fixo - sempre usa este bin
-
-// Função para obter o Bin ID compartilhado (usa fixo ou cria se não existir)
+// Função para obter o Bin ID compartilhado (usa config injetada)
 async function getSharedBinId(masterKey) {
-  const keyToUse = (masterKey && masterKey.trim()) || DEFAULT_MASTER_KEY;
-  
-  if (!keyToUse || keyToUse === 'SUA_MASTER_KEY_AQUI') {
-    console.error('Master Key não configurada');
+  const config = getConfig();
+  const keyToUse = (masterKey && masterKey.trim()) || config.masterKey;
+  const fixedBinId = config.binId;
+
+  if (!keyToUse) {
+    console.error('JSONBin: Master Key não configurada. Defina window.__JSONBIN_CONFIG__ = { masterKey, binId }');
     return null;
   }
 
-  // SEMPRE usa o Bin ID fixo se estiver configurado (não cria novos bins)
-  if (FIXED_SHARED_BIN_ID && FIXED_SHARED_BIN_ID.trim()) {
-    const fixedBinId = FIXED_SHARED_BIN_ID.trim();
-    
+  if (fixedBinId) {
     // Verifica se o bin existe e é acessível
     try {
       const response = await fetch(`${JSONBIN_API_BASE}/${fixedBinId}/latest`, {
@@ -54,9 +49,8 @@ async function getSharedBinId(masterKey) {
       return null;
     }
   }
-  
-  // Se não há Bin ID fixo configurado, retorna null (não cria novos bins automaticamente)
-  console.error('⚠️ FIXED_SHARED_BIN_ID não está configurado! Configure um Bin ID fixo no código.');
+
+  console.error('JSONBin: binId não configurado. Defina window.__JSONBIN_CONFIG__ = { masterKey, binId }');
   return null;
 }
 
@@ -97,10 +91,11 @@ async function verifyBinId(binId, masterKey) {
       return { success: false, exists: false, error: 'Formato de Bin ID inválido. O Bin ID deve ter pelo menos 10 caracteres alfanuméricos.' };
     }
 
-    const keyToUse = (masterKey && masterKey.trim()) || DEFAULT_MASTER_KEY;
-    
-    if (!keyToUse || keyToUse === 'SUA_MASTER_KEY_AQUI') {
-      return { success: false, exists: false, error: 'Master Key não configurada.' };
+    const config = getConfig();
+    const keyToUse = (masterKey && masterKey.trim()) || config.masterKey;
+
+    if (!keyToUse) {
+      return { success: false, exists: false, error: 'Master Key não configurada. Defina window.__JSONBIN_CONFIG__.' };
     }
 
     // Tenta buscar o bin para verificar se existe
@@ -145,10 +140,11 @@ async function verifyBinId(binId, masterKey) {
  */
 async function createBin(masterKey, data) {
   try {
-    const keyToUse = (masterKey && masterKey.trim()) || DEFAULT_MASTER_KEY;
-    
-    if (!keyToUse || keyToUse === 'SUA_MASTER_KEY_AQUI') {
-      return { success: false, error: 'Master Key não configurada. Configure DEFAULT_MASTER_KEY no código.' };
+    const config = getConfig();
+    const keyToUse = (masterKey && masterKey.trim()) || config.masterKey;
+
+    if (!keyToUse) {
+      return { success: false, error: 'Master Key não configurada. Defina window.__JSONBIN_CONFIG__.' };
     }
 
     // Valida se os dados são válidos
@@ -242,10 +238,11 @@ async function updateUserData(userBinId, masterKey, userData) {
       return { success: true, offline: true, message: 'Dados salvos localmente. Serão sincronizados quando a conexão for restaurada.' };
     }
 
-    const keyToUse = (masterKey && masterKey.trim()) || DEFAULT_MASTER_KEY;
-    
-    if (!keyToUse || keyToUse === 'SUA_MASTER_KEY_AQUI') {
-      return { success: false, error: 'Master Key não configurada. Configure DEFAULT_MASTER_KEY no código.' };
+    const config = getConfig();
+    const keyToUse = (masterKey && masterKey.trim()) || config.masterKey;
+
+    if (!keyToUse) {
+      return { success: false, error: 'Master Key não configurada. Defina window.__JSONBIN_CONFIG__.' };
     }
 
     // Primeiro, busca o bin compartilhado completo
@@ -388,10 +385,11 @@ async function updateUserData(userBinId, masterKey, userData) {
  */
 async function getSharedBin(masterKey) {
   try {
-    const keyToUse = (masterKey && masterKey.trim()) || DEFAULT_MASTER_KEY;
-    
-    if (!keyToUse || keyToUse === 'SUA_MASTER_KEY_AQUI') {
-      return { success: false, error: 'Master Key não configurada.' };
+    const config = getConfig();
+    const keyToUse = (masterKey && masterKey.trim()) || config.masterKey;
+
+    if (!keyToUse) {
+      return { success: false, error: 'Master Key não configurada. Defina window.__JSONBIN_CONFIG__.' };
     }
 
     // Obtém o ID do bin compartilhado (cria se não existir)
@@ -442,17 +440,16 @@ async function getSharedBin(masterKey) {
  */
 async function createSharedBin(masterKey, initialData) {
   try {
-    const keyToUse = (masterKey && masterKey.trim()) || DEFAULT_MASTER_KEY;
-    
-    if (!keyToUse || keyToUse === 'SUA_MASTER_KEY_AQUI') {
-      return { success: false, error: 'Master Key não configurada.' };
+    const config = getConfig();
+    const keyToUse = (masterKey && masterKey.trim()) || config.masterKey;
+
+    if (!keyToUse) {
+      return { success: false, error: 'Master Key não configurada. Defina window.__JSONBIN_CONFIG__.' };
     }
 
-    // Obtém ou cria o bin compartilhado
     const sharedBinId = await getSharedBinId(masterKey);
     if (!sharedBinId) {
       // Tenta criar novamente para obter detalhes do erro
-      const keyToUse = (masterKey && masterKey.trim()) || DEFAULT_MASTER_KEY;
       try {
         const testData = { _initialized: true, _created: new Date().toISOString() };
         const testResponse = await fetch(JSONBIN_API_BASE, {
@@ -576,10 +573,11 @@ async function updateBin(binId, masterKey, data) {
       return { success: false, error: 'Bin ID inválido' };
     }
 
-    const keyToUse = (masterKey && masterKey.trim()) || DEFAULT_MASTER_KEY;
-    
-    if (!keyToUse || keyToUse === 'SUA_MASTER_KEY_AQUI') {
-      return { success: false, error: 'Master Key não configurada. Configure DEFAULT_MASTER_KEY no código.' };
+    const config = getConfig();
+    const keyToUse = (masterKey && masterKey.trim()) || config.masterKey;
+
+    if (!keyToUse) {
+      return { success: false, error: 'Master Key não configurada. Defina window.__JSONBIN_CONFIG__.' };
     }
 
     const response = await fetch(`${JSONBIN_API_BASE}/${binId}`, {
@@ -633,10 +631,11 @@ async function getBin(binId, masterKey) {
       return { success: false, error: 'Bin ID inválido' };
     }
 
-    const keyToUse = (masterKey && masterKey.trim()) || DEFAULT_MASTER_KEY;
-    
-    if (!keyToUse || keyToUse === 'SUA_MASTER_KEY_AQUI') {
-      return { success: false, error: 'Master Key não configurada. Configure DEFAULT_MASTER_KEY no código.' };
+    const config = getConfig();
+    const keyToUse = (masterKey && masterKey.trim()) || config.masterKey;
+
+    if (!keyToUse) {
+      return { success: false, error: 'Master Key não configurada. Defina window.__JSONBIN_CONFIG__.' };
     }
 
     const response = await fetch(`${JSONBIN_API_BASE}/${binId}/latest`, {
@@ -676,12 +675,12 @@ async function getBin(binId, masterKey) {
 // Exportar funções para uso global (já que não há módulos ES6)
 if (typeof window !== 'undefined') {
   window.jsonbinService = {
+    getConfig,
     createBin,
     updateBin,
     getBin,
     validateBinId,
     verifyBinId,
-    // Novas funções para banco de dados compartilhado
     updateUserData,
     getUserData,
     getSharedBin,

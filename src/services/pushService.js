@@ -141,16 +141,15 @@ async function subscribe(userId = null) {
       applicationServerKey: applicationServerKey
     });
 
-    // Enviar subscription para o servidor
+    // Enviar subscription para o servidor (requer autenticação)
+    const token = typeof window !== 'undefined' && window.apiService && window.apiService.getAccessToken && window.apiService.getAccessToken();
+    const headers = { 'Content-Type': 'application/json' };
+    if (token) headers['Authorization'] = 'Bearer ' + token;
     const response = await fetch(`${pushServerUrl}/api/push/subscribe`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        subscription: subscription.toJSON(),
-        userId: userId
-      })
+      credentials: 'include',
+      headers,
+      body: JSON.stringify({ subscription: subscription.toJSON() })
     });
 
     const responseData = await response.json().catch(() => ({}));
@@ -213,11 +212,13 @@ async function unsubscribe() {
       ? subscription.endpoint 
       : subscription;
 
+    const token = typeof window !== 'undefined' && window.apiService && window.apiService.getAccessToken && window.apiService.getAccessToken();
+    const headers = { 'Content-Type': 'application/json' };
+    if (token) headers['Authorization'] = 'Bearer ' + token;
     await fetch(`${pushServerUrl}/api/push/unsubscribe`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      credentials: 'include',
+      headers,
       body: JSON.stringify({ endpoint })
     });
 

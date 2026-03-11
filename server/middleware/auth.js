@@ -1,7 +1,12 @@
 const jwt = require('jsonwebtoken');
 
-const JWT_SECRET = process.env.JWT_SECRET || 'dev_jwt_secret_change_in_production';
-const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'dev_refresh_secret_change_in_production';
+const isProduction = process.env.NODE_ENV === 'production';
+const JWT_SECRET = process.env.JWT_SECRET || (isProduction ? null : 'dev_jwt_secret_change_in_production');
+const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || (isProduction ? null : 'dev_refresh_secret_change_in_production');
+
+if (isProduction && (!JWT_SECRET || !JWT_REFRESH_SECRET)) {
+  throw new Error('Em produção JWT_SECRET e JWT_REFRESH_SECRET devem estar definidos no .env');
+}
 
 function signAccessToken(payload, expiresIn = '15m') {
   return jwt.sign(payload, JWT_SECRET, { expiresIn });

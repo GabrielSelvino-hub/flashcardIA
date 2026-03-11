@@ -1,12 +1,13 @@
 // Backend NihonGo Deck - Auth, Decks, Cards, Sync, Push (PostgreSQL)
 const path = require('path');
 const express = require('express');
+const cookieParser = require('cookie-parser');
 const webpush = require('web-push');
 const cors = require('cors');
 require('dotenv').config();
 
 const db = require('./db');
-const { optionalAuth, authMiddleware } = require('./middleware/auth');
+const { authMiddleware } = require('./middleware/auth');
 const authRoutes = require('./routes/auth');
 const usersRoutes = require('./routes/users');
 const decksRoutes = require('./routes/decks');
@@ -17,8 +18,9 @@ const syncRoutes = require('./routes/sync');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(cors());
+app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
+app.use(cookieParser());
 
 const VAPID_PUBLIC_KEY = process.env.VAPID_PUBLIC_KEY;
 const VAPID_PRIVATE_KEY = process.env.VAPID_PRIVATE_KEY;
@@ -53,13 +55,13 @@ app.get('/api/push/vapid-public-key', (req, res) => {
   res.json({ publicKey: VAPID_PUBLIC_KEY });
 });
 
-app.post('/api/push/subscribe', optionalAuth, async (req, res) => {
+app.post('/api/push/subscribe', authMiddleware, async (req, res) => {
   try {
-    const { subscription, userId: bodyUserId } = req.body || {};
+    const { subscription } = req.body || {};
     if (!subscription || !subscription.endpoint) {
       return res.status(400).json({ error: 'Subscription inválida' });
     }
-    const userId = req.user ? req.user.id : (bodyUserId != null ? bodyUserId : null);
+    const userId = req.user.id;
     const keysStr = JSON.stringify(subscription.keys || {});
     await db.query(
       `INSERT INTO push_subscriptions (user_id, endpoint, keys)
@@ -71,17 +73,21 @@ app.post('/api/push/subscribe', optionalAuth, async (req, res) => {
     res.json({ success: true, message: 'Subscription registrada com sucesso' });
   } catch (e) {
     console.error('Erro ao registrar subscription:', e);
-    res.status(500).json({ error: 'Erro ao registrar subscription' });
+    const msg = process.env.NODE_ENV === 'production' ? 'Erro ao registrar subscription' : (e.message || 'Erro ao registrar subscription');
+    res.status(500).json({ error: msg });
   }
 });
 
-app.post('/api/push/unsubscribe', async (req, res) => {
+app.post('/api/push/unsubscribe', authMiddleware, async (req, res) => {
   try {
     const { endpoint } = req.body || {};
     if (!endpoint) {
       return res.status(400).json({ error: 'Endpoint não fornecido' });
     }
-    const r = await db.query('DELETE FROM push_subscriptions WHERE endpoint = $1 RETURNING id', [endpoint]);
+    const r = await db.query(
+      'DELETE FROM push_subscriptions WHERE endpoint = $1 AND user_id = $2 RETURNING id',
+      [endpoint, req.user.id]
+    );
     if (r.rows.length === 0) {
       return res.status(404).json({ error: 'Subscription não encontrada' });
     }
@@ -89,22 +95,18 @@ app.post('/api/push/unsubscribe', async (req, res) => {
     res.json({ success: true, message: 'Subscription removida com sucesso' });
   } catch (e) {
     console.error('Erro ao remover subscription:', e);
-    res.status(500).json({ error: 'Erro ao remover subscription' });
+    const msg = process.env.NODE_ENV === 'production' ? 'Erro ao remover subscription' : (e.message || 'Erro ao remover subscription');
+    res.status(500).json({ error: msg });
   }
 });
 
-app.post('/api/push/send', async (req, res) => {
+app.post('/api/push/send', authMiddleware, async (req, res) => {
   try {
-    const { userId, title = 'NihonGo Deck', body, icon = '/icon-192.png', badge = '/icon-192.png', data = {}, url = '/' } = req.body || {};
+    const { title = 'NihonGo Deck', body, icon = '/icon-192.png', badge = '/icon-192.png', data = {}, url = '/' } = req.body || {};
     if (!body) {
       return res.status(400).json({ error: 'Corpo da notificação não fornecido' });
     }
-    let r;
-    if (userId != null && userId !== '') {
-      r = await db.query('SELECT endpoint, keys FROM push_subscriptions WHERE user_id = $1', [userId]);
-    } else {
-      r = await db.query('SELECT endpoint, keys FROM push_subscriptions');
-    }
+    const r = await db.query('SELECT endpoint, keys FROM push_subscriptions WHERE user_id = $1', [req.user.id]);
     const subs = r.rows.map(row => ({
       endpoint: row.endpoint,
       keys: (() => { try { return JSON.parse(row.keys); } catch (_) { return {}; } })(),
@@ -140,7 +142,8 @@ app.post('/api/push/send', async (req, res) => {
     res.json({ success: true, sent: successful, failed, total: results.length });
   } catch (e) {
     console.error('Erro ao enviar notificação:', e);
-    res.status(500).json({ error: 'Erro ao enviar notificação' });
+    const msg = process.env.NODE_ENV === 'production' ? 'Erro ao enviar notificação' : (e.message || 'Erro ao enviar notificação');
+    res.status(500).json({ error: msg });
   }
 });
 
@@ -157,7 +160,8 @@ app.get('/api/push/subscriptions', authMiddleware, async (req, res) => {
     res.json({ total: subscriptions.length, subscriptions });
   } catch (e) {
     console.error('Erro ao listar subscriptions:', e);
-    res.status(500).json({ error: 'Erro ao listar subscriptions' });
+    const msg = process.env.NODE_ENV === 'production' ? 'Erro ao listar subscriptions' : (e.message || 'Erro ao listar subscriptions');
+    res.status(500).json({ error: msg });
   }
 });
 

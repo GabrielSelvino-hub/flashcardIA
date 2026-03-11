@@ -7,6 +7,24 @@ const router = express.Router();
 const SALT_ROUNDS = 10;
 const ACCESS_EXPIRES = '15m';
 const REFRESH_EXPIRES = '7d';
+const REFRESH_COOKIE_NAME = 'refresh_token';
+const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
+
+function refreshCookieOptions() {
+  return {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict',
+    path: '/',
+    maxAge: SEVEN_DAYS_MS,
+  };
+}
+
+function safeError(res, status, message, err) {
+  if (err) console.error(err);
+  const msg = process.env.NODE_ENV === 'production' ? message : (err && err.message ? message + ': ' + err.message : message);
+  return res.status(status).json({ error: msg });
+}
 
 function toUserRow(row) {
   if (!row) return null;
@@ -49,15 +67,15 @@ router.post('/register', async (req, res) => {
       'INSERT INTO refresh_tokens (user_id, token, expires_at) VALUES ($1, $2, $3)',
       [user.id, refreshToken, expiresAt]
     );
+    res.cookie(REFRESH_COOKIE_NAME, refreshToken, refreshCookieOptions());
     return res.status(201).json({
       user: { id: user.id, email: user.email, name: user.name },
       accessToken,
-      refreshToken,
       expiresIn: 900,
     });
   } catch (e) {
     console.error('Auth register error:', e);
-    return res.status(500).json({ error: 'Erro ao registrar.' });
+    return safeError(res, 500, 'Erro ao registrar.', e);
   }
 });
 
@@ -88,22 +106,22 @@ router.post('/login', async (req, res) => {
       'INSERT INTO refresh_tokens (user_id, token, expires_at) VALUES ($1, $2, $3)',
       [user.id, refreshToken, expiresAt]
     );
+    res.cookie(REFRESH_COOKIE_NAME, refreshToken, refreshCookieOptions());
     return res.json({
       user: { id: user.id, email: user.email, name: user.name },
       accessToken,
-      refreshToken,
       expiresIn: 900,
     });
   } catch (e) {
     console.error('Auth login error:', e);
-    return res.status(500).json({ error: 'Erro ao fazer login.' });
+    return safeError(res, 500, 'Erro ao fazer login.', e);
   }
 });
 
-// POST /api/auth/refresh
+// POST /api/auth/refresh — lê refresh token do cookie (HttpOnly) ou do body (retrocompat)
 router.post('/refresh', async (req, res) => {
   try {
-    const { refreshToken } = req.body || {};
+    const refreshToken = req.cookies && req.cookies[REFRESH_COOKIE_NAME] || (req.body && req.body.refreshToken);
     if (!refreshToken) {
       return res.status(400).json({ error: 'Refresh token não fornecido.' });
     }
@@ -122,7 +140,7 @@ router.post('/refresh', async (req, res) => {
     return res.json({ accessToken, expiresIn: 900 });
   } catch (e) {
     console.error('Auth refresh error:', e);
-    return res.status(500).json({ error: 'Erro ao renovar token.' });
+    return safeError(res, 500, 'Erro ao renovar token.', e);
   }
 });
 
@@ -137,21 +155,22 @@ router.get('/me', authMiddleware, async (req, res) => {
     return res.json({ user });
   } catch (e) {
     console.error('Auth me error:', e);
-    return res.status(500).json({ error: 'Erro ao obter perfil.' });
+    return safeError(res, 500, 'Erro ao obter perfil.', e);
   }
 });
 
-// POST /api/auth/logout
+// POST /api/auth/logout — invalida refresh token do cookie ou do body
 router.post('/logout', async (req, res) => {
   try {
-    const { refreshToken } = req.body || {};
+    const refreshToken = req.cookies && req.cookies[REFRESH_COOKIE_NAME] || (req.body && req.body.refreshToken);
     if (refreshToken) {
       await db.query('DELETE FROM refresh_tokens WHERE token = $1', [refreshToken]);
     }
+    res.clearCookie(REFRESH_COOKIE_NAME, { path: '/', httpOnly: true, sameSite: 'strict', secure: process.env.NODE_ENV === 'production' });
     return res.json({ success: true });
   } catch (e) {
     console.error('Auth logout error:', e);
-    return res.status(500).json({ error: 'Erro ao sair.' });
+    return safeError(res, 500, 'Erro ao sair.', e);
   }
 });
 

@@ -1,6 +1,6 @@
 {
   "name": "nihongo-deck-server",
-  "version": "1.0.0",
+  "version": "1.10.0",
   "description": "Backend simples para push notifications do NihonGo Deck",
   "main": "index.js",
   "scripts": {

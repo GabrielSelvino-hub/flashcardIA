@@ -398,6 +398,9 @@ function App() {
   const [generatorPrompt, setGeneratorPrompt] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [furiganaMode, setFuriganaMode] = useState('always');
+  const [soundMuted, setSoundMuted] = useState(() => {
+    try { return localStorage.getItem('sound_muted') === 'true'; } catch (_) { return false; }
+  });
   const [showApiKeyModal, setShowApiKeyModal] = useState(false);
   const [apiKeyModalDueToError, setApiKeyModalDueToError] = useState(false);
   const [apiKeyInput, setApiKeyInput] = useState('');
@@ -1895,6 +1898,7 @@ function App() {
     }
 
     setWritingResult(isCorrect ? 'correct' : 'wrong');
+    if (window.soundService) window.soundService.play(isCorrect ? 'correct' : 'wrong');
     
     // Se correto, processa a revisão automaticamente após 2s (mais tempo para ver feedback)
     if (isCorrect) {
@@ -2055,6 +2059,7 @@ function App() {
     
     setTestSelectedAnswer(selectedOption);
     setTestShowResult(true);
+    if (window.soundService) window.soundService.play(isCorrect ? 'correct' : 'wrong');
     
     // Atualiza score
     setTestScore(prev => {
@@ -3003,7 +3008,8 @@ Exemplo de formato válido:
           if (currentCardIndex < reviewQueue.length - 1) { setCurrentCardIndex(prev => prev + 1); setShowAnswer(false); } else { showAlert('Revisão rápida concluída!'); setView('deck'); }
         }
       } else if (Math.abs(diffY) > 50) {
-        if (diffY < 0 && !showAnswer) setShowAnswer(true); else if (diffY > 0 && showAnswer) setShowAnswer(false);
+        if (diffY < 0 && !showAnswer) { setShowAnswer(true); if (window.soundService) window.soundService.play('flip'); }
+        else if (diffY > 0 && showAnswer) setShowAnswer(false);
       }
       touchStartX.current = 0; touchStartY.current = 0;
     };
@@ -3015,18 +3021,18 @@ Exemplo de formato válido:
           <ProgressBar progress={progress} />
         </header>
         <div ref={cardRef} onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd} className="flex-1 flex items-center justify-center">
-          <DuoCard className="p-10 border-b-8 min-w-[300px] cursor-pointer touch-pan-y" interactive onClick={() => setShowAnswer(!showAnswer)}>
+          <DuoCard className="p-10 border-b-8 min-w-[300px] cursor-pointer touch-pan-y" interactive onClick={() => { const next = !showAnswer; setShowAnswer(next); if (next && window.soundService) window.soundService.play('flip'); }}>
             <KanjiCard kanji={card.kanji} reading={card.reading} meaning={card.meaning} showBack={showAnswer} furiganaMode={furiganaMode} size="large" />
           </DuoCard>
         </div>
         <footer className="pt-8 mb-4">
           {showAnswer ? (
             <div className="grid grid-cols-2 gap-3">
-              <DuoButton variant="danger" fullWidth className="h-14" onClick={() => { processReview(0); if (currentCardIndex < reviewQueue.length - 1) { setCurrentCardIndex(prev => prev + 1); setShowAnswer(false); } else { showAlert('Revisão rápida concluída!'); setView('deck'); } }}>Errado</DuoButton>
-              <DuoButton variant="primary" fullWidth className="h-14" onClick={() => { processReview(2); if (currentCardIndex < reviewQueue.length - 1) { setCurrentCardIndex(prev => prev + 1); setShowAnswer(false); } else { showAlert('Revisão rápida concluída!'); setView('deck'); } }}>Correto</DuoButton>
+              <DuoButton variant="danger" fullWidth className="h-14" onClick={() => { if (window.soundService) window.soundService.play('wrong'); processReview(0); if (currentCardIndex < reviewQueue.length - 1) { setCurrentCardIndex(prev => prev + 1); setShowAnswer(false); } else { showAlert('Revisão rápida concluída!'); setView('deck'); } }}>Errado</DuoButton>
+              <DuoButton variant="primary" fullWidth className="h-14" onClick={() => { if (window.soundService) window.soundService.play('correct'); processReview(2); if (currentCardIndex < reviewQueue.length - 1) { setCurrentCardIndex(prev => prev + 1); setShowAnswer(false); } else { showAlert('Revisão rápida concluída!'); setView('deck'); } }}>Correto</DuoButton>
             </div>
           ) : (
-            <DuoButton variant="primary" fullWidth className="h-16 text-lg" onClick={() => setShowAnswer(true)}>Ver Resposta</DuoButton>
+            <DuoButton variant="primary" fullWidth className="h-16 text-lg" onClick={() => { setShowAnswer(true); if (window.soundService) window.soundService.play('flip'); }}>Ver Resposta</DuoButton>
           )}
           <button onClick={() => setView('deck')} className="mt-4 w-full text-[#afafaf] font-black uppercase text-[10px]">Cancelar</button>
         </footer>
@@ -3045,7 +3051,7 @@ Exemplo de formato válido:
           <ProgressBar progress={progress} />
         </header>
         <div className="flex-1 flex flex-col items-center justify-center text-center">
-          <DuoCard className="p-10 border-b-8 mb-12 min-w-[300px] flex flex-col items-center justify-center shadow-xl cursor-pointer" interactive onClick={() => setShowAnswer(true)}>
+          <DuoCard className="p-10 border-b-8 mb-12 min-w-[300px] flex flex-col items-center justify-center shadow-xl cursor-pointer" interactive onClick={() => { setShowAnswer(true); if (window.soundService) window.soundService.play('flip'); }}>
             <KanjiCard kanji={card.kanji} reading={card.reading} meaning={card.meaning} showBack={showAnswer} furiganaMode={furiganaMode} size="large" />
           </DuoCard>
           {!showAnswer ? (
@@ -3057,12 +3063,12 @@ Exemplo de formato válido:
         <footer className="pt-8 mb-4">
           {showAnswer ? (
             <div className="grid grid-cols-3 gap-3">
-              <DuoButton onClick={() => processReview(0)} variant="danger" fullWidth className="h-14 text-xs">Não sei</DuoButton>
+              <DuoButton onClick={() => { if (window.soundService) window.soundService.play('wrong'); processReview(0); }} variant="danger" fullWidth className="h-14 text-xs">Não sei</DuoButton>
               <DuoButton onClick={() => processReview(1)} variant="warning" fullWidth className="h-14 text-xs">Dúvida</DuoButton>
-              <DuoButton onClick={() => processReview(2)} variant="primary" fullWidth className="h-14 text-xs">Sei</DuoButton>
+              <DuoButton onClick={() => { if (window.soundService) window.soundService.play('correct'); processReview(2); }} variant="primary" fullWidth className="h-14 text-xs">Sei</DuoButton>
             </div>
           ) : (
-            <DuoButton onClick={() => setShowAnswer(true)} variant="primary" fullWidth className="h-16 text-lg">Ver Resposta</DuoButton>
+            <DuoButton onClick={() => { setShowAnswer(true); if (window.soundService) window.soundService.play('flip'); }} variant="primary" fullWidth className="h-16 text-lg">Ver Resposta</DuoButton>
           )}
           <button onClick={() => setView('deck')} className="mt-4 w-full text-[#afafaf] font-black uppercase text-[10px] text-center">Cancelar</button>
         </footer>
@@ -3992,6 +3998,13 @@ Exemplo de formato válido:
             <button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-[#f1f1f1] dark:hover:bg-[#37464f] transition">
               {theme === 'dark' ? <Sun size={18} className="text-[#ff9600]" /> : <Moon size={18} className="text-[#4b4b4b] dark:text-white" />}
               <span className="text-sm font-bold text-[#4b4b4b] dark:text-white">{theme === 'dark' ? 'Tema Claro' : 'Tema Escuro'}</span>
+            </button>
+            <div className="border-t-2 border-[#e5e5e5] dark:border-[#37464f] my-2" />
+            <button onClick={() => { const next = !soundMuted; setSoundMuted(next); if (window.soundService) window.soundService.setMuted(next); }} className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-[#f1f1f1] dark:hover:bg-[#37464f] transition">
+              <span className="text-sm font-bold text-[#4b4b4b] dark:text-white">Efeitos sonoros</span>
+              <div className={`relative w-14 h-8 rounded-full border-b-2 transition-colors ${!soundMuted ? 'bg-[#58cc02] border-[#46a302]' : 'bg-[#e5e5e5] dark:bg-[#37464f] border-[#afafaf]'}`}>
+                <div className={`absolute top-0.5 w-6 h-6 bg-white rounded-full shadow transition-all ${!soundMuted ? 'left-7' : 'left-0.5'}`} />
+              </div>
             </button>
             <div className="border-t-2 border-[#e5e5e5] dark:border-[#37464f] my-2" />
             <div className="px-2 py-1"><span className="text-[10px] font-black text-[#afafaf] uppercase tracking-widest">Notificações</span></div>

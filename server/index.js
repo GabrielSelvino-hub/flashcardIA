@@ -180,7 +180,7 @@ app.get('/health', async (req, res) => {
 });
 
 app.get('/api/version', (req, res) => {
-  res.json({ version: '1.0.0' });
+  res.json({ version: '1.10' });
 });
 
 // Servir frontend (index.html, app.jsx, scripts, etc.) da raiz do projeto

@@ -6,22 +6,25 @@ Backend simples em Express para gerenciar push notifications do PWA.
 
 1. Instalar dependências:
 ```bash
+cd server
 npm install
 ```
 
-2. Gerar VAPID keys:
+2. Criar `.env` a partir de `.env.example` e preencher (banco, JWT, etc.).
+
+3. Gerar chaves VAPID para push notifications:
 ```bash
 npx web-push generate-vapid-keys
 ```
+Copie a chave pública e a privada para o `.env` como `VAPID_PUBLIC_KEY` e `VAPID_PRIVATE_KEY`.
 
-3. Criar arquivo `.env` baseado em `.env.example` e adicionar as VAPID keys geradas.
-
-4. Iniciar servidor:
+4. Iniciar o servidor (obrigatório para as notificações push funcionarem no app):
 ```bash
 npm start
 # ou para desenvolvimento com auto-reload:
 npm run dev
 ```
+O app usa a mesma URL da API (`window.API_BASE_URL`) para o servidor de push; se o front rodar em outra porta, defina `API_BASE_URL` para a URL do backend (ex.: `http://localhost:3000`).
 
 ## Endpoints
 

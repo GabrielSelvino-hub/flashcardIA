@@ -3,11 +3,22 @@
 
 let vapidPublicKey = null;
 let subscription = null;
-let pushServerUrl = 'http://localhost:3000'; // Em produção, usar URL do servidor
+// Usa a mesma URL da API (definida em index.html como window.API_BASE_URL) para o servidor de push
+function getPushServerUrl() {
+  if (typeof window !== 'undefined' && window.API_BASE_URL) {
+    return String(window.API_BASE_URL).replace(/\/$/, '');
+  }
+  return 'http://localhost:3000';
+}
+let pushServerUrl = null; // override opcional; se null, usa getPushServerUrl()
 
-// Configurar URL do servidor
+function getEffectivePushServerUrl() {
+  return (pushServerUrl != null && pushServerUrl !== '') ? pushServerUrl : getPushServerUrl();
+}
+
+// Configurar URL do servidor (opcional; senão usa API_BASE_URL)
 function setServerUrl(url) {
-  pushServerUrl = url;
+  pushServerUrl = url ? String(url).replace(/\/$/, '') : null;
 }
 
 // Verificar se push está disponível
@@ -73,8 +84,9 @@ async function getVapidPublicKey() {
     return vapidPublicKey;
   }
 
+  const url = getEffectivePushServerUrl();
   try {
-    const response = await fetch(`${pushServerUrl}/api/push/vapid-public-key`);
+    const response = await fetch(`${url}/api/push/vapid-public-key`);
     const data = await response.json().catch(() => ({}));
     if (!response.ok) {
       const msg = data.error || 'Erro ao obter chave VAPID';
@@ -86,7 +98,7 @@ async function getVapidPublicKey() {
     return vapidPublicKey;
   } catch (error) {
     if (error.name === 'TypeError' && error.message.includes('fetch')) {
-      throw new Error('Servidor de push inacessível. Verifique se o servidor está rodando em ' + pushServerUrl);
+      throw new Error('Servidor de push inacessível. Verifique se o servidor está rodando em ' + url);
     }
     console.error('Erro ao obter chave VAPID:', error);
     throw error;
@@ -145,7 +157,8 @@ async function subscribe(userId = null) {
     const token = typeof window !== 'undefined' && window.apiService && window.apiService.getAccessToken && window.apiService.getAccessToken();
     const headers = { 'Content-Type': 'application/json' };
     if (token) headers['Authorization'] = 'Bearer ' + token;
-    const response = await fetch(`${pushServerUrl}/api/push/subscribe`, {
+    const subscribeUrl = getEffectivePushServerUrl();
+    const response = await fetch(`${subscribeUrl}/api/push/subscribe`, {
       method: 'POST',
       credentials: 'include',
       headers,
@@ -215,7 +228,8 @@ async function unsubscribe() {
     const token = typeof window !== 'undefined' && window.apiService && window.apiService.getAccessToken && window.apiService.getAccessToken();
     const headers = { 'Content-Type': 'application/json' };
     if (token) headers['Authorization'] = 'Bearer ' + token;
-    await fetch(`${pushServerUrl}/api/push/unsubscribe`, {
+    const unsubscribeUrl = getEffectivePushServerUrl();
+    await fetch(`${unsubscribeUrl}/api/push/unsubscribe`, {
       method: 'POST',
       credentials: 'include',
       headers,

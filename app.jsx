@@ -301,16 +301,21 @@ const LoginView = ({ onBack, onLoginSuccess, showAlert }) => {
       </button>
 
       <div className="w-full max-w-sm flex flex-col items-center">
-        {/* Logo NihonGo! deck e balão ようこそ */}
+        {/* Logo NihonGo! deck e balão ようこそ — ícone em 2x para tela nítida */}
         <div className="relative mb-6 flex justify-center">
-          <img src="/icon-192.png" alt="NihonGo Deck" className="w-20 h-20 rounded-[28px] shadow-lg shadow-green-200 dark:shadow-none object-cover" />
-          <div className="absolute left-1/2 top-0 ml-10 sm:ml-12 bg-white dark:bg-[#1b2c35] px-3 py-1.5 rounded-2xl shadow-md border border-gray-100 dark:border-[#37464f] flex items-center gap-1 whitespace-nowrap">
+          <img
+            src="./icon-384.png"
+            srcSet="./icon-192.png 1x, ./icon-384.png 2x, ./icon-512.png 3x"
+            alt="NihonGo Deck"
+            className="w-24 h-24 rounded-[28px] shadow-lg shadow-green-200 dark:shadow-none object-contain bg-[#58cc02]/10"
+          />
+          <div className="absolute left-1/2 top-0 ml-12 sm:ml-14 bg-white dark:bg-[#1b2c35] px-3 py-1.5 rounded-2xl shadow-md border border-gray-100 dark:border-[#37464f] flex items-center gap-1 whitespace-nowrap">
             <span className="text-xs font-bold text-gray-700 dark:text-gray-200">ようこそ!</span>
             <span className="text-xs">✍️</span>
           </div>
         </div>
 
-        <h1 className="text-[#5ACD00] text-3xl font-black tracking-wider mb-1 text-center">NIHONGO DECK</h1>
+        <h1 className="text-[#5ACD00] text-2xl sm:text-3xl font-black tracking-wider mb-1 text-center whitespace-nowrap">NIHONGO DECK</h1>
         <p className="text-gray-400 dark:text-gray-500 text-sm font-medium mb-10 text-center">Aprenda japonês do jeito viciante</p>
 
         <form onSubmit={handleSubmit} className="w-full space-y-4">
